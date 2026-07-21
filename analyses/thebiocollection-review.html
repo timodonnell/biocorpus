@@ -1,0 +1,577 @@
+<meta charset="utf-8">
+<title>TheBioCollection — Dataset Review</title>
+<style>
+  :root{
+    --bg:#F5F8F6; --surface:#FFFFFF; --surface-2:#EEF3F1; --spec-bg:#F0F4F2;
+    --ink:#13201D; --ink-soft:#3B4A46; --muted:#697974; --line:#DCE4E1;
+    --accent:#137A6B; --accent-2:#1C9A86; --accent-weak:rgba(19,122,107,.09);
+    --good:#2C7D55; --good-bg:rgba(44,125,85,.10);
+    --warn:#A9720C; --warn-bg:rgba(169,114,12,.12);
+    --bad:#B03A31; --bad-bg:rgba(176,58,49,.10);
+    --font-head:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-body:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --font-mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --maxw:1000px; --radius:10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0C110F; --surface:#121A17; --surface-2:#16211D; --spec-bg:#0F1815;
+      --ink:#DBE5E1; --ink-soft:#A9B7B2; --muted:#7C8C87; --line:#22302A;
+      --accent:#40C4AC; --accent-2:#5AD3BC; --accent-weak:rgba(64,196,172,.12);
+      --good:#54C489; --good-bg:rgba(84,196,137,.12);
+      --warn:#DDA23F; --warn-bg:rgba(221,162,63,.14);
+      --bad:#E3746A; --bad-bg:rgba(227,116,106,.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0C110F; --surface:#121A17; --surface-2:#16211D; --spec-bg:#0F1815;
+    --ink:#DBE5E1; --ink-soft:#A9B7B2; --muted:#7C8C87; --line:#22302A;
+    --accent:#40C4AC; --accent-2:#5AD3BC; --accent-weak:rgba(64,196,172,.12);
+    --good:#54C489; --good-bg:rgba(84,196,137,.12);
+    --warn:#DDA23F; --warn-bg:rgba(221,162,63,.14);
+    --bad:#E3746A; --bad-bg:rgba(227,116,106,.14);
+  }
+  :root[data-theme="light"]{
+    --bg:#F5F8F6; --surface:#FFFFFF; --surface-2:#EEF3F1; --spec-bg:#F0F4F2;
+    --ink:#13201D; --ink-soft:#3B4A46; --muted:#697974; --line:#DCE4E1;
+    --accent:#137A6B; --accent-2:#1C9A86; --accent-weak:rgba(19,122,107,.09);
+    --good:#2C7D55; --good-bg:rgba(44,125,85,.10);
+    --warn:#A9720C; --warn-bg:rgba(169,114,12,.12);
+    --bad:#B03A31; --bad-bg:rgba(176,58,49,.10);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); font-size:18px; line-height:1.62;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px}
+  h1,h2,h3,h4,.eyebrow,.chip,.stat-num,.barlabel,.tag,nav,th,.spec-head,.kicker{font-family:var(--font-head)}
+  h2{font-size:1.5rem; font-weight:650; letter-spacing:-.01em; line-height:1.2; margin:0; text-wrap:balance}
+  h3{font-size:1.12rem; font-weight:640; letter-spacing:-.01em; margin:0 0 .2rem; text-wrap:balance}
+  p{margin:.7em 0; max-width:70ch}
+  a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+  a:hover{border-bottom-color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+  .eyebrow{font-size:.72rem; text-transform:uppercase; letter-spacing:.14em; color:var(--accent); font-weight:640}
+
+  /* nav */
+  nav{position:sticky; top:0; z-index:20; background:color-mix(in srgb,var(--bg) 86%,transparent);
+    backdrop-filter:saturate(140%) blur(8px); border-bottom:1px solid var(--line)}
+  .nav-in{max-width:var(--maxw); margin:0 auto; padding:9px 22px; display:flex; align-items:center; gap:16px}
+  .nav-brand{font-weight:680; font-size:.95rem; letter-spacing:-.01em; white-space:nowrap; color:var(--ink)}
+  .nav-brand .dot{color:var(--accent)}
+  .nav-links{display:flex; gap:4px; margin-left:auto; overflow-x:auto; scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{font-family:var(--font-head); font-size:.82rem; color:var(--ink-soft); border:0;
+    padding:5px 10px; border-radius:7px; white-space:nowrap}
+  .nav-links a:hover{background:var(--accent-weak); color:var(--ink)}
+
+  section{padding:52px 0; border-top:1px solid var(--line); scroll-margin-top:60px}
+  section:first-of-type{border-top:0}
+
+  /* header */
+  header.hero{padding:60px 0 46px}
+  .hero h1{font-size:clamp(2rem,5.2vw,3rem); font-weight:720; letter-spacing:-.025em; line-height:1.04; margin:.35em 0 .12em; text-wrap:balance}
+  .hero .lede{font-size:1.22rem; color:var(--ink-soft); max-width:64ch; margin:.4em 0 0}
+  .meta-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px}
+  .chip{font-size:.76rem; font-weight:560; letter-spacing:.01em; padding:5px 11px; border-radius:999px;
+    background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--line)}
+  .chip.k{background:var(--accent-weak); color:var(--accent); border-color:transparent}
+  .srclinks{margin-top:16px; font-family:var(--font-head); font-size:.85rem; display:flex; gap:18px; flex-wrap:wrap}
+
+  /* KPI band */
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin-top:30px}
+  .kpi{background:var(--surface); padding:18px 18px 16px}
+  .stat-num{font-size:1.9rem; font-weight:700; letter-spacing:-.02em; line-height:1; font-variant-numeric:tabular-nums}
+  .kpi .lbl{font-size:.82rem; color:var(--muted); margin-top:7px; line-height:1.3}
+  .kpi.good .stat-num{color:var(--good)} .kpi.warn .stat-num{color:var(--warn)}
+  .kpi.bad .stat-num{color:var(--bad)} .kpi.acc .stat-num{color:var(--accent)}
+
+  .lead{font-size:1.14rem; color:var(--ink-soft)}
+  .kicker{font-size:.95rem; color:var(--muted); margin:-2px 0 20px; font-weight:500}
+
+  /* takeaways */
+  .takeaways{list-style:none; padding:0; margin:22px 0 0; display:grid; gap:12px}
+  .takeaways li{display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:14px 16px}
+  .takeaways .m{font-family:var(--font-head); font-weight:700; font-size:.95rem; padding:2px 8px; border-radius:6px;
+    background:var(--accent-weak); color:var(--accent); white-space:nowrap; margin-top:2px}
+  .takeaways p{margin:0}
+
+  /* bars */
+  .barwrap{margin-top:20px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px 20px 8px}
+  .barwrap h3{font-size:1rem}
+  .barlegend{font-size:.78rem; color:var(--muted); margin:-2px 0 14px}
+  .bar{display:grid; grid-template-columns:210px 1fr 52px; align-items:center; gap:12px; margin-bottom:13px}
+  .bar .bl{font-family:var(--font-head); font-size:.83rem; line-height:1.2}
+  .bar .bl small{display:block; color:var(--muted); font-size:.72rem; font-weight:500; margin-top:1px}
+  .track{height:12px; background:var(--surface-2); border-radius:999px; overflow:hidden}
+  .fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); border-radius:999px; min-width:2px}
+  .fill.mut{background:var(--muted); opacity:.5}
+  .bar .bv{font-family:var(--font-head); font-size:.83rem; font-weight:640; text-align:right; font-variant-numeric:tabular-nums}
+  .signalgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-top:16px}
+  .signal{background:var(--surface); border:1px solid var(--line); border-radius:9px; padding:12px 14px}
+  .signal b{font-family:var(--font-head); font-size:1.25rem; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+  .signal span{display:block; font-size:.78rem; color:var(--muted); margin-top:3px; line-height:1.3}
+
+  /* specimen cards */
+  .spec{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; margin:16px 0}
+  .spec-head{display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:11px 15px; border-bottom:1px solid var(--line);
+    background:var(--surface-2); font-size:.78rem}
+  .spec-head .t{font-weight:680; letter-spacing:.01em}
+  .spec-head .s{color:var(--muted)}
+  .spec-head .len{margin-left:auto; color:var(--muted); font-variant-numeric:tabular-nums}
+  .spec pre{margin:0; padding:15px 16px; overflow-x:auto; background:var(--spec-bg);
+    font-family:var(--font-mono); font-size:.79rem; line-height:1.5; color:var(--ink); white-space:pre-wrap; word-break:break-word}
+  .spec .note{padding:11px 16px; font-size:.9rem; color:var(--ink-soft); border-top:1px solid var(--line); background:var(--surface)}
+  .spec .note b{color:var(--ink)}
+  mark.bug{background:var(--bad-bg); color:var(--bad); font-weight:600; border-radius:3px; padding:0 2px; text-decoration:underline wavy var(--bad)}
+  .seqtag{color:var(--accent); font-weight:600}
+
+  details.spec>summary{cursor:pointer; list-style:none; padding:12px 15px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    background:var(--surface-2); font-size:.82rem; font-family:var(--font-head)}
+  details.spec>summary::-webkit-details-marker{display:none}
+  details.spec>summary .t{font-weight:680}
+  details.spec>summary .s{color:var(--muted); font-weight:500}
+  details.spec>summary .len{margin-left:auto; color:var(--muted); font-variant-numeric:tabular-nums}
+  details.spec>summary::before{content:"►"; color:var(--accent); font-size:.7rem; margin-right:2px}
+  details.spec[open]>summary::before{content:"▼"}
+  details.spec[open]>summary{border-bottom:1px solid var(--line)}
+
+  /* tables */
+  .tablewrap{overflow-x:auto; margin-top:18px; border:1px solid var(--line); border-radius:var(--radius)}
+  table{border-collapse:collapse; width:100%; font-size:.9rem}
+  th,td{padding:10px 14px; text-align:left; border-bottom:1px solid var(--line)}
+  th{font-size:.74rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); font-weight:640; background:var(--surface-2)}
+  tbody tr:last-child td{border-bottom:0}
+  td.num,th.num{text-align:right; font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+  .ok{color:var(--good); font-weight:600} .hi{color:var(--warn); font-weight:600}
+
+  /* findings */
+  .finding{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--sev,var(--accent));
+    border-radius:var(--radius); padding:18px 20px; margin:14px 0}
+  .finding .fh{display:flex; gap:12px; align-items:baseline}
+  .finding .fn{font-family:var(--font-head); font-weight:750; font-size:1.05rem; color:var(--sev,var(--accent)); font-variant-numeric:tabular-nums}
+  .finding h3{flex:1}
+  .tag{font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; font-weight:640; padding:3px 8px; border-radius:5px;
+    background:var(--surface-2); color:var(--ink-soft); white-space:nowrap}
+  .finding p{margin:.5em 0 0; font-size:.98rem}
+  .finding .ev{font-family:var(--font-mono); font-size:.82rem; color:var(--ink-soft); background:var(--surface-2);
+    padding:8px 12px; border-radius:7px; margin-top:10px}
+  .sev-bad{--sev:var(--bad)} .sev-warn{--sev:var(--warn)} .sev-acc{--sev:var(--accent)}
+
+  .fix{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; padding:15px 0; border-bottom:1px solid var(--line)}
+  .fix:last-child{border-bottom:0}
+  .fix .addr{font-family:var(--font-head); font-size:.72rem; font-weight:640; color:var(--accent); background:var(--accent-weak);
+    padding:4px 9px; border-radius:6px; white-space:nowrap; margin-top:2px}
+  .fix h3{font-size:1.02rem}
+  .fix p{margin:.25em 0 0; font-size:.96rem; color:var(--ink-soft)}
+
+  .callout{background:var(--good-bg); border:1px solid color-mix(in srgb,var(--good) 30%,transparent);
+    border-radius:var(--radius); padding:18px 20px; margin-top:18px}
+  .callout .eyebrow{color:var(--good)}
+  .bottomline{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:24px 26px; margin-top:8px}
+  .bottomline p{font-size:1.06rem; max-width:72ch}
+
+  footer{border-top:1px solid var(--line); padding:34px 0 60px; color:var(--muted); font-size:.85rem}
+  footer p{max-width:80ch}
+  footer code{font-family:var(--font-mono); font-size:.8rem; color:var(--ink-soft)}
+  .disc{font-size:.82rem; color:var(--muted); font-style:italic; margin-top:8px}
+
+  @media (max-width:640px){
+    body{font-size:17px}
+    .bar{grid-template-columns:130px 1fr 44px; gap:9px}
+    .bar .bl small{display:none}
+    .fix{grid-template-columns:1fr; gap:6px}
+    section{padding:40px 0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<nav>
+  <div class="nav-in">
+    <span class="nav-brand">TheBioCollection <span class="dot">/</span> review</span>
+    <div class="nav-links">
+      <a href="#overview">Overview</a>
+      <a href="#composition">Composition</a>
+      <a href="#literature">Literature</a>
+      <a href="#random">Random draws</a>
+      <a href="#tour">Guided tour</a>
+      <a href="#accuracy">Accuracy</a>
+      <a href="#shortcomings">Findings</a>
+      <a href="#fixes">Fixes</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Dataset walkthrough &amp; critique</div>
+    <h1>TheBioCollection, read closely</h1>
+    <p class="lede">A 52.6&nbsp;billion-token biology pre-training corpus — what's actually inside it, shown with verbatim records, and where it falls short of its own framing.</p>
+    <div class="meta-chips">
+      <span class="chip k">52.6B tokens</span>
+      <span class="chip k">62.4M records</span>
+      <span class="chip">2 streams · 64 shards</span>
+      <span class="chip">Apache-2.0</span>
+      <span class="chip">Lunit · Trillion Labs et al.</span>
+      <span class="chip">reviewed 2026-07-21</span>
+    </div>
+    <div class="srclinks">
+      <a href="https://huggingface.co/datasets/trillionlabs/TheBioCollection">HF dataset ↗</a>
+      <a href="https://arxiv.org/abs/2607.08803">arXiv:2607.08803 ↗</a>
+      <a href="https://huggingface.co/datasets/trillionlabs/TheBioCollection-Eval">Eval suite ↗</a>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi acc"><div class="stat-num">73%</div><div class="lbl">of the free-text stream is single small-molecule descriptors</div></div>
+      <div class="kpi warn"><div class="stat-num">~2%</div><div class="lbl">is genuine natural-language biomedical prose</div></div>
+      <div class="kpi bad"><div class="stat-num">89%</div><div class="lbl">of binding-assay records ship a broken template line</div></div>
+      <div class="kpi good"><div class="stat-num">0.00%</div><div class="lbl">descriptor mismatch vs. RDKit (enrichment is accurate)</div></div>
+      <div class="kpi acc"><div class="stat-num">0.12</div><div class="lbl">template-diversity ratio in the instruction stream</div></div>
+      <div class="kpi"><div class="stat-num">0.17%</div><div class="lbl">is dedicated pathway (KEGG/Reactome) content</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="overview">
+  <div class="wrap">
+    <div class="eyebrow">Overview</div>
+    <h2>A verbalized database, not a corpus of biology</h2>
+    <p class="lead">TheBioCollection converts heterogeneous biological databases into training text, enriched with tool-computed properties and paired with programmatically-verifiable instruction tasks. That engineering is real and, in places, excellent. But the corpus is far more concentrated — and far more templated — than its "five equal domains" framing suggests.</p>
+
+    <ul class="takeaways">
+      <li><span class="m">1</span><p><b>It's overwhelmingly small-molecule chemistry.</b> ~78% of the free-text stream is molecules; genomics, RNA, cells, and pathways are slivers. The five advertised domains are not close to balanced.</p></li>
+      <li><span class="m">2</span><p><b>~98% is template-generated.</b> Real scientific prose is ~2% of records. The model learns a database-narration register, and the headline eval is built from the <em>same</em> templates.</p></li>
+      <li><span class="m">3</span><p><b>A large share of instruction tasks are ill-posed.</b> ~24% ask for 3-D contact geometry and ~26% ask to design a binder — from <em>sequence-only</em> inputs. Verifiable ≠ learnable.</p></li>
+      <li><span class="m">4</span><p><b>The enrichment itself is trustworthy.</b> Molecular descriptors match RDKit essentially perfectly — this is clean, checkable structured knowledge.</p></li>
+      <li><span class="m">5</span><p><b>There is no provenance.</b> Every record is just <code>{text, record_type}</code> — no source, organism, license, or quality flag. You can't filter, ablate, or check licensing.</p></li>
+    </ul>
+
+    <p class="kicker" style="margin-top:26px">How this was measured: I streamed 2 of 32 shards per stream (~1.6&nbsp;GB), classified <b>3.9M records</b> by content, cross-checked <b>4,000</b> molecule records against RDKit, and ran artifact/duplication counters over full shards. The two shards of each stream agree to &lt;0.1% — the corpus is globally shuffled, so one shard represents the whole. Source names are <em>inferred from content</em>; percentages are sample-based estimates.</p>
+  </div>
+</section>
+
+<section id="composition">
+  <div class="wrap">
+    <div class="eyebrow">Composition</div>
+    <h2>What the two streams are made of</h2>
+    <p>Because records carry no domain label, this is reconstructed by classifying text into mutually-exclusive content classes. Both streams are near-identical across shards.</p>
+
+    <div class="barwrap">
+      <h3>Free-text stream · 37.2M records · 33.8B tokens</h3>
+      <div class="barlegend">Share of records by content class (inferred source in grey).</div>
+      <div class="bar"><div class="bl">Small-molecule descriptor<small>PubChem + RDKit</small></div><div class="track"><div class="fill" style="width:73.1%"></div></div><div class="bv">73.1%</div></div>
+      <div class="bar"><div class="bl">Protein-structure narration<small>AlphaFold + DSSP/Biopython</small></div><div class="track"><div class="fill" style="width:17.7%"></div></div><div class="bv">17.7%</div></div>
+      <div class="bar"><div class="bl">Ligand–target binding assay<small>BindingDB / ChEMBL / patents</small></div><div class="track"><div class="fill" style="width:4.4%"></div></div><div class="bv">4.4%</div></div>
+      <div class="bar"><div class="bl">Genomic DNA window<small>ENCODE / Ensembl</small></div><div class="track"><div class="fill" style="width:1.46%"></div></div><div class="bv">1.5%</div></div>
+      <div class="bar"><div class="bl">UniProt function / GO<small>UniProt / TrEMBL</small></div><div class="track"><div class="fill" style="width:1.35%"></div></div><div class="bv">1.4%</div></div>
+      <div class="bar"><div class="bl">RNA sequence / fold<small>Ensembl / Rfam</small></div><div class="track"><div class="fill" style="width:0.97%"></div></div><div class="bv">1.0%</div></div>
+      <div class="bar"><div class="bl">Cells / pathways / prose<small>literature, misc</small></div><div class="track"><div class="fill mut" style="width:0.94%"></div></div><div class="bv">0.9%</div></div>
+      <div class="signalgrid">
+        <div class="signal"><b>0.35%</b><span>records with no structured tag (pure prose)</span></div>
+        <div class="signal"><b>5.4%</b><span>records with an empty-slot template bug</span></div>
+        <div class="signal"><b>0.04%</b><span>exact duplicates (dedup worked)</span></div>
+        <div class="signal"><b>0.002%</b><span>DrugBank monographs (26 in 1.16M)</span></div>
+      </div>
+    </div>
+
+    <div class="barwrap">
+      <h3>Instruction stream · 25.1M records · 18.9B tokens</h3>
+      <div class="barlegend">Share of records by primary content class. Task-signal keywords (below) overlap and don't sum to 100%.</div>
+      <div class="bar"><div class="bl">Protein design / binder / interface<small>PDB structure-derived</small></div><div class="track"><div class="fill" style="width:40.1%"></div></div><div class="bv">40.1%</div></div>
+      <div class="bar"><div class="bl">Genomic span localization<small>ENCODE open-chromatin / GENCODE splice</small></div><div class="track"><div class="fill" style="width:27.6%"></div></div><div class="bv">27.6%</div></div>
+      <div class="bar"><div class="bl">Small-molecule property / reaction<small>Therapeutics Data Commons / USPTO</small></div><div class="track"><div class="fill" style="width:20.5%"></div></div><div class="bv">20.5%</div></div>
+      <div class="bar"><div class="bl">Cell / spatial descriptive records<small>JUMP Cell Painting / Slide-seq · HuBMAP</small></div><div class="track"><div class="fill" style="width:9.6%"></div></div><div class="bv">9.6%</div></div>
+      <div class="bar"><div class="bl">RNA (miRNA–target)<small>miRTarBase-like</small></div><div class="track"><div class="fill" style="width:2.1%"></div></div><div class="bv">2.1%</div></div>
+      <div class="signalgrid">
+        <div class="signal"><b>48%</b><span>request JSON / verifiable answers</span></div>
+        <div class="signal"><b>26%</b><span>binder / protein-design tasks</span></div>
+        <div class="signal"><b>24%</b><span>list residue contacts / interfaces</span></div>
+        <div class="signal"><b>18%</b><span>reference "within 5.0&nbsp;Å" contacts</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="literature">
+  <div class="wrap">
+    <div class="eyebrow">Literature content</div>
+    <h2>Paper full texts? Published open-access only — no preprints</h2>
+    <p>A fair question, since a "biology corpus" might be expected to pull bioRxiv/medRxiv. It doesn't. Searching a full 1.16M-record free-text shard for the fingerprints that would be present if preprints had been ingested:</p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Preprint fingerprint</th><th class="num">Records</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td><code>10.1101/</code> DOI prefix (bioRxiv/medRxiv)</td><td class="num ok">0</td><td>—</td></tr>
+          <tr><td>"not certified by peer review" — the bioRxiv/medRxiv PDF watermark</td><td class="num ok">0</td><td>—</td></tr>
+          <tr><td><code>PMC#####</code> identifier</td><td class="num ok">0</td><td>—</td></tr>
+          <tr><td>"bioRxiv" appearing anywhere</td><td class="num">2</td><td>authors <em>citing</em> a preprint inside a published paper</td></tr>
+          <tr><td>"medRxiv" / "arXiv"</td><td class="num">1 / 1</td><td>same — in-text mentions, not sources</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>If preprint full texts were present, the watermark line and <code>10.1101</code> DOIs would appear thousands of times per shard. Zero is conclusive.</p>
+
+    <div class="signalgrid">
+      <div class="signal"><b>0</b><span>preprint watermarks in 1.16M records</span></div>
+      <div class="signal"><b>1.71%</b><span>of free-text characters are full-text articles</span></div>
+      <div class="signal"><b>~64k</b><span>estimated OA articles corpus-wide</span></div>
+      <div class="signal"><b>~1%</b><span>of all 52.6B tokens is OA full text</span></div>
+    </div>
+
+    <h3 style="margin-top:28px">What the prose actually is</h3>
+    <p>There is genuine full-text literature — just <b>published open-access journal articles</b>, not preprints. It's ~0.17% of records but longer, so <b>1.71% of free-text characters</b> (~1% of the whole corpus). The DOIs cited in the bodies are dominated by <b>BMC</b>, then Springer/Nature, <b>PeerJ</b>, <b>Hindawi</b>, JCI, Frontiers — the classic <b>PMC Open Access</b> mix. Every sampled article is body text (Background / Introduction / Results / Discussion) that terminates in a stray <code>Figures and Captions</code> header — the signature of an XML→text extraction with front- and back-matter stripped. Topically it skews hard toward <b>cell biology, single-cell, and immunology</b> (plus CELLxGENE cell-type profiles and Cell Ontology definitions), reading like literature pulled to shore up the thin "cells" domain rather than a general biomedical-literature corpus.</p>
+
+    <div class="callout" style="background:var(--warn-bg); border-color:color-mix(in srgb,var(--warn) 30%,transparent); margin-top:18px">
+      <div class="eyebrow" style="color:var(--warn)">Governance implication</div>
+      <p style="margin:.4em 0 0">Only ~4 of ~2,000 sampled articles retain any license string, and none retain the article's own DOI or PMC id. So even though most PMC-OA content is CC-BY (reusable <em>with attribution</em>), the attribution is gone and you can't separate it from the more restrictive CC-BY-NC-ND subset. This is finding&nbsp;#10 in miniature — full-text articles ingested with provenance and license stripped.</p>
+    </div>
+  </div>
+</section>
+
+<section id="random">
+  <div class="wrap">
+    <div class="eyebrow">Random draws</div>
+    <h2>An unbiased look: uniform samples</h2>
+    <p>First entries from a seeded reservoir sample over shard&nbsp;1 — genuinely random, not selected. Long raw sequences are trimmed with <code>…[+N]</code> for display; everything else is verbatim.</p>
+
+    <div class="spec">
+      <div class="spec-head"><span class="t">Free-text #1</span><span class="s">small-molecule descriptor — the 73% case</span><span class="len">2,351 chars</span></div>
+      <pre>The molecule has the SMILES representation: <span class="seqtag">&lt;smiles&gt;</span>CC1=CC(=CC(=C1)C(=O)N[C@H](CCSC)C(=O)O)C<span class="seqtag">&lt;/smiles&gt;</span> and its IUPAC systematic name is (2R)-2-[(3,5-dimethylphenyl)carbonylamino]-4-methylsulfanyl-butanoic acid. It also has the corresponding InChI: <span class="seqtag">&lt;inchi&gt;</span>InChI=1S/C14H19NO3S/c1-9-6-10(2)8-11(7-9)13(16)15-12(14(17)18)4-5-19-3/t12-/m1/s1<span class="seqtag">&lt;/inchi&gt;</span>.
+The compound contains 38 atoms, including 19 heavy atoms, and 38 bonds. The molecule is Chiral, and it has 0 charged atoms, and a total formal charge of 0. Its molecular formula is C14H19NO3S, giving an exact mass of 281.10856464g/mol and a molecular weight of 281.37g/mol.
+The molecule features 4 hydrogen bond acceptors, 2 hydrogen bond donor, 6 rotatable bond, and an XlogP3-AA value of 2.6, indicating moderate polarity, balanced aqueous solubility and membrane permeability.
+There is 1 ring in the molecular graph, including 1 aromatic, 0 aliphatic, and 0 saturated ring. … The Murcko scaffold is c1ccccc1. Graph complexity descriptors include Bertz complexity 453.5, Labute ASA 117.1 A^2, Hall-Kier alpha -1.5, and Kier kappa values 15.7, 9.9, and 9.6. …</pre>
+    </div>
+
+    <div class="spec">
+      <div class="spec-head"><span class="t">Free-text #2</span><span class="s">binding assay — with the template bug</span><span class="len">1,433 chars</span></div>
+      <pre>The ligand 5-(1-Isopropyl-1H-1,2,3-triazol-4-yl)-3-(…)pentanoic acid
+(SMILES: <span class="seqtag">&lt;smiles&gt;</span>CC(C)n1cc(CCC(CC(O)=O)c2ccc(C)c(CN3C[C@@H](C)Oc4ccccc4S3(=O)=O)c2)nn1<span class="seqtag">&lt;/smiles&gt;</span>, InChI: <span class="seqtag">&lt;inchi&gt;</span>…<span class="seqtag">&lt;/inchi&gt;</span>)
+ was tested against the protein Nuclear factor erythroid 2-related factor 2.
+The target protein name is Human of NF2L2_HUMAN and chain sequence is <span class="seqtag">&lt;protein&gt;</span>MMDLELPPPGLPSQQDMDLIDILWRQDIDLGVSREVFDFSQRRKEY…[+560&nbsp;aa]<span class="seqtag">&lt;/protein&gt;</span>.
+ PDB IDs of target chain are 7O7B,7X5E,7X5F
+The experiment was performed at <mark class="bug">pH  and .</mark>
+The ligand exhibited moderate binding strength, with a reported EC50 (nM) of<mark class="bug">  550</mark>.</pre>
+      <div class="note"><b>Two artifacts in one record:</b> missing assay conditions leave <code>pH  and .</code>, and a missing unit leaves a double-space before the value. This occurs in <b>~89% of binding-assay records</b>.</div>
+    </div>
+
+    <div class="spec">
+      <div class="spec-head"><span class="t">Instruction #1</span><span class="s">binder design — supervised against one native sequence</span><span class="len">1,135 chars</span></div>
+      <pre>Design a single-chain binder that satisfies the ligand-pocket motif below. Use only the 20 standard amino acids, produce a single chain of exactly 193 residues, and keep the motif anchors in N-to-C order.
+
+Ligand (SMILES): <span class="seqtag">&lt;smiles&gt;</span>CC1CCN(C(=O)N[C@H](C)c2ccccc2)CC1<span class="seqtag">&lt;/smiles&gt;</span>
+Binding-pocket motif (anchors in order):
+1. an aromatic residue making an aromatic (pi-stacking) contact with the ligand's aromatic ring
+2. an aromatic residue making an aromatic (pi-stacking) contact with the ligand's aromatic ring
+3. a hydrophobic residue making a hydrophobic contact with ligand atom 6
+4. a polar residue making a hydrogen-bond-like contact with ligand atom 13
+… (6 anchors)
+Output only the binder sequence.
+Answer: <span class="seqtag">&lt;protein&gt;</span>GDDRELAILATAENLLEDRPLADISVDDLAKGAGISRPTFYFYFPSKEAVLLTLLDRVVNQADM…[+193&nbsp;aa]<span class="seqtag">&lt;/protein&gt;</span></pre>
+    </div>
+
+    <div class="spec">
+      <div class="spec-head"><span class="t">Instruction #2</span><span class="s">contact summary — 3-D answer from sequence-only input</span><span class="len">1,787 chars</span></div>
+      <pre>Summarize how the binder protein contacts the target protein, focusing on residue-level contacts. Two residues are in contact when their heavy atoms are within 5.0 Å, and positions are 1-indexed within each chain. For this pair, chain R is the target and chain L is the binder.
+
+Target protein (chain R): <span class="seqtag">&lt;protein&gt;</span>GLPVMNTPGSNQFLTSDDYQSPTAMPQFDVTPEMNIPGEV…[+200&nbsp;aa]<span class="seqtag">&lt;/protein&gt;</span>
+Binder protein (chain L): <span class="seqtag">&lt;protein&gt;</span>GAQVSTQKTGAHEIHYTNINYYKDAASNSANRQDFTQDPGKFTEPVKDIMVKSLPALN<span class="seqtag">&lt;/protein&gt;</span>
+
+Answer: The binder presents a 54-contact interface against the target, with 8 hydrogen-bond-like contacts, 4 hydrophobic contacts, 39 polar contacts, and 3 salt-bridge-like contacts. The binder-side patch is L:N18, L:I19, L:N20, L:Y21, L:Y22, L:K23, L:D24 … the corresponding target epitope is R:S16, R:D17, R:D18, R:Y19, R:Q20 … Representative pairwise contacts include L:N18 to R:Q20 (polar), L:I19 to R:Q20 (polar) …</pre>
+      <div class="note"><b>The recurring problem in one card:</b> the answer is precise 3-D interface geometry, but the model is given only two 1-D sequences. Nothing in the input determines the answer — it is learnable only by memorizing the specific PDB complex. See finding&nbsp;#3.</div>
+    </div>
+  </div>
+</section>
+
+<section id="tour">
+  <div class="wrap">
+    <div class="eyebrow">Guided tour</div>
+    <h2>One representative record per aspect</h2>
+    <p>Expand each to see a full record. Together these span the corpus's real range — from its clean, dominant molecule records to its rare literature and its most questionable tasks.</p>
+
+    <details class="spec"><summary><span class="t">A · AlphaFold protein-structure narration</span><span class="s">17.7% of free-text</span><span class="len">2,516 chars</span></summary>
+      <pre>Protein A0A101LZ69_PICGL is a medium-sized protein of 101 amino acid residues containing 829 atoms, with its three-dimensional structure predicted by AlphaFold. Its sequence is <span class="seqtag">&lt;protein&gt;</span>MIRVSSLRYAISTLVSLVIGWFRHLCVWWFFKLVGSPIKLFQVSTMFPWHLLSYGTNDMILRLVQMNKGLGSHPHTHIGQKGSPHPAIVRYSHPSYDRCYL<span class="seqtag">&lt;/protein&gt;</span>.
+
+Physicochemical properties: molecular weight 11,728 Da, isoelectric point 10.11 (basic, strong net positive charge), GRAVY 0.171 (slightly hydrophobic), instability index 32.6 (stable in vitro).
+Secondary structure: 64% helix, 0% sheet, 36% coil. Helical regions span residues 2-34, 37-68. Fold topology H-H.
+Geometry and compactness: Radius of gyration 34.7 Å. Relative contact order 0.0231. Long-range contact count: 0.
+Interactions: 1 salt bridge ARG62–ASP58 (3.5 Å). No disulfide bonds despite 2 cysteine residues. …
+Solvent accessibility: SASA 12,139 Å². Remarkably, no residues are buried (RSA &lt; 0.25), and 86% of residues are fully exposed to solvent, which is highly unusual and consistent with an intrinsically disordered protein.
+Residue composition: 48% hydrophobic, 27% polar, 17 positively charged, 2 negatively charged. Absent amino acids: E.
+Structural and functional annotation (UniProt): Transmembrane region: 7–31.</pre>
+      <div class="note"><b>Confident, but self-contradictory:</b> called a transmembrane protein yet narrated as fully solvent-exposed / disordered, with an Rg of 34.7&nbsp;Å for a 101-mer (very extended). These are hallmarks of a low-confidence AlphaFold model — but <b>no pLDDT is reported</b>, so shaky geometry is stated as fact. See finding&nbsp;#6.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">B · UniProt function + GO</span><span class="s">protein/pathway prose, ~1.4%</span><span class="len">1,125 chars</span></summary>
+      <pre>Transaldolase from Xanthomonas oryzae pv. oryzae (strain PXO99A) is an enzyme (EC 2.2.1.2). The functional descriptions of this protein are as follows: Transaldolase is important for the balance of metabolites in the pentose-phosphate pathway. It catalyzes the reaction: D-sedoheptulose 7-phosphate + D-glyceraldehyde 3-phosphate = D-erythrose 4-phosphate + beta-D-fructose 6-phosphate. Gene Ontology (GO) information indicates: molecular function — transaldolase activity; biological process — carbohydrate metabolic process, pentose-phosphate shunt; cellular component — cytosol. It has a length of 322 amino acids. The protein sequence is <span class="seqtag">&lt;protein&gt;</span>MTASPSKLAQLRELSVVVADTGDYDAIKRLQPVDCTTNPTLVKKALDLPVYAD…[+270&nbsp;aa]<span class="seqtag">&lt;/protein&gt;</span>.</pre>
+      <div class="note">This is close to what "pathways" means in the corpus: GO/enzymatic context folded into protein records. Dedicated KEGG/Reactome pathway content is just <b>0.17%</b> of the free-text stream.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">C · Genomic DNA window</span><span class="s">1.5% of free-text</span><span class="len">452 chars</span></summary>
+      <pre>Sequence: <span class="seqtag">&lt;dna&gt;</span>ATTGGAGATTAGCTAAATTTGCTAAATGCCTGAATCTAGCAAATCCAGAGAGAAAAAGCCACAACAATGAACACC…<span class="seqtag">&lt;/dna&gt;</span>. Mus musculus mm10 genomic DNA | location=chr3:55781947-55782165 | features=overlaps 1 gene feature for Nbea | length=218 bp | GC=32.1% | CpG sites=2 | CpG O/E=0.36 | entropy=1.90 bits | longest homopolymer=5 bp.</pre>
+      <div class="note">Better records tie the window to a feature (here, the <em>Nbea</em> gene). But ~0.2% of the stream are windows labeled <code>has no selected coordinate feature overlap</code> — random sequence plus composition stats, no signal.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">D · Literature (rare, but real)</span><span class="s">~0.2% of records — longer, so more tokens</span><span class="len">13,302 chars</span></summary>
+      <pre>Proton Therapy Reduces the Effective Dose to Immune Cells in Mediastinal Hodgkin Lymphoma Patients
+Purpose Effective dose to circulating immune cells (EDIC) is associated with survival in lung and esophageal cancer patients. This study aimed to evaluate the benefit of intensity-modulated proton therapy (IMPT) for EDIC reduction compared with volumetric modulated arc therapy (VMAT) in mediastinal Hodgkin lymphoma (mHL) patients. … [full open-access paper continues for 13k chars]</pre>
+      <div class="note">Full open-access papers appear verbatim (also seen: a 30k-char k-mer bioinformatics methods paper; NCBI GeneRIF-style "Literature-derived functional findings for gene VPS4A"). This is the corpus's only real natural-language biology — and it is vanishingly rare.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">E · Genomic span task — well-posed &amp; checkable</span><span class="s">instruction stream · the good kind</span><span class="len">1,934 chars</span></summary>
+      <pre>You are given a human GRCh38 genomic DNA sequence measured in a T-helper 2 cell context. … The sequence below contains one open chromatin peak plus flanking DNA. The summit is the single position with the strongest accessibility signal.
+
+Sequence:
+<span class="seqtag">&lt;dna&gt;</span>GAGGAGCGTAGGAACCTGGTCCGCAGCCTCACCCAGCCCCCGGCAGGCCGGACCTGAGCTCCCC…<span class="seqtag">&lt;/dna&gt;</span>
+
+Task: Locate the open chromatin peak and its summit position. [1-indexed, inclusive; subsequence must match exactly]
+Return JSON only:
+{"open_chromatin_peaks":[{"assay":"&lt;ATAC-seq or DNase-seq&gt;","biosample":"&lt;string&gt;","start":&lt;int&gt;,"end":&lt;int&gt;,"summit_position":&lt;int&gt;,"subsequence":"&lt;string&gt;"}]}
+{"open_chromatin_peaks":[{"assay":"DNase-seq","biosample":"T-helper 2 cell","start":151,"end":330,"summit_position":226,"subsequence":"CCCTCGAGACCCGCCAAGAAATAAAGGCGATGATTTCC…"}]}</pre>
+      <div class="note">This is the model of a good task: the answer is a span of the given input and is exactly verifiable. The prompt+answer are concatenated for pre-training.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">F · Drug-property multiple choice</span><span class="s">Therapeutics Data Commons · chemistry, checkable</span><span class="len">642 chars</span></summary>
+      <pre>Instructions: Answer the following question about drug properties.
+Context: Tyrosyl-DNA phosphodiesterase is an enzyme involved in repairing stalled topoisomerase I-DNA complexes … Mutations have been associated with axonal neuropathy.
+Question: Given a drug SMILES string, predict whether it (A) is not active against tyrosyl-DNA phosphodiesterase (B) is active against tyrosyl-DNA phosphodiesterase
+Drug SMILES: <span class="seqtag">&lt;smiles&gt;</span>Clc1ccc(C2=NN(C(C2)c2occc2)C(=O)CSc2n(C3CC3)c(=O)[nH]n2)cc1<span class="seqtag">&lt;/smiles&gt;</span>
+Answer: (A)</pre>
+    </details>
+
+    <details class="spec"><summary><span class="t">G · Cell / spatial descriptive record</span><span class="s">~9.6% of the "instruction" stream — but no task</span><span class="len">486 &amp; 483 chars</span></summary>
+      <pre>Observed spatial transcriptomics record: Slide-seq [Salmon], HuBMAP sample=HBM844.HNVJ.589, Homo sapiens Kidney (Right), spot CAATGCCCTATAGA, x=3049.3, y=4989.1. The spot contains 16.2 total counts across 23 detected genes. Among the most abundant transcripts are CBWD1, CDC16, CEP350, COX2, LUM, NEAT1, RPL3, RPS12. Local density: 13 neighbors within 50 um; closest 16.2 um. The record preserves measurement context without assigning tissue function.
+
+Well-level Cell Painting record for U2OS: plate=C13487bW, well=P12, perturbation=JCP2022_106375. Matched-control morphology strength=2.24; strongest feature families are nuclear shape and size (Nuclei_AreaShape, 2.60), nuclear granularity (2.26) … Strongest CellProfiler measurement: EulerNumber (z=-22.47).</pre>
+      <div class="note">These live in the <em>instruction</em> stream but contain no question or answer, and are self-hedged ("preserves measurement context without assigning tissue function"; "Image-profile similarity is not a mechanism label"). Descriptive, low-signal, mislabeled. See finding&nbsp;#9.</div>
+    </details>
+
+    <details class="spec"><summary><span class="t">H · Drug synergy as exact-integer regression</span><span class="s">many packed examples per record</span><span class="len">4,332 chars</span></summary>
+      <pre>Instructions: Answer the following question about drug synergy. … Synergy is calculated using the Bliss model.
+Question: Given two drug SMILES and a cell line, predict the normalized synergy from 000 to 1000.
+
+Drug1 SMILES: <span class="seqtag">&lt;smiles&gt;</span>CC1=C2C(C(=O)C3(…paclitaxel…))<span class="seqtag">&lt;/smiles&gt;</span>
+Drug2 SMILES: <span class="seqtag">&lt;smiles&gt;</span>CC1C(C(CC(O1)…doxorubicin…))<span class="seqtag">&lt;/smiles&gt;</span>
+Cell line description: HCT116
+Answer: 460
+
+Drug1 … Drug2 … Cell line: OVCAR-5   Answer: 506
+Drug1 … Drug2 … Cell line: MALME-3M  Answer: 485
+… (8+ pairs, answers 462, 477, 486 …)</pre>
+      <div class="note">Predicting an exact integer for a noisy experimental synergy readout is close to unlearnable and rewards memorization. See finding&nbsp;#7.</div>
+    </details>
+  </div>
+</section>
+
+<section id="accuracy">
+  <div class="wrap">
+    <div class="eyebrow">The strong positive</div>
+    <h2>The tool-computed enrichment is accurate</h2>
+    <p>Cross-checking 4,000 molecule-descriptor records against RDKit, recomputed from each record's own SMILES:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Descriptor</th><th class="num">Mismatch</th><th>Reading</th></tr></thead>
+        <tbody>
+          <tr><td>heavy atoms · total atoms · formal charge · ring count · TPSA · fraction-sp³</td><td class="num ok">0.00%</td><td>exact</td></tr>
+          <tr><td>molecular weight</td><td class="num ok">0.05%</td><td>exact</td></tr>
+          <tr><td>molecular formula</td><td class="num ok">0.10%*</td><td>*Hill-order for carbon-free salts; corpus arguably more correct</td></tr>
+          <tr><td>aromatic ring count</td><td class="num ok">0.21%</td><td>aromaticity-model edge cases</td></tr>
+          <tr><td>exact mass</td><td class="num hi">2.18%**</td><td>**concentrated in multi-component / salt SMILES</td></tr>
+          <tr><td>SMILES parses in RDKit</td><td class="num ok">99.97%</td><td>0.03% genuinely malformed</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <div class="eyebrow">Worth stating plainly</div>
+      <p style="margin:.4em 0 0">For normal drug-like molecules the descriptors are essentially perfect and internally consistent with the structure. This is clean, verifiable structured knowledge — the genuinely valuable core of the corpus, and the part most defensible for training.</p>
+    </div>
+  </div>
+</section>
+
+<section id="shortcomings">
+  <div class="wrap">
+    <div class="eyebrow">Findings</div>
+    <h2>Where it falls short</h2>
+    <p class="kicker">Ordered by how much they undercut the corpus's stated goal — a model with "genuine understanding of biology." The number is referenced elsewhere on this page.</p>
+
+    <div class="finding sev-bad"><div class="fh"><span class="fn">1</span><h3>"Five domains" is really one domain</h3><span class="tag">balance</span></div>
+      <p>73% small molecules + 18% protein structure. Genomics, RNA, cells, and pathways (0.17%) are rounding error in the free-text stream. A model trained here is a cheminformatics model that has <em>seen</em> some genomics — the card presents the five domains as co-equal, but the token reality is lopsided and undocumented.</p></div>
+
+    <div class="finding sev-bad"><div class="fh"><span class="fn">2</span><h3>A verbalized database, not a biology corpus — and the eval is matched to it</h3><span class="tag">format · evidence</span></div>
+      <p>~98% is template-generated narration; genuine scientific prose is ~2% of records. So (a) the model learns database register, not reading/reasoning over real scientific language; and (b) the headline "more than doubles on TheBioCollection-Eval" is measured on an eval built from the <em>same</em> templates and sources. That largely demonstrates format acquisition and risks train/eval leakage — no source- or template-held-out split is reported.</p></div>
+
+    <div class="finding sev-bad"><div class="fh"><span class="fn">3</span><h3>Many instruction tasks are information-theoretically ill-posed</h3><span class="tag">task validity</span></div>
+      <p>~24% ask for residue contacts / 5&nbsp;Å binding sites / interface epitopes, and ~26% ask to design or scaffold a binder — from <em>sequence-only</em> inputs. The ground truth depends on 3-D structure the model can't see, so the only ways to fit it are memorizing PDB entries or hallucinating geometry. Protein design is additionally one-to-many yet supervised against a single native sequence with cross-entropy.</p>
+      <div class="ev">"Programmatically verifiable" ≠ "learnable from the given inputs."</div></div>
+
+    <div class="finding sev-bad"><div class="fh"><span class="fn">4</span><h3>Visible template-rendering bugs at scale</h3><span class="tag">rendering</span></div>
+      <p>5.4% of free-text records contain <code>performed at pH&nbsp;&nbsp;and .</code> (empty slots) — that's 89% of all binding-assay records shipped with broken sentences. 6.1% have a double-space where a value/unit is missing. On 37M records that's <b>~2M visibly malformed documents</b> the model will learn as valid.</p></div>
+
+    <div class="finding sev-warn"><div class="fh"><span class="fn">5</span><h3>Garbage-in source records pass straight through</h3><span class="tag">source quality</span></div>
+      <p>PubChem mixtures/formulations get single-molecule descriptor write-ups — e.g. a "molecule" that is twelve ethanes plus carbazoles and spiro-siloles (an OLED formulation) with a semicolon-list "IUPAC name" and a computed molecular weight for the bag. No connectivity/mixture filter.</p></div>
+
+    <div class="finding sev-warn"><div class="fh"><span class="fn">6</span><h3>Structural narration outruns its evidence</h3><span class="tag">evidence</span></div>
+      <p>AlphaFold records (18%) recite Rg, SASA, contact order, "intrinsically disordered," etc. computed on models of <em>unknown confidence</em> (no pLDDT), sometimes self-contradictory (transmembrane yet fully exposed). Presented as fact, this teaches confident wrongness.</p></div>
+
+    <div class="finding sev-warn"><div class="fh"><span class="fn">7</span><h3>Numeracy tasks with unlearnable exact targets</h3><span class="tag">numeracy</span></div>
+      <p>Drug-synergy regression to an exact integer 000–1000, Ki/IC50 to the reported nanomolar — these are noisy assay readouts. Demanding an exact token answer rewards memorization and injects label noise.</p></div>
+
+    <div class="finding sev-acc"><div class="fh"><span class="fn">8</span><h3>Redundancy the exact-dedup missed</h3><span class="tag">redundancy</span></div>
+      <p>Exact duplicates are ~0.04% (good), but the instruction stream's template-diversity ratio is 0.12 — enormous near-duplication at the template level (top ~12 templates are 2–3% each). Low-information records (feature-less DNA windows; self-nullifying cell/spatial descriptions) burn tokens without teaching much.</p></div>
+
+    <div class="finding sev-acc"><div class="fh"><span class="fn">9</span><h3>Stream and label semantics are loose</h3><span class="tag">semantics</span></div>
+      <p>Declarative cell/spatial descriptions (~9.6% of the "instruction" stream) contain no instruction at all. <code>record_type</code> carries zero information beyond the filename it came from.</p></div>
+
+    <div class="finding sev-bad"><div class="fh"><span class="fn">10</span><h3>No provenance → no governance</h3><span class="tag">governance</span></div>
+      <p>With only <code>{text, record_type}</code> you cannot filter by source/organism/quality, cannot ablate, cannot dedup against a downstream eval, and cannot check licenses. The corpus is Apache-2.0 but derives from sources with heterogeneous terms — patent example compounds (<code>US10301272</code>), DrugBank, full-text papers, UniProt/ENCODE/GENCODE. Provenance is unrecoverable from the release.</p></div>
+
+    <div class="finding sev-acc"><div class="fh"><span class="fn">11</span><h3>Scope claims vs. content</h3><span class="tag">scope</span></div>
+      <p>Tagged <code>language:en</code>, human/mouse-centric, and "biology," but it is overwhelmingly chemistry + structural bioinformatics. Whole areas — physiology, clinical, microbiology, ecology, evolution, and most of molecular biology's <em>prose</em> — are essentially absent.</p></div>
+  </div>
+</section>
+
+<section id="fixes">
+  <div class="wrap">
+    <div class="eyebrow">Fixes</div>
+    <h2>How I'd improve it</h2>
+    <p>Most of these are curation and metadata, not new data collection. They're ordered by leverage.</p>
+
+    <div class="fix"><span class="addr">#1 #9 #10</span><div><h3>Ship provenance metadata — the single biggest win</h3><p>Add per-record <code>source</code>, <code>source_id</code>, <code>domain</code>, <code>subtype/template_id</code>, <code>organism</code>, <code>license</code>, and quality flags. This alone unlocks rebalancing, ablation, dedup-vs-eval, and license compliance, and lets users down-weight the 73% molecule mass.</p></div></div>
+
+    <div class="fix"><span class="addr">#1 #2</span><div><h3>Rebalance and document</h3><p>Publish per-source token counts and a real domain histogram. Cap the cheap-to-generate PubChem descriptor mass; up-sample the thin, high-value domains and genuine open-access prose — for balance and to fight format overfitting.</p></div></div>
+
+    <div class="fix"><span class="addr">#3</span><div><h3>Fix task well-posedness</h3><p>Only pose tasks solvable from the inputs, or provide the missing context (include structure/features, or reframe as "given this structure…"). Supervise design with multiple valid references or a structural reward (foldability, motif satisfaction), not cross-entropy to one native sequence.</p></div></div>
+
+    <div class="fix"><span class="addr">#4</span><div><h3>Repair the renderer</h3><p>Regenerate or drop the ~2M records with empty slots; when a source value is missing, omit the clause instead of emitting <code>pH&nbsp;&nbsp;and .</code>. Trivially detectable with two regexes.</p></div></div>
+
+    <div class="fix"><span class="addr">#5 #6</span><div><h3>Filter source junk; carry confidence</h3><p>Reject or tag disconnected / multi-component SMILES and non-drug-like formulations. For AlphaFold records, carry pLDDT and gate or caveat descriptors from low-confidence models; reconcile contradictory annotations.</p></div></div>
+
+    <div class="fix"><span class="addr">#7</span><div><h3>Rethink noisy-number supervision</h3><p>Bin regression targets into calibrated buckets or attach uncertainty, instead of demanding exact integers / nanomolar values.</p></div></div>
+
+    <div class="fix"><span class="addr">#8</span><div><h3>De-duplicate at the template level</h3><p>Sample-cap per prompt skeleton; drop feature-less DNA windows and self-nullifying descriptive records, or convert them into actual tasks.</p></div></div>
+
+    <div class="fix"><span class="addr">#2</span><div><h3>Make the eval honest</h3><p>Report results on a source- and template-held-out split, plus a format-shifted eval (same biology, different phrasing/schema), so gains reflect biology rather than template familiarity. State the contamination controls.</p></div></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Bottom line</div>
+    <div class="bottomline">
+      <p>This is a <b>well-engineered, accurately-enriched verbalization of chemical and structural-bioinformatics databases</b> — genuinely useful for teaching a model to manipulate SMILES, reactions, and sequence↔property mappings, and the descriptor accuracy is excellent.</p>
+      <p>But "a corpus for biology" oversells it: ~78% small molecules, ~98% templated, thin on real biological prose and on the genomics/cells/pathways it advertises, with a large share of instruction tasks that are unlearnable except by memorization. The fixes are mostly curation and metadata — and <b>adding provenance would be the single biggest improvement.</b></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Method &amp; reproducibility.</b> Streamed 2 of 32 shards per stream (<code>free_text_stream</code> parts 1 &amp; 17; <code>instruction_stream</code> parts 1 &amp; 20) via <code>zstd -dc</code>; classified 3.9M records by content heuristics; validated 4,000 molecule records against RDKit 2025.03.3; counted template artifacts, exact duplicates, and template skeletons over full shards. Cross-shard composition agreed to &lt;0.1%, indicating global shuffling. Token counts and stream sizes are from the dataset card (Gravity tokenizer).</p>
+    <p class="disc">Estimates are sample-based (2 shards/stream). Source names (PubChem, BindingDB, UniProt, AlphaFold, ENCODE, GENCODE, Therapeutics Data Commons, USPTO, JUMP Cell Painting, Slide-seq/HuBMAP, DrugBank, Rfam) are inferred from record content, not asserted by the release. Independent review, not affiliated with the dataset authors. Dataset last modified 2026-07-20; reviewed 2026-07-21.</p>
+  </div>
+</footer>
