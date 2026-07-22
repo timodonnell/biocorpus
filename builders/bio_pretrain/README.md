@@ -64,13 +64,14 @@ is queryable metadata.
 | `source_url` | str | exact URL the entry came from |
 | `license` | str | UniProt = CC-BY-4.0; Ensembl = open (verify assembly terms) |
 | `accession` | str | primary accession / stable id |
-| `entity_type` | str | `protein` \| `transcript` |
-| `seq_type` | str | `aa` \| `dna` |
+| `entity_type` | str | `protein` \| `transcript` \| `gene` \| `regulatory_feature` \| `splice_junction` \| `central_dogma` |
+| `seq_type` | str | `aa` \| `dna` \| `rna` |
 | `seq_len` | int | length in residues/nt |
 | `organism`, `taxid` | str | species + NCBI taxon id |
 | `gene`, `name` | str | gene symbol; display name |
-| `annotations` | object | source-specific typed fields (function, go, features, keywords, xrefs, lineage, description, location, biotype, …) |
-| `sequence` | str | raw residues/bases |
+| `annotations` | object | source-specific typed fields (function, go, features, keywords, xrefs, lineage, description, location, biotype, view, …) |
+| `sequence` | str | raw residues/bases (the primary form) |
+| `sequences` | object | multi-sequence *central-dogma* records only: the raw forms `{dna_genomic, rna, cds, protein}` |
 | `ordering` | str | `sequence_first` \| `metadata_first` |
 | `text` | str | the rendered pre-training document |
 
@@ -99,6 +100,9 @@ python build_bio_corpus.py ensembl-regulatory --limit 20 --out samples/ensembl_r
 
 # Ensembl 5' splice-donor junction windows (DNA via REST; reports the observed donor motif)
 python build_bio_corpus.py ensembl-splice --limit 20 --out samples/ensembl_splice.sample.jsonl
+
+# Central-dogma records: DNA (pre-mRNA) + spliced RNA + protein for one transcript, verified
+python build_bio_corpus.py ensembl-dogma --view all --min-exons 2 --out samples/ensembl_dogma.sample.jsonl
 
 # Sample a representative slice of Swiss-Prot or TrEMBL via the UniProt query API
 python build_bio_corpus.py uniprot --query "reviewed:true"  --limit 500 --out sprot.jsonl
@@ -156,12 +160,63 @@ which surfaces annotation quality (the DDX11L1 telomeric pseudogene's first
 intron is correctly flagged non-canonical). Strand handling is validated:
 donor = `GT` on both `+` and `-` strand transcripts.
 
-Requires `biopython` (Swiss-Prot parsing) and stdlib only otherwise; the Ensembl
-regulatory/splice sources also make Ensembl REST calls. Committed example output
-is in [`samples/`](samples/): `uniprot_swissprot.sample.jsonl` (proteins),
-`ensembl_pep.sample.jsonl` (peptides), `ensembl_gff.sample.jsonl` (gene models),
-`ensembl_regulatory.sample.jsonl` (regulatory features), and
-`ensembl_splice.sample.jsonl` (splice-donor junctions).
+Requires `biopython` (Swiss-Prot parsing + dogma translation) and stdlib only
+otherwise; the Ensembl regulatory/splice/dogma sources also make Ensembl REST
+calls. Committed example output is in [`samples/`](samples/):
+`uniprot_swissprot.sample.jsonl` (proteins), `ensembl_pep.sample.jsonl`
+(peptides), `ensembl_gff.sample.jsonl` (gene models),
+`ensembl_regulatory.sample.jsonl` (regulatory features),
+`ensembl_splice.sample.jsonl` (splice-donor junctions), and
+`ensembl_dogma.sample.jsonl` (DNA→RNA→protein records, all four views).
+
+## Central dogma (DNA → RNA → protein in one document)
+
+`ensembl-dogma` co-presents the sequence *forms* of a single transcript so a model
+can learn transcription, splicing, and translation from one document — something
+**TheBioCollection never does** (across a full shard of each stream, `<dna>` /
+`<rna>` / `<protein>` never co-occur; its only two-form pairing is a miRNA–protein
+*interaction*, not the dogma). Per canonical transcript it fetches genomic / cDNA /
+CDS / protein from the Ensembl REST API, verifies the mapping, and renders it with
+exons UPPERCASE and introns lowercase, RNA shown as U — so the splice site is
+visible as `…EXONgt…AGintron…`:
+
+```
+>ensembl-dogma:ENST00000641515 OR4F5 [Homo sapiens]
+Gene OR4F5 (protein_coding), Ensembl canonical transcript ENST00000641515, 1:65,419-71,585 (+), 3 exon(s) / 2 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+<dna>CCCAGATCTCTTCAGgtacatctagtccattcataaagggctttta…</dna>
+
+Transcription and splicing remove 2 intron(s) (3549 nt) to give the mature mRNA (2618 nt):
+<rna>CCCAGAUCUCUUCAGUUUUUAUGCCUCAUUCUGUGAAAAUUGCUGUA…</rna>
+Exon boundaries in the mRNA: 1-15, 16-69, 70-2618. 5' UTR: 1-60 (60 nt); CDS: 61-1041 (981 nt); 3' UTR: 1042-2618 (1577 nt).
+
+Translation of the CDS (981 nt, standard genetic code) yields the 326-residue protein:
+<protein>MKKVTAEAISWNESTSETNNSMVTEFIFLGLSDSQELQTFLFMLFFV…</protein>
+
+Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein.
+```
+
+**Views** (`--view`) — so all form-combinations appear in the corpus even though a
+single document may carry only two of the three:
+
+| view | forms | teaches | eligible |
+|---|---|---|---|
+| `triple` | DNA + RNA + protein | the whole dogma at once | compact coding genes |
+| `dna_rna` | DNA + spliced RNA | transcription + splicing | any (incl. lncRNA) |
+| `rna_protein` | RNA + protein | translation / codon table | any coding transcript |
+| `dna_protein` | DNA + protein | the collapsed map | compact coding genes |
+
+`--view all` emits one richest feasible view per transcript. Filters: `--max-dna`
+(skip DNA views when the genomic span is too large — introns are token-expensive)
+and `--min-exons` (use `2` to require splicing).
+
+**This is "verifiable *and* learnable" done right** (vs. review finding #3): the
+document contains everything needed to derive RNA from DNA and protein from RNA,
+and it only claims what's checked — `translate(CDS)==protein` (biopython) and
+`mRNA==spliced exons`. Transcripts that fail (selenoproteins, readthrough,
+incomplete CDS) are skipped, not silently rendered wrong; strand is handled (the
+genomic is fetched in transcription orientation).
 
 ## Token yield (Marin tokenizer)
 

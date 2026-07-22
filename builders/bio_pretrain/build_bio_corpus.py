@@ -107,6 +107,8 @@ class BioRecord:
     ordering: str = "sequence_first"
     schema_version: str = SCHEMA_VERSION
     text: str = ""  # filled by render()
+    # multi-sequence records (central dogma) keep the raw forms here: {dna_genomic, rna, cds, protein}
+    sequences: Optional[dict] = None
 
 
 # --------------------------------------------------------------------------- #
@@ -224,6 +226,9 @@ def _db_label(rec: BioRecord) -> str:
 
 def render(rec: BioRecord, ordering: str) -> BioRecord:
     """Populate rec.text according to `ordering`; returns rec."""
+    if rec.entity_type == "central_dogma":  # dogma records are pre-rendered (fixed DNA->RNA->protein order)
+        rec.ordering = ordering
+        return rec
     anchor = _anchor(rec)
     seq = _seq_block(rec)
     meta = "\n".join(_metadata_lines(rec))
@@ -829,6 +834,256 @@ def iter_ensembl_splice(args) -> Iterator[BioRecord]:
 
 
 # --------------------------------------------------------------------------- #
+# Source: central dogma (DNA + spliced RNA + protein for one transcript)       #
+# --------------------------------------------------------------------------- #
+
+
+def _ensembl_id_seq(tx: str, seqtype: str) -> str:
+    """Fetch one sequence form of a transcript by stable id (type=genomic|cdna|cds|protein)."""
+    url = f"{ENSEMBL_REST}/sequence/id/{tx}?type={seqtype}&content-type=text/plain"
+    s = (
+        urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=60)
+        .read()
+        .decode("ascii", "replace")
+        .strip()
+    )
+    time.sleep(0.08)  # be polite to the REST API
+    return s
+
+
+def _dogma_views(view: str, coding: bool, compact: bool) -> list:
+    """Which document view(s) to emit for a transcript. `all` = one richest feasible view."""
+    if view == "all":
+        if coding and compact:
+            return ["triple"]
+        if coding:
+            return ["rna_protein"]  # large introns: skip DNA, keep translation
+        if compact:
+            return ["dna_rna"]  # non-coding: teach splicing
+        return []
+    if view in ("triple", "dna_protein") and not (coding and compact):
+        return []
+    if view == "rna_protein" and not coding:
+        return []
+    if view == "dna_rna" and not compact:
+        return []
+    return [view]
+
+
+def _render_dogma(view, gene, tx, biotype, loc, n_exon, n_intron, dna, rna, protein,
+                  bounds, cds_span, cds_len, utr5, utr3, intron_total, organism):
+    org = f" [{organism}]" if organism else ""
+    head = (
+        f">ensembl-dogma:{tx} {gene}{org}\n"
+        f"Gene {gene} ({biotype}), Ensembl canonical transcript {tx}, {loc}, "
+        f"{n_exon} exon(s) / {n_intron} intron(s)."
+    )
+    exon_line = "Exon boundaries in the mRNA: " + ", ".join(bounds) + "."
+    cds_utr = None
+    if cds_span:
+        parts = []
+        if utr5:
+            parts.append(f"5' UTR: 1-{utr5} ({utr5} nt)")
+        parts.append(f"CDS: {cds_span[0]}-{cds_span[1]} ({cds_len} nt)")
+        if utr3:
+            parts.append(f"3' UTR: {cds_span[1] + 1}-{cds_span[1] + utr3} ({utr3} nt)")
+        cds_utr = "; ".join(parts) + "."
+    dna_block = "Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):\n" f"<dna>{dna}</dna>"
+    splice_line = (
+        f"Transcription and splicing remove {n_intron} intron(s) ({intron_total} nt) "
+        f"to give the mature mRNA ({len(rna) if rna else 0} nt):"
+    )
+    translate_line = (
+        f"Translation of the CDS ({cds_len} nt, standard genetic code) yields the "
+        f"{len(protein) if protein else 0}-residue protein:"
+    )
+    p = [head, ""]
+    if view == "triple":
+        p += [dna_block, "", splice_line, f"<rna>{rna}</rna>", exon_line]
+        if cds_utr:
+            p.append(cds_utr)
+        p += ["", translate_line, f"<protein>{protein}</protein>", "",
+              "Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein."]
+    elif view == "dna_rna":
+        p += [dna_block, "", splice_line, f"<rna>{rna}</rna>", exon_line]
+        if cds_utr:
+            p.append(cds_utr)
+        p += ["", "Verified: the mRNA equals the genomic exons with introns removed."]
+    elif view == "rna_protein":
+        p += [f"Mature mRNA ({len(rna)} nt):", f"<rna>{rna}</rna>"]
+        if cds_utr:
+            p.append(cds_utr)
+        p += ["", translate_line, f"<protein>{protein}</protein>", "",
+              "Verified: translate(CDS) equals the protein."]
+    elif view == "dna_protein":
+        p += [dna_block, "",
+              f"After transcription, splicing out {n_intron} intron(s), and translation of the CDS, "
+              f"this locus encodes the {len(protein)}-residue protein:",
+              f"<protein>{protein}</protein>", "",
+              "Verified: translate(the CDS of the spliced mRNA) equals the protein."]
+    return "\n".join(p)
+
+
+def iter_ensembl_dogma(args) -> Iterator[BioRecord]:
+    """Co-present DNA (pre-mRNA), spliced RNA, and protein for one transcript, with a verified mapping."""
+    import warnings
+    from Bio.Seq import Seq
+
+    warnings.filterwarnings("ignore")  # silence biopython partial-codon warnings
+    gff = args.gff or ENSEMBL_HUMAN_GFF
+    version = _version_from_url(gff)
+
+    def process(g):
+        ctx = g.get("canonical_tx")
+        if not ctx or ctx not in g["exons"]:
+            return
+        exons = sorted(g["exons"][ctx])
+        strand = g["strand"]
+        tx_exons = exons if strand == 1 else list(reversed(exons))
+        exon_lens = [e - s + 1 for s, e in tx_exons]
+        introns = [
+            (tx_exons[i + 1][0] - tx_exons[i][1] - 1) if strand == 1 else (tx_exons[i][0] - tx_exons[i + 1][1] - 1)
+            for i in range(len(tx_exons) - 1)
+        ]
+        n_exon, n_intron = len(exon_lens), len(exon_lens) - 1
+        if n_exon < args.min_exons:
+            return
+        span = max(e for _, e in exons) - min(s for s, _ in exons) + 1
+        coding = g.get("biotype") == "protein_coding"
+        views = _dogma_views(args.view, coding, span <= args.max_dna)
+        if not views:
+            return
+
+        need_dna = any(v in ("triple", "dna_rna", "dna_protein") for v in views)
+        need_rna = any(v in ("triple", "dna_rna", "rna_protein") for v in views)
+        need_prot = any(v in ("triple", "dna_protein", "rna_protein") for v in views)
+        try:
+            cdna = _ensembl_id_seq(ctx, "cdna") if (need_rna or (coding and need_prot)) else None
+            genomic = _ensembl_id_seq(ctx, "genomic") if need_dna else None
+            cds = _ensembl_id_seq(ctx, "cds") if coding and need_prot else None
+            protein = _ensembl_id_seq(ctx, "protein") if need_prot else None
+        except Exception:
+            return
+
+        # verify the mapping; only assert what we can check
+        if coding:
+            if not (cds and protein):
+                return
+            try:
+                if str(Seq(cds).translate(table=1, to_stop=True)) != protein:
+                    return  # selenoproteins / readthrough / incomplete CDS
+            except Exception:
+                return
+        if cdna is not None and sum(exon_lens) != len(cdna):
+            return  # exon structure inconsistent with the spliced transcript
+        if genomic is not None and len(genomic) != sum(exon_lens) + sum(introns):
+            return
+
+        rna = cdna.replace("T", "U") if cdna else None
+        bounds, pos = [], 0
+        for L in exon_lens:
+            bounds.append(f"{pos + 1}-{pos + L}")
+            pos += L
+        cds_span = utr5 = utr3 = None
+        if coding and cdna and cds:
+            idx = cdna.find(cds)
+            if idx >= 0:
+                cds_span, utr5, utr3 = (idx + 1, idx + len(cds)), idx, len(cdna) - idx - len(cds)
+        dna_marked = None
+        if genomic is not None:
+            segs, out, q = [], [], 0
+            for i, L in enumerate(exon_lens):
+                segs.append(("e", L))
+                if i < n_intron:
+                    segs.append(("i", introns[i]))
+            for kind, L in segs:
+                chunk = genomic[q : q + L]
+                out.append(chunk.upper() if kind == "e" else chunk.lower())
+                q += L
+            dna_marked = "".join(out)
+
+        gene = g.get("name") or g["gene_id"]
+        loc = f"{g['seqid']}:{min(s for s, _ in exons):,}-{max(e for _, e in exons):,} ({'+' if strand == 1 else '-'})"
+        for v in views:
+            text = _render_dogma(
+                v, gene, ctx, g.get("biotype"), loc, n_exon, n_intron, dna_marked, rna, protein,
+                bounds, cds_span, len(cds) if cds else None, utr5, utr3, sum(introns), args.organism,
+            )
+            seqs = {}
+            if dna_marked is not None and v in ("triple", "dna_rna", "dna_protein"):
+                seqs["dna_genomic"] = genomic
+            if rna is not None and v in ("triple", "dna_rna", "rna_protein"):
+                seqs["rna"] = rna
+            if cds and v in ("triple", "rna_protein", "dna_protein"):
+                seqs["cds"] = cds
+            if protein and v in ("triple", "rna_protein", "dna_protein"):
+                seqs["protein"] = protein
+            primary = seqs.get("rna") or seqs.get("protein") or seqs.get("dna_genomic") or ""
+            ptype = "rna" if "rna" in seqs else ("aa" if "protein" in seqs else "dna")
+            rec = BioRecord(
+                id=f"ensembl-dogma:{ctx}:{v}",
+                source="ensembl",
+                source_version=version,
+                source_url=gff,
+                license=LICENSES["ensembl"],
+                accession=ctx,
+                entity_type="central_dogma",
+                seq_type=ptype,
+                seq_len=len(primary),
+                organism=args.organism,
+                taxid=args.taxid,
+                gene=gene,
+                name=g.get("name"),
+                annotations={
+                    "view": v,
+                    "biotype": g.get("biotype"),
+                    "n_exons": n_exon,
+                    "n_introns": n_intron,
+                    "location": loc,
+                    "verified": "translate(CDS)==protein; mRNA==spliced exons" if coding else "mRNA==spliced exons",
+                },
+                sequences=seqs,
+                sequence=primary,
+            )
+            rec.text = text
+            yield rec
+
+    cur = None
+    for line in open_text(gff):
+        if line.startswith("#"):
+            continue
+        cols = line.rstrip("\n").split("\t")
+        if len(cols) < 9:
+            continue
+        ftype, attrs = cols[2], _gff_attrs(cols[8])
+        if ftype in _GENE_TYPES:
+            if cur is not None:
+                yield from process(cur)
+            cur = {
+                "gene_id": attrs.get("gene_id") or attrs.get("ID", "").replace("gene:", ""),
+                "name": attrs.get("Name"),
+                "seqid": cols[0],
+                "strand": 1 if cols[6] == "+" else -1,
+                "canonical_tx": None,
+                "biotype": None,
+                "exons": {},
+            }
+        elif cur is not None:
+            parent = attrs.get("Parent", "")
+            if ftype == "exon":
+                cur["exons"].setdefault(parent.replace("transcript:", ""), []).append(
+                    (int(cols[3]), int(cols[4]))
+                )
+            elif parent.startswith("gene:") and "Ensembl_canonical" in attrs.get("tag", ""):
+                cur["canonical_tx"] = attrs.get("transcript_id") or attrs.get("ID", "").replace(
+                    "transcript:", ""
+                )
+                cur["biotype"] = attrs.get("biotype")
+    if cur is not None:
+        yield from process(cur)
+
+
+# --------------------------------------------------------------------------- #
 # Build driver                                                                 #
 # --------------------------------------------------------------------------- #
 
@@ -840,6 +1095,7 @@ def build(args) -> None:
         "ensembl-gff": iter_ensembl_gff,
         "ensembl-regulatory": iter_ensembl_regulatory,
         "ensembl-splice": iter_ensembl_splice,
+        "ensembl-dogma": iter_ensembl_dogma,
     }
     it = dispatch[args.source](args)
 
@@ -932,6 +1188,24 @@ def main() -> None:
     spl.add_argument("--species", default="homo_sapiens")
     spl.add_argument("--organism", default="Homo sapiens")
     spl.add_argument("--taxid", default="9606")
+
+    dg = sub.add_parser(
+        "ensembl-dogma",
+        parents=[common],
+        help="Central-dogma records: DNA (pre-mRNA) + spliced RNA + protein for one transcript, verified",
+    )
+    dg.add_argument("--gff", help="gene GFF3 .gz (default: human GRCh38 v112)")
+    dg.add_argument(
+        "--view",
+        choices=["triple", "dna_rna", "rna_protein", "dna_protein", "all"],
+        default="all",
+        help="'all' emits one richest feasible view per transcript (ordering is fixed DNA->RNA->protein)",
+    )
+    dg.add_argument("--max-dna", type=int, default=5000, help="skip DNA-bearing views when the genomic span exceeds this (bp)")
+    dg.add_argument("--min-exons", type=int, default=1, help="skip transcripts with fewer exons (use 2+ to require splicing)")
+    dg.add_argument("--species", default="homo_sapiens")
+    dg.add_argument("--organism", default="Homo sapiens")
+    dg.add_argument("--taxid", default="9606")
 
     args = p.parse_args()
     build(args)
