@@ -279,6 +279,139 @@ def fetch_text(url: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Bulk genome FASTA: local region extraction (faidx-style; avoids per-record REST)
+# --------------------------------------------------------------------------- #
+
+_COMPL = str.maketrans("ACGTNRYSWKMBDHVacgtnryswkmbdhv", "TGCANYRSWMKVHDBtgcanyrswmkvhdb")
+
+
+def _revcomp(s: str) -> str:
+    return s.translate(_COMPL)[::-1]
+
+
+class GenomeFasta:
+    """Random-access reader over a genome FASTA.
+
+    A plain ``.fa`` is indexed (samtools-faidx-style) and read by seek — low memory,
+    for large genomes. A ``.fa.gz`` is loaded into memory (fine for small genomes;
+    gunzip large ones to ``.fa`` for the indexed path). ``region()`` returns the
+    sequence for a 1-based inclusive interval, reverse-complemented for strand -1.
+    """
+
+    def __init__(self, path: str):
+        self.path = path
+        if path.endswith(".gz"):
+            self.mode = "mem"
+            self.seqs: dict = {}
+            name, buf = None, []
+            for line in open_text(path):
+                if line.startswith(">"):
+                    if name:
+                        self.seqs[name] = "".join(buf)
+                    name, buf = line[1:].split()[0], []
+                else:
+                    buf.append(line.strip())
+            if name:
+                self.seqs[name] = "".join(buf)
+        else:
+            self.mode = "idx"
+            self.fh = open(path, "rb")
+            self.index = self._index(path)
+
+    @staticmethod
+    def _index(path: str) -> dict:
+        fai = path + ".fai"
+        idx = {}
+        if os.path.exists(fai):
+            for line in open(fai):
+                f = line.rstrip("\n").split("\t")
+                idx[f[0]] = (int(f[1]), int(f[2]), int(f[3]), int(f[4]))
+            return idx
+        cur, pos = None, 0  # cur = [name, length, seq_offset, linebases, linewidth]
+        with open(path, "rb") as f:
+            for raw in f:
+                if raw.startswith(b">"):
+                    if cur:
+                        idx[cur[0]] = (cur[1], cur[2], cur[3], cur[4])
+                    cur = [raw[1:].split()[0].decode(), 0, pos + len(raw), None, None]
+                elif cur is not None:
+                    body = raw.rstrip(b"\r\n")
+                    if cur[3] is None:
+                        cur[3], cur[4] = len(body), len(raw)
+                    cur[1] += len(body)
+                pos += len(raw)
+        if cur:
+            idx[cur[0]] = (cur[1], cur[2], cur[3], cur[4])
+        try:  # cache for next time
+            with open(fai, "w") as out:
+                for name, (length, off, lb, lw) in idx.items():
+                    out.write(f"{name}\t{length}\t{off}\t{lb}\t{lw}\n")
+        except OSError:
+            pass
+        return idx
+
+    def region(self, seqid: str, start: int, end: int, strand=1) -> str:
+        if self.mode == "mem":
+            sub = self.seqs.get(seqid, "")[max(0, start - 1) : end]
+        else:
+            if seqid not in self.index:
+                return ""
+            length, offset, lb, lw = self.index[seqid]
+            start, end = max(1, start), min(end, length)
+            if end < start:
+                return ""
+            b0 = offset + (start - 1) // lb * lw + (start - 1) % lb
+            b1 = offset + (end - 1) // lb * lw + (end - 1) % lb + 1
+            self.fh.seek(b0)
+            sub = self.fh.read(b1 - b0).replace(b"\n", b"").replace(b"\r", b"").decode("ascii", "replace")
+        sub = sub.upper()
+        return _revcomp(sub) if str(strand) in ("-1", "-") else sub
+
+
+def _load_fasta_by_id(src: str, key: str = "id") -> dict:
+    """Map a per-transcript FASTA (cdna/cds/pep) to {id: sequence}, versions stripped.
+
+    key='id' uses the FASTA record id (cdna/cds); key='transcript' uses the
+    header's transcript: field (pep, whose id is the protein id).
+    """
+    m: dict = {}
+    hdr, buf = None, []
+
+    def _flush():
+        if hdr is None:
+            return
+        toks = hdr.split()
+        k = toks[0] if key == "id" else next((t.split(":", 1)[1] for t in toks if t.startswith("transcript:")), None)
+        if k:
+            m.setdefault(k.split(".")[0], "".join(buf))
+
+    for line in open_text(src):
+        if line.startswith(">"):
+            _flush()
+            hdr, buf = line[1:].strip(), []
+        else:
+            buf.append(line.strip())
+    _flush()
+    return m
+
+
+def _region_fetcher(args):
+    """Return (seqid, start, end, strand) -> DNA, backed by a local genome or the REST API."""
+    genome = getattr(args, "genome", None)
+    if genome:
+        gf = GenomeFasta(genome)
+        return lambda seqid, s, e, st: gf.region(seqid, s, e, st)
+    species = args.species
+
+    def _rest(seqid, s, e, st):
+        r = _ensembl_region_seq(species, seqid, s, e, st)
+        time.sleep(0.08)  # be polite to the REST API
+        return r
+
+    return _rest
+
+
+# --------------------------------------------------------------------------- #
 # Source: UniProtKB/Swiss-Prot                                                 #
 # --------------------------------------------------------------------------- #
 
@@ -783,6 +916,7 @@ def iter_ensembl_regulatory(args) -> Iterator[BioRecord]:
     """One record per Ensembl Regulatory Build feature (enhancer/promoter/CTCF/etc.) + its DNA."""
     url = args.gff or ENSEMBL_REG_GFF
     version = _version_from_url(url)
+    fetch = _region_fetcher(args)  # local genome (--genome) or REST
     for line in open_text(url):
         if line.startswith("#"):
             continue
@@ -799,10 +933,11 @@ def iter_ensembl_regulatory(args) -> Iterator[BioRecord]:
         else:
             fs, fe = start, end
         try:
-            seq = _ensembl_region_seq(args.species, seqid, fs, fe, 1)
+            seq = fetch(seqid, fs, fe, 1)
         except Exception:
             continue
-        time.sleep(0.08)  # be polite to the REST API
+        if not seq:
+            continue
         annotations = {
             "feature_type": ftype,
             "location": f"{seqid}:{start:,}-{end:,}",
@@ -828,10 +963,11 @@ def iter_ensembl_regulatory(args) -> Iterator[BioRecord]:
 
 
 def iter_ensembl_splice(args) -> Iterator[BioRecord]:
-    """5' splice-donor junction windows for the canonical transcript of each multi-exon gene."""
+    """Splice-donor/acceptor junction windows for the canonical transcript of each multi-exon gene."""
     gff = args.gff or ENSEMBL_HUMAN_GFF
     version = _version_from_url(gff)
-    w = args.window  # exon/intron context on each side of the donor site
+    w = args.window  # exon/intron context on each side of the splice site
+    fetch = _region_fetcher(args)  # local genome (--genome) or REST
 
     def emit(g):
         ctx = g.get("canonical_tx")
@@ -864,10 +1000,11 @@ def iter_ensembl_splice(args) -> Iterator[BioRecord]:
                 wanted.append(("acceptor", accept_win))
             for site, (fs, fe) in wanted:
                 try:
-                    seq = _ensembl_region_seq(args.species, g["seqid"], fs, fe, strand)
+                    seq = fetch(g["seqid"], fs, fe, strand)
                 except Exception:
                     continue
-                time.sleep(0.08)
+                if not seq:
+                    continue
                 if site == "donor":  # exon|intron, GT at the intron's 5' end
                     motif = seq[w : w + 2]
                     klass = {"GT": "canonical (GT-AG)", "GC": "minor (GC-AG)"}.get(motif, "non-canonical")
@@ -1035,6 +1172,16 @@ def iter_ensembl_dogma(args) -> Iterator[BioRecord]:
     gff = args.gff or ENSEMBL_HUMAN_GFF
     version = _version_from_url(gff)
 
+    # bulk-local backend: genome FASTA for the pre-mRNA + per-transcript FASTAs (loaded once)
+    local = getattr(args, "genome", None)
+    gf = GenomeFasta(local) if local else None
+    cdna_dict = cds_dict = pep_dict = None
+    if gf is not None:
+        sp = _resolve_species(args.species, str(getattr(args, "release", "112"))) or {}
+        cdna_dict = _load_fasta_by_id(args.cdna or sp.get("cdna_url"), "id")
+        cds_dict = _load_fasta_by_id(args.cds or sp.get("cds_url"), "id")
+        pep_dict = _load_fasta_by_id(args.pep or sp.get("pep_url"), "transcript")
+
     def process(g):
         ctx = g.get("canonical_tx")
         if not ctx or ctx not in g["exons"]:
@@ -1060,12 +1207,22 @@ def iter_ensembl_dogma(args) -> Iterator[BioRecord]:
         need_rna = any(v in ("triple", "dna_rna", "rna_protein") for v in views)
         need_prot = any(v in ("triple", "dna_protein", "rna_protein") for v in views)
         try:
-            cdna = _ensembl_id_seq(ctx, "cdna") if (need_rna or (coding and need_prot)) else None
-            genomic = _ensembl_id_seq(ctx, "genomic") if need_dna else None
-            cds = _ensembl_id_seq(ctx, "cds") if coding and need_prot else None
-            protein = _ensembl_id_seq(ctx, "protein") if need_prot else None
+            if gf is not None:  # bulk-local: genome region + per-transcript FASTA dicts
+                key = ctx.split(".")[0]
+                span_s, span_e = min(s for s, _ in exons), max(e for _, e in exons)
+                cdna = cdna_dict.get(key) if (need_rna or (coding and need_prot)) else None
+                genomic = gf.region(g["seqid"], span_s, span_e, strand) if need_dna else None
+                cds = cds_dict.get(key) if coding and need_prot else None
+                protein = pep_dict.get(key) if need_prot else None
+            else:  # REST
+                cdna = _ensembl_id_seq(ctx, "cdna") if (need_rna or (coding and need_prot)) else None
+                genomic = _ensembl_id_seq(ctx, "genomic") if need_dna else None
+                cds = _ensembl_id_seq(ctx, "cds") if coding and need_prot else None
+                protein = _ensembl_id_seq(ctx, "protein") if need_prot else None
         except Exception:
             return
+        if (need_rna and not cdna) or (coding and need_prot and (not cds or not protein)):
+            return  # missing from the local FASTAs (or a version mismatch) — skip
 
         # verify the mapping; only assert what we can check
         if coding:
@@ -1227,6 +1384,8 @@ def _resolve_species(name: str, release: str) -> Optional[dict]:
         "gff_url": f"{base}/gff3/{name}/{cap_name}.{asm}.{release}.gff3.gz",
         "pep_url": f"{base}/fasta/{name}/pep/{cap_name}.{asm}.pep.all.fa.gz",
         "cdna_url": f"{base}/fasta/{name}/cdna/{cap_name}.{asm}.cdna.all.fa.gz",
+        "cds_url": f"{base}/fasta/{name}/cds/{cap_name}.{asm}.cds.all.fa.gz",
+        "dna_url": f"{base}/fasta/{name}/dna/{cap_name}.{asm}.dna.toplevel.fa.gz",
     }
 
 
@@ -1388,6 +1547,7 @@ def main() -> None:
     reg = sub.add_parser("ensembl-regulatory", parents=[common], help="Ensembl Regulatory Build features (+ DNA via REST)")
     reg.add_argument("--gff", help="regulatory features GFF3 .gz (default: human GRCh38 v112)")
     reg.add_argument("--window", type=int, default=600, help="max bp of DNA to fetch per feature (centered)")
+    reg.add_argument("--genome", help="local genome .fa/.fa.gz for offline DNA extraction (else REST)")
     reg.add_argument("--species", default="homo_sapiens")
     reg.add_argument("--organism", default="Homo sapiens")
     reg.add_argument("--taxid", default="9606")
@@ -1396,6 +1556,7 @@ def main() -> None:
     spl.add_argument("--gff", help="gene GFF3 .gz (default: human GRCh38 v112)")
     spl.add_argument("--window", type=int, default=100, help="bp of exon/intron context each side of the splice site")
     spl.add_argument("--site", choices=["donor", "acceptor", "both"], default="both", help="which splice site(s) to emit")
+    spl.add_argument("--genome", help="local genome .fa/.fa.gz for offline DNA extraction (else REST)")
     spl.add_argument("--per-transcript", type=int, default=1, help="max introns per transcript")
     spl.add_argument("--species", default="homo_sapiens", help="species name, comma-list, or 'all' (vertebrates)")
     spl.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
@@ -1417,6 +1578,10 @@ def main() -> None:
     )
     dg.add_argument("--max-dna", type=int, default=5000, help="skip DNA-bearing views when the genomic span exceeds this (bp)")
     dg.add_argument("--min-exons", type=int, default=1, help="skip transcripts with fewer exons (use 2+ to require splicing)")
+    dg.add_argument("--genome", help="local genome .fa/.fa.gz for offline mode (pre-mRNA from genome; cDNA/CDS/protein from FASTAs)")
+    dg.add_argument("--cdna", help="local cdna.all.fa.gz (offline mode; default: stream per-species from Ensembl)")
+    dg.add_argument("--cds", help="local cds.all.fa.gz (offline mode)")
+    dg.add_argument("--pep", help="local pep.all.fa.gz (offline mode)")
     dg.add_argument("--species", default="homo_sapiens", help="species name, comma-list, or 'all' (vertebrates)")
     dg.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
     dg.add_argument("--max-species", type=int, default=0, help="cap when --species all (0 = no cap)")

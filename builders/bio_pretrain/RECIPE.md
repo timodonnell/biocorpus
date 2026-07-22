@@ -12,8 +12,8 @@ Token rates below are measured with Marin's tokenizer (Llama-3) — see
 
 | regime | sources | scales to billions? |
 |---|---|---|
-| **bulk file, local** | `uniprot --dat`, `uniref --file` | **yes** — one download, stream once |
-| REST-backed | `ensembl-dogma/splice/regulatory`, `uniprot --query` | no — fine for human + a few species (bounded), not billions |
+| **bulk file, local** | `uniprot --dat`, `uniref --file`, `ensembl-* --genome` | **yes** — download once, stream/seek locally |
+| REST-backed | `ensembl-*` (default), `uniprot --query` | bounded — fine for one species / a pilot, not billions |
 
 ## Recommended ~6 B recipe
 
@@ -73,10 +73,26 @@ python build_bio_corpus.py ensembl-dogma --species "mus_musculus,danio_rerio,gal
 - **Steps 1–2 are the corpus** (~5 B) and are pure local streaming: fast, no REST,
   reproducible. Output is ~15–20 GB of JSONL; pipe through `zstd` if you want
   `.jsonl.zst` shards like TheBioCollection.
-- **Steps 3–4 (genomic) are REST-bound.** Human alone is ~0.9 M records ×
-  1–4 requests ≈ hours at ~15 req/s; all-vertebrates is not feasible over REST.
-  To scale genomics past ~1 B, add a **bulk-genome source** (local `*.dna.fa.gz`
-  + GFF3 instead of `/sequence` REST) — the natural next builder addition.
+- **Genomic (steps 3–4) scales offline.** Default is REST (fine for one species /
+  a pilot). At scale pass `--genome <species>.dna.toplevel.fa[.gz]` to read DNA
+  from the **local genome FASTA** (indexed seek; validated byte-identical to REST)
+  — no per-record requests. Dogma also takes `--cdna/--cds/--pep` (default:
+  streamed once per species). Loop species in a shell script, downloading each
+  genome, to go all-vertebrates fully offline:
+
+  ```bash
+  SP=mus_musculus ASM=GRCm39 REL=112; Sp=$(python -c "print('$SP'.capitalize())")
+  base=https://ftp.ensembl.org/pub/release-$REL
+  for k in dna/$Sp.$ASM.dna.toplevel cdna/$Sp.$ASM.cdna.all cds/$Sp.$ASM.cds.all pep/$Sp.$ASM.pep.all; do
+    curl -sL $base/fasta/$SP/$k.fa.gz -o $(basename $k).fa.gz; done
+  curl -sL $base/gff3/$SP/$Sp.$ASM.$REL.gff3.gz -o gff.gff3.gz
+  python build_bio_corpus.py ensembl-dogma --species $SP --gff gff.gff3.gz \
+    --genome $Sp.$ASM.dna.toplevel.fa.gz --cdna $Sp.$ASM.cdna.all.fa.gz \
+    --cds $Sp.$ASM.cds.all.fa.gz --pep $Sp.$ASM.pep.all.fa.gz \
+    --view all --min-exons 2 --limit 0 --out out/dogma_$SP.jsonl
+  python build_bio_corpus.py ensembl-splice --species $SP --gff gff.gff3.gz \
+    --genome $Sp.$ASM.dna.toplevel.fa.gz --site both --limit 0 --out out/splice_$SP.jsonl
+  ```
 - **Redundancy:** UniRef50 already removes near-duplicate proteins; if you add
   multi-species Ensembl proteins/dogma, expect ortholog overlap with UniRef50 —
   dedup by sequence (the builder does exact-sequence dedup within a run; a
