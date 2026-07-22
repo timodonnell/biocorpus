@@ -55,6 +55,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
@@ -149,6 +150,14 @@ def _lead_sentence(rec: BioRecord) -> str:
     org = ""
     if rec.organism:
         org = f" from {rec.organism}" + (f" (NCBI taxon {rec.taxid})" if rec.taxid else "")
+    if rec.entity_type == "regulatory_feature":
+        ft = (rec.annotations.get("feature_type") or "regulatory feature").replace("_", " ")
+        return (
+            f"The sequence is a {ft} ({rec.seq_len} bp) from the Ensembl "
+            f"{rec.source_version} Regulatory Build ({rec.accession}){org}."
+        )
+    if rec.entity_type == "splice_junction":
+        return f"The sequence is a {rec.seq_len} bp window over a 5' splice donor site in gene {rec.gene or '?'}{org}."
     if rec.entity_type == "gene":
         biotype = rec.annotations.get("biotype")
         return (
@@ -180,6 +189,13 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         ("Description", "description"),
         ("Location", "location"),
         ("Biotype", "biotype"),
+        ("Feature length", "feature_length_bp"),
+        ("Splice site", "splice_site"),
+        ("Transcript", "transcript"),
+        ("Intron", "intron"),
+        ("Intron location", "intron_location"),
+        ("Intron length", "intron_length_bp"),
+        ("Donor dinucleotide", "donor_dinucleotide"),
     ):
         v = a.get(key)
         if v:
@@ -649,12 +665,182 @@ def iter_ensembl_gff(args) -> Iterator[BioRecord]:
 
 
 # --------------------------------------------------------------------------- #
+# Sources: Ensembl regulatory features + splice-donor junctions (DNA via REST) #
+# --------------------------------------------------------------------------- #
+
+ENSEMBL_REST = "https://rest.ensembl.org"
+ENSEMBL_REG_GFF = (
+    "https://ftp.ensembl.org/pub/release-112/regulation/homo_sapiens/GRCh38/annotation/"
+    "Homo_sapiens.GRCh38.regulatory_features.v112.gff3.gz"
+)
+ENSEMBL_HUMAN_GFF = (
+    "https://ftp.ensembl.org/pub/release-112/gff3/homo_sapiens/Homo_sapiens.GRCh38.112.gff3.gz"
+)
+
+
+def _ensembl_region_seq(species: str, seqid: str, start: int, end: int, strand: int = 1) -> str:
+    """Fetch a genomic DNA sequence via the Ensembl REST API (strand -1 => reverse complement)."""
+    url = f"{ENSEMBL_REST}/sequence/region/{species}/{seqid}:{start}..{end}:{strand}?content-type=text/plain"
+    return (
+        urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=60)
+        .read()
+        .decode("ascii", "replace")
+        .strip()
+    )
+
+
+def iter_ensembl_regulatory(args) -> Iterator[BioRecord]:
+    """One record per Ensembl Regulatory Build feature (enhancer/promoter/CTCF/etc.) + its DNA."""
+    url = args.gff or ENSEMBL_REG_GFF
+    version = _version_from_url(url)
+    for line in open_text(url):
+        if line.startswith("#"):
+            continue
+        cols = line.rstrip("\n").split("\t")
+        if len(cols) < 9:
+            continue
+        seqid, ftype, start, end = cols[0], cols[2], int(cols[3]), int(cols[4])
+        rid = _gff_attrs(cols[8]).get("ID", f"{seqid}:{start}")
+        length = end - start + 1
+        windowed = bool(args.window and length > args.window)
+        if windowed:  # cap the fetched DNA to a centered window
+            center = (start + end) // 2
+            fs, fe = max(1, center - args.window // 2), max(1, center - args.window // 2) + args.window - 1
+        else:
+            fs, fe = start, end
+        try:
+            seq = _ensembl_region_seq(args.species, seqid, fs, fe, 1)
+        except Exception:
+            continue
+        time.sleep(0.08)  # be polite to the REST API
+        annotations = {
+            "feature_type": ftype,
+            "location": f"{seqid}:{start:,}-{end:,}",
+            "feature_length_bp": f"{length:,} bp" + (f" (central {args.window} bp shown)" if windowed else ""),
+        }
+        yield BioRecord(
+            id=f"ensembl_reg:{rid}",
+            source="ensembl",
+            source_version=version,
+            source_url=url,
+            license=LICENSES["ensembl"],
+            accession=rid,
+            entity_type="regulatory_feature",
+            seq_type="dna",
+            seq_len=len(seq),
+            organism=args.organism,
+            taxid=args.taxid,
+            gene=None,
+            name=ftype.replace("_", " "),
+            annotations=annotations,
+            sequence=seq,
+        )
+
+
+def iter_ensembl_splice(args) -> Iterator[BioRecord]:
+    """5' splice-donor junction windows for the canonical transcript of each multi-exon gene."""
+    gff = args.gff or ENSEMBL_HUMAN_GFF
+    version = _version_from_url(gff)
+    w = args.window  # exon/intron context on each side of the donor site
+
+    def emit(g):
+        ctx = g.get("canonical_tx")
+        if ctx not in g["exons"]:  # fall back to the transcript with the most exons
+            if not g["exons"]:
+                return
+            ctx = max(g["exons"], key=lambda k: len(g["exons"][k]))
+        exons = sorted(g["exons"][ctx])
+        if len(exons) < 2:
+            return
+        strand = g["strand"]
+        tx = exons if strand == 1 else list(reversed(exons))
+        n_intron = len(tx) - 1
+        for i, ((sA, eA), (sB, eB)) in enumerate(zip(tx, tx[1:]), start=1):
+            if args.per_transcript and i > args.per_transcript:
+                break
+            if strand == 1:
+                a, b, fs, fe = eA + 1, sB - 1, eA + 1 - w, eA + w
+            else:
+                a, b, fs, fe = eB + 1, sA - 1, sA - w, sA + w - 1
+            try:
+                seq = _ensembl_region_seq(args.species, g["seqid"], fs, fe, strand)
+            except Exception:
+                continue
+            time.sleep(0.08)
+            donor = seq[w : w + 2]
+            donor_class = {"GT": "canonical (GT-AG)", "GC": "minor (GC-AG)"}.get(donor, "non-canonical")
+            annotations = {
+                "splice_site": "5' splice donor",
+                "transcript": ctx,
+                "intron": f"{i} of {n_intron}",
+                "intron_location": f"{g['seqid']}:{a:,}-{b:,} ({'+' if strand == 1 else '-'})",
+                "intron_length_bp": f"{b - a + 1:,} bp",
+                "donor_dinucleotide": f"{donor} — {donor_class}",
+            }
+            yield BioRecord(
+                id=f"ensembl_splice:{ctx}:intron{i}",
+                source="ensembl",
+                source_version=version,
+                source_url=gff,
+                license=LICENSES["ensembl"],
+                accession=f"{ctx}:intron{i}",
+                entity_type="splice_junction",
+                seq_type="dna",
+                seq_len=len(seq),
+                organism=args.organism,
+                taxid=args.taxid,
+                gene=g.get("name") or g["gene_id"],
+                name=None,
+                annotations=annotations,
+                sequence=seq,
+            )
+
+    cur = None
+    for line in open_text(gff):
+        if line.startswith("#"):
+            continue
+        cols = line.rstrip("\n").split("\t")
+        if len(cols) < 9:
+            continue
+        ftype, attrs = cols[2], _gff_attrs(cols[8])
+        if ftype in _GENE_TYPES:
+            if cur is not None:
+                yield from emit(cur)
+            cur = {
+                "gene_id": attrs.get("gene_id") or attrs.get("ID", "").replace("gene:", ""),
+                "name": attrs.get("Name"),
+                "seqid": cols[0],
+                "strand": 1 if cols[6] == "+" else -1,
+                "canonical_tx": None,
+                "exons": {},
+            }
+        elif cur is not None:
+            parent = attrs.get("Parent", "")
+            if ftype == "exon":
+                cur["exons"].setdefault(parent.replace("transcript:", ""), []).append(
+                    (int(cols[3]), int(cols[4]))
+                )
+            elif parent.startswith("gene:") and "Ensembl_canonical" in attrs.get("tag", ""):
+                cur["canonical_tx"] = attrs.get("transcript_id") or attrs.get("ID", "").replace(
+                    "transcript:", ""
+                )
+    if cur is not None:
+        yield from emit(cur)
+
+
+# --------------------------------------------------------------------------- #
 # Build driver                                                                 #
 # --------------------------------------------------------------------------- #
 
 
 def build(args) -> None:
-    dispatch = {"uniprot": iter_uniprot, "ensembl": iter_ensembl, "ensembl-gff": iter_ensembl_gff}
+    dispatch = {
+        "uniprot": iter_uniprot,
+        "ensembl": iter_ensembl,
+        "ensembl-gff": iter_ensembl_gff,
+        "ensembl-regulatory": iter_ensembl_regulatory,
+        "ensembl-splice": iter_ensembl_splice,
+    }
     it = dispatch[args.source](args)
 
     seen_seq: set[str] = set()
@@ -731,6 +917,21 @@ def main() -> None:
     )
     eg.add_argument("--organism", default="Saccharomyces cerevisiae")
     eg.add_argument("--taxid", default="4932")
+
+    reg = sub.add_parser("ensembl-regulatory", parents=[common], help="Ensembl Regulatory Build features (+ DNA via REST)")
+    reg.add_argument("--gff", help="regulatory features GFF3 .gz (default: human GRCh38 v112)")
+    reg.add_argument("--window", type=int, default=600, help="max bp of DNA to fetch per feature (centered)")
+    reg.add_argument("--species", default="homo_sapiens")
+    reg.add_argument("--organism", default="Homo sapiens")
+    reg.add_argument("--taxid", default="9606")
+
+    spl = sub.add_parser("ensembl-splice", parents=[common], help="Ensembl 5' splice-donor junction windows (+ DNA via REST)")
+    spl.add_argument("--gff", help="gene GFF3 .gz (default: human GRCh38 v112)")
+    spl.add_argument("--window", type=int, default=100, help="bp of exon/intron context each side of the donor site")
+    spl.add_argument("--per-transcript", type=int, default=1, help="max donor junctions per transcript")
+    spl.add_argument("--species", default="homo_sapiens")
+    spl.add_argument("--organism", default="Homo sapiens")
+    spl.add_argument("--taxid", default="9606")
 
     args = p.parse_args()
     build(args)

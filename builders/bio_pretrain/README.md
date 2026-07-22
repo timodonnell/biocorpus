@@ -94,6 +94,12 @@ python build_bio_corpus.py ensembl --limit 40 \
 python build_bio_corpus.py ensembl-gff --limit 40 \
   --ordering sequence_first --out samples/ensembl_gff.sample.jsonl
 
+# Ensembl Regulatory Build features (enhancer/promoter/CTCF/...), DNA fetched via REST
+python build_bio_corpus.py ensembl-regulatory --limit 20 --out samples/ensembl_regulatory.sample.jsonl
+
+# Ensembl 5' splice-donor junction windows (DNA via REST; reports the observed donor motif)
+python build_bio_corpus.py ensembl-splice --limit 20 --out samples/ensembl_splice.sample.jsonl
+
 # Sample a representative slice of Swiss-Prot or TrEMBL via the UniProt query API
 python build_bio_corpus.py uniprot --query "reviewed:true"  --limit 500 --out sprot.jsonl
 python build_bio_corpus.py uniprot --query "reviewed:false" --limit 500 --out trembl.jsonl
@@ -118,11 +124,44 @@ Location: I:7,235-9,016 (-)
 Biotype: protein_coding
 ```
 
-Requires `biopython` (Swiss-Prot parsing) and stdlib only otherwise. Committed
-example output is in [`samples/`](samples/): `uniprot_swissprot.sample.jsonl`
-(proteins), `ensembl_pep.sample.jsonl` (peptides from FASTA headers), and
-`ensembl_gff.sample.jsonl` (gene models from GFF3 with the canonical product
-sequence and transcript/exon counts).
+The `ensembl-regulatory` and `ensembl-splice` sources add **genomic/regulatory**
+record types (`entity_type: regulatory_feature` / `splice_junction`), fetching
+the DNA for each feature via the Ensembl REST API (no genome download):
+
+```
+>ensembl:ENSR00001164745 enhancer [Homo sapiens]
+<dna>GGGCAGGAGGCAGTCACTGACCCCGAGACGTTTGCATCCTGCACAGCTAGAGATCCTTTA…</dna>
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00001164745) from Homo sapiens (NCBI taxon 9606).
+Location: 1:12,802-16,450
+Feature length: 3,649 bp (central 600 bp shown)
+```
+
+```
+>ensembl:ENST00000456328:intron1 [Homo sapiens]
+<dna>CCCCTGTTGTCTGCATGTAACTTAATACCACAACCAGGCATAGGGGAAAGATTGGAGGAA…GTAAGT…</dna>
+
+The sequence is a 200 bp window over a 5' splice donor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 5' splice donor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Donor dinucleotide: GT — canonical (GT-AG)
+```
+
+Splice records report the **observed** donor dinucleotide and classify it
+(canonical `GT-AG`, minor `GC-AG`, or non-canonical) rather than asserting it,
+which surfaces annotation quality (the DDX11L1 telomeric pseudogene's first
+intron is correctly flagged non-canonical). Strand handling is validated:
+donor = `GT` on both `+` and `-` strand transcripts.
+
+Requires `biopython` (Swiss-Prot parsing) and stdlib only otherwise; the Ensembl
+regulatory/splice sources also make Ensembl REST calls. Committed example output
+is in [`samples/`](samples/): `uniprot_swissprot.sample.jsonl` (proteins),
+`ensembl_pep.sample.jsonl` (peptides), `ensembl_gff.sample.jsonl` (gene models),
+`ensembl_regulatory.sample.jsonl` (regulatory features), and
+`ensembl_splice.sample.jsonl` (splice-donor junctions).
 
 ## Token yield (Marin tokenizer)
 
@@ -146,7 +185,7 @@ to UniRef50. Emitting both orderings doubles the counts.
 A production build would add:
 
 - **Real dedup/clustering:** UniRef50/90 for proteins instead of exact-match; genome-window dedup for nucleotides.
-- **Richer Ensembl records:** GFF3 gene models (biotype, transcript/exon counts, location) are built and joined to the canonical product; a production build would add transcript-level cDNA records, GO terms and orthologs (BioMart/REST), and would still **avoid raw genome dumps** — nucleotide sequence is long and low-information per token, so prefer gene/transcript-level records and cap `--max-seq-len`.
+- **Richer Ensembl records:** gene models (GFF3, joined to the canonical product), Regulatory-Build features, and 5' splice-donor junctions are built (DNA fetched via REST). A production build would add transcript-level cDNA, acceptor sites / full exon-intron structure, GO terms and orthologs (BioMart/REST), and per-cell-type regulatory activity — and would batch/cache REST calls. It already **avoids raw genome dumps**: nucleotide is long and low-information per token, so windows are bounded (`--window`) and gene/feature-level records preferred.
 - **Tokenization:** if the bio fraction grows, add sequence-aware or byte-level tokenization; raw AA/nt in a text BPE vocab is inefficient.
 - **Eval decontamination:** dedup against downstream biology benchmarks (including TheBioCollection-Eval) before training.
 - **Scale + execution:** streaming/sharding, resumability, and packing many short records per document (cf. Marin's `bio_chem` datakit, which does exactly this for capped pilot slices).
