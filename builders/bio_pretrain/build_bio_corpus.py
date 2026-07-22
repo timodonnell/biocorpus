@@ -55,6 +55,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Iterator, Optional
@@ -132,27 +133,37 @@ def _anchor(rec: BioRecord) -> str:
 
 
 def _seq_block(rec: BioRecord) -> str:
+    if not rec.sequence:  # gene-annotation records may carry no sequence
+        return ""
     o, c = SEQ_DELIMS[rec.seq_type]
     return f"{o}{rec.sequence}{c}"
+
+
+def _lead_sentence(rec: BioRecord) -> str:
+    """Order-neutral identity sentence (never references 'above'/'below')."""
+    ident = rec.name or rec.accession
+    org = ""
+    if rec.organism:
+        org = f" from {rec.organism}" + (f" (NCBI taxon {rec.taxid})" if rec.taxid else "")
+    if rec.entity_type == "gene":
+        biotype = rec.annotations.get("biotype")
+        return (
+            f"{ident} — {_db_label(rec)} gene {rec.accession} — is a "
+            + (f"{biotype} " if biotype else "")
+            + f"gene{org}."
+        )
+    unit = "residue" if rec.seq_type == "aa" else "nt"
+    kind = "protein" if rec.entity_type == "protein" else "transcript"
+    who = f"{ident} — {_db_label(rec)} {rec.accession} — is a {rec.seq_len}-{unit} {kind}{org}"
+    if rec.gene:
+        who += f"; gene {rec.gene}"
+    return who + "."
 
 
 def _metadata_lines(rec: BioRecord) -> list[str]:
     """Order-neutral, clean natural-language metadata. Missing fields omitted."""
     a = rec.annotations
-    unit = "residue" if rec.seq_type == "aa" else "nt"
-    lines: list[str] = []
-
-    # Lead identity sentence.
-    ident = rec.name or rec.accession
-    who = f"{ident} — {_db_label(rec)} {rec.accession} — is a {rec.seq_len}-{unit} "
-    who += "protein" if rec.entity_type == "protein" else "transcript"
-    if rec.organism:
-        who += f" from {rec.organism}"
-        if rec.taxid:
-            who += f" (NCBI taxon {rec.taxid})"
-    if rec.gene:
-        who += f"; gene {rec.gene}"
-    lines.append(who + ".")
+    lines: list[str] = [_lead_sentence(rec)]
 
     for label, key in (
         ("Function", "function"),
@@ -160,6 +171,8 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         ("Subcellular location", "subcellular_location"),
         ("Pathway", "pathway"),
         ("Involvement in disease", "disease"),
+        ("Gene model", "gene_model"),
+        ("Canonical product", "product"),
         ("Description", "description"),
         ("Location", "location"),
         ("Biotype", "biotype"),
@@ -190,11 +203,14 @@ def _db_label(rec: BioRecord) -> str:
 
 def render(rec: BioRecord, ordering: str) -> BioRecord:
     """Populate rec.text according to `ordering`; returns rec."""
-    anchor, seq, meta = _anchor(rec), _seq_block(rec), "\n".join(_metadata_lines(rec))
+    anchor = _anchor(rec)
+    seq = _seq_block(rec)
+    meta = "\n".join(_metadata_lines(rec))
+    head = f"{anchor}\n{seq}" if seq else anchor
     if ordering == "metadata_first":
-        rec.text = f"{meta}\n\n{anchor}\n{seq}"
+        rec.text = f"{meta}\n\n{head}"
     else:  # sequence_first (default)
-        rec.text = f"{anchor}\n{seq}\n\n{meta}"
+        rec.text = f"{head}\n\n{meta}"
     rec.ordering = ordering
     return rec
 
@@ -358,6 +374,17 @@ def iter_uniprot(args) -> Iterator[BioRecord]:
             handle = io.StringIO(fetch_text(url))
             for rec in SwissProt.parse(handle):
                 yield _uniprot_record_from_swiss(rec, url, args.version or "uniprot_rest")
+    elif getattr(args, "query", None):
+        # Stream a representative sample matching a UniProt query, e.g.
+        #   --query "reviewed:true"   (Swiss-Prot)   /   --query "reviewed:false"  (TrEMBL)
+        url = (
+            "https://rest.uniprot.org/uniprotkb/stream?"
+            f"query={urllib.parse.quote(args.query)}&format=txt&compressed=true"
+        )
+        raw = urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=300)
+        handle = io.TextIOWrapper(gzip.GzipFile(fileobj=raw), encoding="ascii", errors="replace")
+        for rec in SwissProt.parse(handle):
+            yield _uniprot_record_from_swiss(rec, url, args.version or "uniprot_stream")
     else:
         src = args.dat or UNIPROT_DAT_URL
         handle = open_text(src)
@@ -466,12 +493,154 @@ def iter_ensembl(args) -> Iterator[BioRecord]:
 
 
 # --------------------------------------------------------------------------- #
+# Source: Ensembl GFF3 gene models (structural annotation, optionally + sequence)
+# --------------------------------------------------------------------------- #
+
+ENSEMBL_DEFAULT_GFF = (
+    "https://ftp.ensembl.org/pub/release-112/gff3/saccharomyces_cerevisiae/"
+    "Saccharomyces_cerevisiae.R64-1-1.112.gff3.gz"
+)
+_GENE_TYPES = {"gene", "ncRNA_gene", "pseudogene"}
+
+
+def _gff_attrs(col9: str) -> dict:
+    """Parse a GFF3 column-9 attribute string; values are URL-decoded."""
+    out: dict[str, str] = {}
+    for kv in col9.rstrip(";\n").split(";"):
+        if "=" in kv:
+            k, v = kv.split("=", 1)
+            out[k] = urllib.parse.unquote(v)
+    return out
+
+
+def _load_fasta_gene_seq(url: str, cap: int = 200_000) -> dict:
+    """Map Ensembl gene_id -> (sequence, fasta_id) using the first FASTA entry per gene."""
+    m: dict[str, tuple[str, str]] = {}
+    handle = open_text(url)
+    hdr: Optional[dict] = None
+    seq: list[str] = []
+
+    def _flush():
+        if hdr is None:
+            return
+        g = hdr.get("gene")
+        if g and g not in m:
+            m[g] = ("".join(seq), hdr.get("id", ""))
+
+    for line in handle:
+        if line.startswith(">"):
+            _flush()
+            if len(m) >= cap:
+                return m
+            hdr, seq = _parse_ensembl_header(line), []
+        else:
+            seq.append(line.strip())
+    _flush()
+    return m
+
+
+def _gene_model_str(g: dict) -> Optional[str]:
+    if not g.get("n_tx"):
+        return None
+    s = f"{g['n_tx']} transcript(s), {g['n_exon']} exon(s) in the canonical transcript"
+    bt = sorted(t for t in g.get("tx_biotypes", set()) if t)
+    if len(bt) > 1:
+        s += f"; transcript biotypes: {', '.join(bt)}"
+    return s
+
+
+def iter_ensembl_gff(args) -> Iterator[BioRecord]:
+    """Gene-level records from an Ensembl GFF3, optionally joined to a product sequence."""
+    gff = args.gff or ENSEMBL_DEFAULT_GFF
+    version = _version_from_url(gff)
+    seqmap: dict[str, tuple[str, str]] = {}
+    seq_type: Optional[str] = None
+    if args.seq_type != "none":
+        seqmap = _load_fasta_gene_seq(args.fasta or ENSEMBL_DEFAULT_PEP)
+        seq_type = "aa" if args.seq_type == "pep" else "dna"
+
+    def _build(g: dict) -> BioRecord:
+        gid = g["gene_id"]
+        sequence, _fid = seqmap.get(gid, ("", ""))
+        annotations = {
+            "biotype": g.get("biotype"),
+            "gene_model": _gene_model_str(g),
+            "description": g.get("description"),
+            "location": g.get("location"),
+            "gene_id": gid,
+        }
+        if sequence:
+            unit = "residue" if seq_type == "aa" else "nt"
+            kind = "protein product" if seq_type == "aa" else "transcript (cDNA)"
+            annotations["product"] = f"canonical {kind}, {len(sequence)} {unit}s"
+        annotations = {k: v for k, v in annotations.items() if v}
+        return BioRecord(
+            id=f"ensembl:{gid}",
+            source="ensembl",
+            source_version=version,
+            source_url=gff,
+            license=LICENSES["ensembl"],
+            accession=gid,
+            entity_type="gene",
+            seq_type=seq_type or "aa",
+            seq_len=len(sequence),
+            organism=args.organism,
+            taxid=args.taxid,
+            gene=g.get("name") or gid,
+            name=g.get("name"),
+            annotations=annotations,
+            sequence=sequence,
+        )
+
+    handle = open_text(gff)
+    cur: Optional[dict] = None
+    for line in handle:
+        if line.startswith("#"):
+            continue
+        cols = line.rstrip("\n").split("\t")
+        if len(cols) < 9:
+            continue
+        ftype, attrs = cols[2], _gff_attrs(cols[8])
+        if ftype in _GENE_TYPES:
+            if cur is not None:
+                yield _build(cur)
+            cur = {
+                "gene_id": attrs.get("gene_id") or attrs.get("ID", "").replace("gene:", ""),
+                "name": attrs.get("Name"),
+                "biotype": attrs.get("biotype"),
+                "description": re.sub(r"\s*\[Source:[^\]]*\]", "", attrs.get("description", "")).strip() or None,
+                "location": f"{cols[0]}:{int(cols[3]):,}-{int(cols[4]):,} ({cols[6]})",
+                "n_tx": 0,
+                "n_exon": 0,
+                "canonical_tx": None,
+                "tx_biotypes": set(),
+            }
+        elif cur is not None:
+            parent = attrs.get("Parent", "")
+            if ftype == "exon":
+                ctx = cur["canonical_tx"]
+                if not ctx or parent == f"transcript:{ctx}":
+                    cur["n_exon"] += 1
+            elif parent.startswith("gene:"):  # a transcript of the current gene
+                cur["n_tx"] += 1
+                if attrs.get("biotype"):
+                    cur["tx_biotypes"].add(attrs["biotype"])
+                if "Ensembl_canonical" in attrs.get("tag", ""):
+                    cur["canonical_tx"] = attrs.get("transcript_id") or attrs.get("ID", "").replace(
+                        "transcript:", ""
+                    )
+    if cur is not None:
+        yield _build(cur)
+
+
+# --------------------------------------------------------------------------- #
 # Build driver                                                                 #
 # --------------------------------------------------------------------------- #
 
 
 def build(args) -> None:
-    it = iter_uniprot(args) if args.source == "uniprot" else iter_ensembl(args)
+    dispatch = {"uniprot": iter_uniprot, "ensembl": iter_ensembl, "ensembl-gff": iter_ensembl_gff}
+    it = dispatch[args.source](args)
 
     seen_seq: set[str] = set()
     n_written = n_dup = n_toolong = n_in = 0
@@ -484,11 +653,12 @@ def build(args) -> None:
             if args.max_seq_len and rec.seq_len > args.max_seq_len:
                 n_toolong += 1
                 continue
-            h = hashlib.sha1(rec.sequence.encode()).hexdigest()
-            if h in seen_seq:
-                n_dup += 1
-                continue
-            seen_seq.add(h)
+            if rec.sequence:  # exact-sequence dedup (skip for metadata-only records)
+                h = hashlib.sha1(rec.sequence.encode()).hexdigest()
+                if h in seen_seq:
+                    n_dup += 1
+                    continue
+                seen_seq.add(h)
             for i, ordering in enumerate(orderings):
                 r = render(dataclasses.replace(rec), ordering)
                 if len(orderings) > 1:
@@ -522,6 +692,10 @@ def main() -> None:
 
     up = sub.add_parser("uniprot", parents=[common], help="UniProtKB/Swiss-Prot")
     up.add_argument("--accessions", help="comma-separated accessions (fetched via UniProt REST)")
+    up.add_argument(
+        "--query",
+        help='sample a UniProt query, e.g. "reviewed:true" (Swiss-Prot) or "reviewed:false" (TrEMBL)',
+    )
     up.add_argument("--dat", help="local/remote uniprot_sprot.dat[.gz] (default: UniProt FTP head)")
     up.add_argument("--version", help="source_version label")
 
@@ -530,6 +704,18 @@ def main() -> None:
     en.add_argument("--seq-type", choices=["pep", "cdna"], default="pep")
     en.add_argument("--organism", default="Saccharomyces cerevisiae")
     en.add_argument("--taxid", default="4932")
+
+    eg = sub.add_parser("ensembl-gff", parents=[common], help="Ensembl GFF3 gene models (+ optional sequence)")
+    eg.add_argument("--gff", help="Ensembl GFF3 .gz URL/path (default: yeast release-112)")
+    eg.add_argument("--fasta", help="pep/cdna FASTA to join a product sequence per gene (default: yeast pep)")
+    eg.add_argument(
+        "--seq-type",
+        choices=["pep", "cdna", "none"],
+        default="pep",
+        help="'none' emits metadata-only gene records",
+    )
+    eg.add_argument("--organism", default="Saccharomyces cerevisiae")
+    eg.add_argument("--taxid", default="4932")
 
     args = p.parse_args()
     build(args)

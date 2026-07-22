@@ -89,19 +89,47 @@ python build_bio_corpus.py uniprot --limit 200 --out out.jsonl
 python build_bio_corpus.py ensembl --limit 40 \
   --ordering sequence_first --out samples/ensembl_pep.sample.jsonl
 
+# Ensembl GFF3 gene models, joined to the canonical protein product
+# (--seq-type none emits annotation-only gene records)
+python build_bio_corpus.py ensembl-gff --limit 40 \
+  --ordering sequence_first --out samples/ensembl_gff.sample.jsonl
+
+# Sample a representative slice of Swiss-Prot or TrEMBL via the UniProt query API
+python build_bio_corpus.py uniprot --query "reviewed:true"  --limit 500 --out sprot.jsonl
+python build_bio_corpus.py uniprot --query "reviewed:false" --limit 500 --out trembl.jsonl
+
 # Emit both recognition and design orderings
 python build_bio_corpus.py uniprot --accessions P69905 --ordering both --out both.jsonl
 ```
 
+The `ensembl-gff` source produces **gene-level records** (`entity_type: gene`)
+carrying the GFF-derived gene model — biotype, genomic location, and
+transcript/exon counts — joined by `gene_id` to the canonical product sequence:
+
+```
+>ensembl:YAL067C SEO1 [Saccharomyces cerevisiae]
+<protein>MYSIVKEIIVDPYKRLKWGFIPVKRQVEDLPDDLNSTEIVTISNSIQSHETAENF…</protein>
+
+SEO1 — Ensembl gene YAL067C — is a protein_coding gene from Saccharomyces cerevisiae (NCBI taxon 4932).
+Gene model: 1 transcript(s), 1 exon(s) in the canonical transcript
+Canonical product: canonical protein product, 593 residues
+Description: Putative permease; member of the allantoate transporter subfamily of the major facilitator superfamily; …
+Location: I:7,235-9,016 (-)
+Biotype: protein_coding
+```
+
 Requires `biopython` (Swiss-Prot parsing) and stdlib only otherwise. Committed
-example output is in [`samples/`](samples/).
+example output is in [`samples/`](samples/): `uniprot_swissprot.sample.jsonl`
+(proteins), `ensembl_pep.sample.jsonl` (peptides from FASTA headers), and
+`ensembl_gff.sample.jsonl` (gene models from GFF3 with the canonical product
+sequence and transcript/exon counts).
 
 ## Caveats — this is a POC, not a pipeline
 
 A production build would add:
 
 - **Real dedup/clustering:** UniRef50/90 for proteins instead of exact-match; genome-window dedup for nucleotides.
-- **Ensembl genes, not just FASTA:** join GFF3 gene models (biotype, exon structure, GO, orthologs) rather than relying on FASTA headers; and **avoid raw genome dumps** — nucleotide sequence is long and low-information per token, so prefer gene/transcript-level records and cap `--max-seq-len`.
+- **Richer Ensembl records:** GFF3 gene models (biotype, transcript/exon counts, location) are built and joined to the canonical product; a production build would add transcript-level cDNA records, GO terms and orthologs (BioMart/REST), and would still **avoid raw genome dumps** — nucleotide sequence is long and low-information per token, so prefer gene/transcript-level records and cap `--max-seq-len`.
 - **Tokenization:** if the bio fraction grows, add sequence-aware or byte-level tokenization; raw AA/nt in a text BPE vocab is inefficient.
 - **Eval decontamination:** dedup against downstream biology benchmarks (including TheBioCollection-Eval) before training.
 - **Scale + execution:** streaming/sharding, resumability, and packing many short records per document (cf. Marin's `bio_chem` datakit, which does exactly this for capped pilot slices).
