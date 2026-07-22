@@ -168,8 +168,10 @@ calls. Committed example output is in [`samples/`](samples/):
 `uniprot_swissprot.sample.jsonl` (proteins), `ensembl_pep.sample.jsonl`
 (peptides), `ensembl_gff.sample.jsonl` (gene models),
 `ensembl_regulatory.sample.jsonl` (regulatory features),
-`ensembl_splice.sample.jsonl` (splice-donor junctions), and
-`ensembl_dogma.sample.jsonl` (DNA→RNA→protein records, all four views).
+`ensembl_splice.sample.jsonl` (splice junctions, donor+acceptor),
+`ensembl_dogma.sample.jsonl` (DNA→RNA→protein records, all four views), and
+`ensembl_multispecies.sample.jsonl` (peptides across human, mouse, zebrafish,
+chicken, frog).
 
 ## Central dogma (DNA → RNA → protein in one document)
 
@@ -219,6 +221,35 @@ and it only claims what's checked — `translate(CDS)==protein` (biopython) and
 `mRNA==spliced exons`. Transcripts that fail (selenoproteins, readthrough,
 incomplete CDS) are skipped, not silently rendered wrong; strand is handled (the
 genomic is fetched in transcription orientation).
+
+## Multi-species (Ensembl vertebrates)
+
+The Ensembl sources (`ensembl`, `ensembl-gff`, `ensembl-splice`, `ensembl-dogma`)
+take a **`--species`** that is a name, a comma-list, or `all` — resolved against
+the Ensembl REST vertebrate index (~356 species) to per-species FTP URLs plus the
+correct organism and NCBI taxid. `--limit` applies **per species**; a species
+whose files are unavailable is skipped, not fatal.
+
+```bash
+# one non-default species
+python build_bio_corpus.py ensembl-dogma --species mus_musculus --view all --min-exons 2 --limit 20 --out mouse.jsonl
+
+# several
+python build_bio_corpus.py ensembl-splice --species "mus_musculus,danio_rerio,gallus_gallus" --limit 50 --out three.jsonl
+
+# all vertebrates (cap for a pilot)
+python build_bio_corpus.py ensembl --species all --max-species 25 --limit 100 --out vertebrates.jsonl
+```
+
+Verified across species: dogma `translate(CDS)==protein` holds (mouse, zebrafish),
+splice donor `GT` / acceptor `AG` are correct on both strands, and organism/taxid
+are per-record. `--release` (default 112) selects the Ensembl release for FTP
+URLs; REST sequence calls use the current release, so a species whose assembly
+changed between the two is **skipped by the verification guards** rather than
+rendered wrong. Regulatory features are human/mouse only (Ensembl builds them for
+just those two). Going all-vertebrates scales the genomic/dogma token counts
+~100–300× (see [TOKEN_ESTIMATE.md](TOKEN_ESTIMATE.md)); at that scale dedup /
+selection and REST batching matter.
 
 ## Token yield (Marin tokenizer)
 

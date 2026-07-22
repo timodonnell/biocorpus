@@ -1107,6 +1107,93 @@ def iter_ensembl_dogma(args) -> Iterator[BioRecord]:
 # --------------------------------------------------------------------------- #
 
 
+_ENSEMBL_SPECIES_INDEX = None
+_MULTISPECIES_SOURCES = {"ensembl", "ensembl-gff", "ensembl-splice", "ensembl-dogma"}
+_DEFAULT_SPECIES = {
+    "ensembl": "saccharomyces_cerevisiae",
+    "ensembl-gff": "saccharomyces_cerevisiae",
+    "ensembl-splice": "homo_sapiens",
+    "ensembl-dogma": "homo_sapiens",
+}
+
+
+def _ensembl_species_index() -> dict:
+    """Cached Ensembl-vertebrates species index: {name: {assembly, taxid}} (~356 species)."""
+    global _ENSEMBL_SPECIES_INDEX
+    if _ENSEMBL_SPECIES_INDEX is None:
+        data = json.loads(fetch_text(f"{ENSEMBL_REST}/info/species?content-type=application/json"))
+        _ENSEMBL_SPECIES_INDEX = {
+            x["name"]: {"assembly": x.get("assembly"), "taxid": str(x["taxon_id"]) if x.get("taxon_id") else None}
+            for x in data.get("species", [])
+            if x.get("assembly")
+        }
+    return _ENSEMBL_SPECIES_INDEX
+
+
+def _resolve_species(name: str, release: str) -> Optional[dict]:
+    """Per-species Ensembl FTP URLs + organism/taxid from the vertebrate index."""
+    info = _ensembl_species_index().get(name)
+    if not info:
+        return None
+    asm = info["assembly"]
+    cap_name = name[:1].upper() + name[1:]  # homo_sapiens -> Homo_sapiens
+    base = f"https://ftp.ensembl.org/pub/release-{release}"
+    return {
+        "organism": name.replace("_", " ").capitalize(),
+        "taxid": info["taxid"],
+        "gff_url": f"{base}/gff3/{name}/{cap_name}.{asm}.{release}.gff3.gz",
+        "pep_url": f"{base}/fasta/{name}/pep/{cap_name}.{asm}.pep.all.fa.gz",
+        "cdna_url": f"{base}/fasta/{name}/cdna/{cap_name}.{asm}.cdna.all.fa.gz",
+    }
+
+
+def _species_run_list(args) -> list:
+    """Expand --species into one (name, per-run-args) tuple per species.
+
+    Multi-species mode triggers on `--species all`, a comma-list, or a single
+    vertebrate name other than the source default; otherwise a single legacy run
+    (hardcoded default URLs) is used. Explicit --gff/--url force a single run.
+    """
+    src = args.source
+    explicit = (getattr(args, "gff", None) is not None) or (getattr(args, "url", None) is not None)
+    spec = getattr(args, "species", "") or ""
+    multi = (
+        src in _MULTISPECIES_SOURCES
+        and not explicit
+        and (spec == "all" or "," in spec or (spec and spec != _DEFAULT_SPECIES.get(src)))
+    )
+    if not multi:
+        return [(spec or None, args)]
+
+    if spec == "all":
+        names = sorted(_ensembl_species_index())
+        cap = getattr(args, "max_species", 0)
+        names = names[:cap] if cap else names
+    else:
+        names = [s.strip() for s in spec.split(",") if s.strip()]
+
+    rel = str(getattr(args, "release", "112"))
+    seq_type = getattr(args, "seq_type", "pep")
+    runs = []
+    for nm in names:
+        sp = _resolve_species(nm, rel)
+        if not sp:
+            print(f"[skip] unknown / non-vertebrate species: {nm}", file=sys.stderr)
+            continue
+        a = argparse.Namespace(**vars(args))
+        a.species, a.organism = nm, sp["organism"]
+        a.taxid = sp["taxid"] or getattr(args, "taxid", None)
+        fasta = None if seq_type == "none" else (sp["cdna_url"] if seq_type == "cdna" else sp["pep_url"])
+        if hasattr(a, "gff"):
+            a.gff = sp["gff_url"]
+        if hasattr(a, "fasta"):
+            a.fasta = fasta
+        if hasattr(a, "url"):
+            a.url = fasta
+        runs.append((nm, a))
+    return runs
+
+
 def build(args) -> None:
     dispatch = {
         "uniprot": iter_uniprot,
@@ -1116,7 +1203,8 @@ def build(args) -> None:
         "ensembl-splice": iter_ensembl_splice,
         "ensembl-dogma": iter_ensembl_dogma,
     }
-    it = dispatch[args.source](args)
+    runs = _species_run_list(args)
+    multi = len(runs) > 1
 
     seen_seq: set[str] = set()
     n_written = n_dup = n_toolong = n_in = 0
@@ -1124,29 +1212,37 @@ def build(args) -> None:
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as fh:
-        for rec in it:
-            n_in += 1
-            if args.max_seq_len and rec.seq_len > args.max_seq_len:
-                n_toolong += 1
-                continue
-            if rec.sequence:  # exact-sequence dedup (skip for metadata-only records)
-                h = hashlib.sha1(rec.sequence.encode()).hexdigest()
-                if h in seen_seq:
-                    n_dup += 1
-                    continue
-                seen_seq.add(h)
-            for i, ordering in enumerate(orderings):
-                r = render(dataclasses.replace(rec), ordering)
-                if len(orderings) > 1:
-                    r.id = f"{rec.id}#{ordering[:2]}"  # keep ids unique
-                fh.write(json.dumps(dataclasses.asdict(r), ensure_ascii=False) + "\n")
-            n_written += 1
-            if args.limit and n_written >= args.limit:
-                break
+        for sp_name, a in runs:
+            written_here = 0
+            try:
+                for rec in dispatch[args.source](a):
+                    n_in += 1
+                    if args.max_seq_len and rec.seq_len > args.max_seq_len:
+                        n_toolong += 1
+                        continue
+                    if rec.sequence:  # exact-sequence dedup (skip for metadata-only records)
+                        h = hashlib.sha1(rec.sequence.encode()).hexdigest()
+                        if h in seen_seq:
+                            n_dup += 1
+                            continue
+                        seen_seq.add(h)
+                    for ordering in orderings:
+                        r = render(dataclasses.replace(rec), ordering)
+                        if len(orderings) > 1:
+                            r.id = f"{rec.id}#{ordering[:2]}"  # keep ids unique
+                        fh.write(json.dumps(dataclasses.asdict(r), ensure_ascii=False) + "\n")
+                    n_written += 1
+                    written_here += 1
+                    if args.limit and written_here >= args.limit:  # --limit is per species
+                        break
+            except Exception as e:  # a species whose FTP/REST URL is unavailable is skipped, not fatal
+                print(f"[skip species {sp_name}] {type(e).__name__}: {e}", file=sys.stderr)
+            if multi:
+                print(f"  {sp_name}: {written_here}", file=sys.stderr)
 
     print(
         f"[{args.source}] wrote {n_written} entries "
-        f"({n_written * len(orderings)} docs, ordering={args.ordering}) -> {args.out}\n"
+        f"({n_written * len(orderings)} docs, ordering={args.ordering}, species={len(runs)}) -> {args.out}\n"
         f"          read={n_in} dup_seq_skipped={n_dup} too_long_skipped={n_toolong}",
         file=sys.stderr,
     )
@@ -1176,8 +1272,11 @@ def main() -> None:
     up.add_argument("--version", help="source_version label")
 
     en = sub.add_parser("ensembl", parents=[common], help="Ensembl FASTA (rich headers)")
-    en.add_argument("--url", help="Ensembl pep/cdna FASTA .gz URL (default: yeast pep)")
+    en.add_argument("--url", help="Ensembl pep/cdna FASTA .gz URL (overrides --species; default: yeast pep)")
     en.add_argument("--seq-type", choices=["pep", "cdna"], default="pep")
+    en.add_argument("--species", default="saccharomyces_cerevisiae", help="species name, comma-list, or 'all' (vertebrates)")
+    en.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
+    en.add_argument("--max-species", type=int, default=0, help="cap when --species all (0 = no cap)")
     en.add_argument("--organism", default="Saccharomyces cerevisiae")
     en.add_argument("--taxid", default="4932")
 
@@ -1190,6 +1289,9 @@ def main() -> None:
         default="pep",
         help="'none' emits metadata-only gene records",
     )
+    eg.add_argument("--species", default="saccharomyces_cerevisiae", help="species name, comma-list, or 'all' (vertebrates)")
+    eg.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
+    eg.add_argument("--max-species", type=int, default=0, help="cap when --species all (0 = no cap)")
     eg.add_argument("--organism", default="Saccharomyces cerevisiae")
     eg.add_argument("--taxid", default="4932")
 
@@ -1205,7 +1307,9 @@ def main() -> None:
     spl.add_argument("--window", type=int, default=100, help="bp of exon/intron context each side of the splice site")
     spl.add_argument("--site", choices=["donor", "acceptor", "both"], default="both", help="which splice site(s) to emit")
     spl.add_argument("--per-transcript", type=int, default=1, help="max introns per transcript")
-    spl.add_argument("--species", default="homo_sapiens")
+    spl.add_argument("--species", default="homo_sapiens", help="species name, comma-list, or 'all' (vertebrates)")
+    spl.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
+    spl.add_argument("--max-species", type=int, default=0, help="cap when --species all (0 = no cap)")
     spl.add_argument("--organism", default="Homo sapiens")
     spl.add_argument("--taxid", default="9606")
 
@@ -1223,7 +1327,9 @@ def main() -> None:
     )
     dg.add_argument("--max-dna", type=int, default=5000, help="skip DNA-bearing views when the genomic span exceeds this (bp)")
     dg.add_argument("--min-exons", type=int, default=1, help="skip transcripts with fewer exons (use 2+ to require splicing)")
-    dg.add_argument("--species", default="homo_sapiens")
+    dg.add_argument("--species", default="homo_sapiens", help="species name, comma-list, or 'all' (vertebrates)")
+    dg.add_argument("--release", default="112", help="Ensembl release for FTP URLs")
+    dg.add_argument("--max-species", type=int, default=0, help="cap when --species all (0 = no cap)")
     dg.add_argument("--organism", default="Homo sapiens")
     dg.add_argument("--taxid", default="9606")
 
