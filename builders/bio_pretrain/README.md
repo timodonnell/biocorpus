@@ -124,6 +124,23 @@ example output is in [`samples/`](samples/): `uniprot_swissprot.sample.jsonl`
 `ensembl_gff.sample.jsonl` (gene models from GFF3 with the canonical product
 sequence and transcript/exon counts).
 
+## Token yield (Marin tokenizer)
+
+Under Marin's tokenizer (Llama-3, 128k vocab) sequences cost **~0.55 tokens/residue**
+— ~2.4× less token-efficient than prose. Whole-database projections (full method
+and caveats in [TOKEN_ESTIMATE.md](TOKEN_ESTIMATE.md), reproduce with
+[`estimate_tokens.py`](estimate_tokens.py)):
+
+| Subset | entries | total tokens (sequence-first) |
+|---|--:|--:|
+| Swiss-Prot (reviewed) | 0.58 M | ~0.6 B |
+| UniRef50 (protein backbone) | 38.8 M | ~8 B |
+| TrEMBL (unreviewed, redundant) | 149 M | ~31–151 B |
+
+Takeaway: **Swiss-Prot + UniRef50 (~10 B; ~2× at both orderings) is a high-value
+protein backbone**; raw TrEMBL is mostly redundant sequence and is better deduped
+to UniRef50. Emitting both orderings doubles the counts.
+
 ## Caveats — this is a POC, not a pipeline
 
 A production build would add:

@@ -68,8 +68,10 @@ SCHEMA_VERSION = "0.1"
 
 SEQ_DELIMS = {"aa": ("<protein>", "</protein>"), "dna": ("<dna>", "</dna>")}
 
+_UNIPROT_LICENSE = "CC-BY-4.0 (https://www.uniprot.org/help/license)"
 LICENSES = {
-    "uniprot_swissprot": "CC-BY-4.0 (https://www.uniprot.org/help/license)",
+    "uniprot_swissprot": _UNIPROT_LICENSE,
+    "uniprot_trembl": _UNIPROT_LICENSE,
     # Ensembl's own annotation is unrestricted; some genome assemblies carry
     # third-party terms, so downstream users should verify per species.
     "ensembl": "Open, no restrictions on Ensembl annotation "
@@ -123,7 +125,9 @@ def _clean(s: Optional[str]) -> Optional[str]:
 
 
 def _anchor(rec: BioRecord) -> str:
-    prefix = "sp" if rec.source == "uniprot_swissprot" else "ensembl"
+    prefix = {"uniprot_swissprot": "sp", "uniprot_trembl": "tr", "ensembl": "ensembl"}.get(
+        rec.source, "db"
+    )
     bits = [f">{prefix}:{rec.accession}"]
     if rec.name:
         bits.append(rec.name)
@@ -197,6 +201,7 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
 def _db_label(rec: BioRecord) -> str:
     return {
         "uniprot_swissprot": "UniProtKB/Swiss-Prot",
+        "uniprot_trembl": "UniProtKB/TrEMBL",
         "ensembl": "Ensembl",
     }.get(rec.source, rec.source)
 
@@ -346,12 +351,17 @@ def _uniprot_record_from_swiss(rec, source_url: str, version: str) -> BioRecord:
     }
     annotations = {k: v for k, v in annotations.items() if v}
 
+    source = (
+        "uniprot_swissprot"
+        if (getattr(rec, "data_class", "") or "").lower().startswith("reviewed")
+        else "uniprot_trembl"
+    )
     return BioRecord(
         id=f"uniprot:{acc}",
-        source="uniprot_swissprot",
+        source=source,
         source_version=version,
         source_url=source_url,
-        license=LICENSES["uniprot_swissprot"],
+        license=LICENSES[source],
         accession=acc,
         entity_type="protein",
         seq_type="aa",
@@ -375,16 +385,21 @@ def iter_uniprot(args) -> Iterator[BioRecord]:
             for rec in SwissProt.parse(handle):
                 yield _uniprot_record_from_swiss(rec, url, args.version or "uniprot_rest")
     elif getattr(args, "query", None):
-        # Stream a representative sample matching a UniProt query, e.g.
-        #   --query "reviewed:true"   (Swiss-Prot)   /   --query "reviewed:false"  (TrEMBL)
-        url = (
-            "https://rest.uniprot.org/uniprotkb/stream?"
-            f"query={urllib.parse.quote(args.query)}&format=txt&compressed=true"
+        # Sample a representative slice matching a UniProt query via the paginated
+        # search API (robust for both the small reviewed set and the huge
+        # unreviewed one, where /stream is refused), e.g.
+        #   --query "reviewed:true" (Swiss-Prot)  /  --query "reviewed:false" (TrEMBL)
+        page_url = (
+            "https://rest.uniprot.org/uniprotkb/search?"
+            f"query={urllib.parse.quote(args.query)}&format=txt&size=500"
         )
-        raw = urllib.request.urlopen(urllib.request.Request(url, headers=_UA), timeout=300)
-        handle = io.TextIOWrapper(gzip.GzipFile(fileobj=raw), encoding="ascii", errors="replace")
-        for rec in SwissProt.parse(handle):
-            yield _uniprot_record_from_swiss(rec, url, args.version or "uniprot_stream")
+        while page_url:
+            resp = urllib.request.urlopen(urllib.request.Request(page_url, headers=_UA), timeout=300)
+            text = resp.read().decode("ascii", "replace")
+            for rec in SwissProt.parse(io.StringIO(text)):
+                yield _uniprot_record_from_swiss(rec, page_url, args.version or "uniprot_search")
+            m = re.search(r'<([^>]+)>;\s*rel="next"', resp.headers.get("Link", ""))
+            page_url = m.group(1) if m else None
     else:
         src = args.dat or UNIPROT_DAT_URL
         handle = open_text(src)
