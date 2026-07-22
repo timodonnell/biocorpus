@@ -93,9 +93,16 @@ python build_bio_corpus.py ensembl-dogma --species "mus_musculus,danio_rerio,gal
   python build_bio_corpus.py ensembl-splice --species $SP --gff gff.gff3.gz \
     --genome $Sp.$ASM.dna.toplevel.fa.gz --site both --limit 0 --out out/splice_$SP.jsonl
   ```
-- **Redundancy:** UniRef50 already removes near-duplicate proteins; if you add
-  multi-species Ensembl proteins/dogma, expect ortholog overlap with UniRef50 —
-  dedup by sequence (the builder does exact-sequence dedup within a run; a
-  cross-run pass would catch the rest).
+- **Redundancy:** UniRef50 removes near-duplicate proteins; the same protein still
+  arrives from Swiss-Prot *and* UniRef *and* Ensembl. Finish with a cross-file
+  dedup (priority order — richest source first):
+
+  ```bash
+  python dedup.py out/sprot.jsonl out/uniref50.jsonl out/dogma_*.jsonl out/splice_*.jsonl \
+      --out out/corpus.jsonl
+  ```
+
+  It keeps the first occurrence of each sequence, namespaced by seq type (proteins
+  vs DNA vs RNA), and never drops central-dogma records against a protein file.
 - **Both orderings** doubles document count for the components you apply it to
   (Swiss-Prot here); it does not change which sequences are covered.

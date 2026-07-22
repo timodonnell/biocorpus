@@ -67,6 +67,9 @@ python build_bio_corpus.py ensembl-regulatory --limit 20 --out reg.jsonl
 
 # multi-species proteins
 python build_bio_corpus.py ensembl --species "mus_musculus,danio_rerio,gallus_gallus" --limit 50 --out fish_etc.jsonl
+
+# de-duplicate across shards (priority order: Swiss-Prot's copy of a protein beats UniRef's beats Ensembl's)
+python dedup.py sprot.jsonl uniref50.jsonl ensembl_pep.jsonl dogma_*.jsonl --out corpus.jsonl
 ```
 
 `--limit` is per species (default 50; `--limit 0` = uncapped).
@@ -82,8 +85,9 @@ human genomic/dogma/splice/regulatory ~0.3 B. Assemble a **4–10 B corpus** wit
 ## Samples & caveats
 
 - [`samples/`](samples/): committed example output for every source.
-- **Dedup** is exact-sequence within a run; a cross-run pass (UniRef50 vs Ensembl
-  proteins) would catch ortholog overlap.
+- **Dedup**: exact-sequence within a run; `dedup.py` (priority order) is the
+  cross-file pass that collapses the same protein across Swiss-Prot / UniRef /
+  Ensembl (namespaced by seq type, so dogma records are never dropped).
 - **Regulatory** features exist for human/mouse only (Ensembl builds them there).
 - **REST mode** is bounded to one species / a pilot; use `--genome` for scale.
 - **Nucleotide is token-expensive** (~0.55 tok/nt) — prefer gene/feature records
