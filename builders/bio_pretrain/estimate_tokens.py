@@ -36,6 +36,10 @@ DB_COUNTS = {
     "UniRef90": 121_389_642,
     "UniRef50": 38_794_121,
     "Ensembl human (protein-coding genes)": 20_000,
+    # new genomic/regulatory record types (human, single species; fetched 2026-07)
+    "Ensembl human dogma (coding transcripts)": 20_000,
+    "Ensembl human regulatory features": 612_140,
+    "Ensembl human splice sites, canonical (donor+acceptor)": 360_000,
 }
 IDENTITY_LINE_TOKENS = 25  # a minimal ">db:acc name [organism]" + one-sentence lead
 
@@ -44,10 +48,16 @@ def measure(path: str, tok: Tokenizer) -> dict:
     tot, seq_t, slen = [], [], []
     for line in open(path):
         r = json.loads(line)
-        text, seq = r["text"], r.get("sequence", "")
-        tot.append(len(tok.encode(text).ids))
-        seq_t.append(len(tok.encode(seq).ids) if seq else 0)
-        slen.append(r.get("seq_len", len(seq)))
+        tot.append(len(tok.encode(r["text"]).ids))
+        seqs = r.get("sequences")
+        if seqs:  # multi-sequence (central dogma): count the forms shown in the text
+            forms = {k: v for k, v in seqs.items() if k != "cds"}  # cds is a substring of rna; don't double-count
+            seq_t.append(sum(len(tok.encode(v).ids) for v in forms.values()))
+            slen.append(sum(len(v) for v in forms.values()))
+        else:
+            seq = r.get("sequence", "")
+            seq_t.append(len(tok.encode(seq).ids) if seq else 0)
+            slen.append(r.get("seq_len", len(seq)))
     n = len(tot)
     mseq = statistics.mean(seq_t)
     mlen = statistics.mean(slen)
@@ -126,6 +136,14 @@ def main() -> None:
     ens_label = next((k for k in samples if k.startswith("Ensembl")), None)
     if ens_label:
         rows.append(("Ensembl human (protein-coding genes)", DB_COUNTS["Ensembl human (protein-coding genes)"], rate_total(ens_label), f"measured ({ens_label})"))
+    # new genomic / regulatory record types
+    for label, dbkey in (
+        ("Dogma", "Ensembl human dogma (coding transcripts)"),
+        ("Regulatory", "Ensembl human regulatory features"),
+        ("Splice", "Ensembl human splice sites, canonical (donor+acceptor)"),
+    ):
+        if label in samples:
+            rows.append((dbkey, DB_COUNTS[dbkey], rate_total(label), f"measured ({label})"))
 
     for name, n, rate, basis in rows:
         print(f"{name:38} {n:>13,} {rate:>9.0f} {human(n * rate):>14}   {basis}")

@@ -98,8 +98,8 @@ python build_bio_corpus.py ensembl-gff --limit 40 \
 # Ensembl Regulatory Build features (enhancer/promoter/CTCF/...), DNA fetched via REST
 python build_bio_corpus.py ensembl-regulatory --limit 20 --out samples/ensembl_regulatory.sample.jsonl
 
-# Ensembl 5' splice-donor junction windows (DNA via REST; reports the observed donor motif)
-python build_bio_corpus.py ensembl-splice --limit 20 --out samples/ensembl_splice.sample.jsonl
+# Ensembl splice-site junction windows — donor + acceptor (DNA via REST; reports the observed motif)
+python build_bio_corpus.py ensembl-splice --site both --limit 20 --out samples/ensembl_splice.sample.jsonl
 
 # Central-dogma records: DNA (pre-mRNA) + spliced RNA + protein for one transcript, verified
 python build_bio_corpus.py ensembl-dogma --view all --min-exons 2 --out samples/ensembl_dogma.sample.jsonl
@@ -154,11 +154,13 @@ Intron length: 385 bp
 Donor dinucleotide: GT — canonical (GT-AG)
 ```
 
-Splice records report the **observed** donor dinucleotide and classify it
-(canonical `GT-AG`, minor `GC-AG`, or non-canonical) rather than asserting it,
-which surfaces annotation quality (the DDX11L1 telomeric pseudogene's first
-intron is correctly flagged non-canonical). Strand handling is validated:
-donor = `GT` on both `+` and `-` strand transcripts.
+`ensembl-splice --site {donor,acceptor,both}` emits **both splice sites** per
+intron (donor window shows exon→intron, acceptor window shows intron→exon). Each
+reports the **observed** motif and classifies it (canonical `GT-AG`, minor
+`GC-AG`/`AT-AC`, or non-canonical) rather than asserting it — which surfaces
+annotation quality (the DDX11L1 telomeric pseudogene's first intron is flagged
+non-canonical at *both* sites). Strand/offset handling is validated against known
+genes: donor = `GT`, acceptor = `AG` on both `+` and `-` strand transcripts.
 
 Requires `biopython` (Swiss-Prot parsing + dogma translation) and stdlib only
 otherwise; the Ensembl regulatory/splice/dogma sources also make Ensembl REST
@@ -230,10 +232,13 @@ and caveats in [TOKEN_ESTIMATE.md](TOKEN_ESTIMATE.md), reproduce with
 | Swiss-Prot (reviewed) | 0.58 M | ~0.6 B |
 | UniRef50 (protein backbone) | 38.8 M | ~8 B |
 | TrEMBL (unreviewed, redundant) | 149 M | ~31–151 B |
+| Ensembl human dogma / regulatory / splice | 20 K / 612 K / 360 K | ~36 M / ~203 M / ~86 M |
 
 Takeaway: **Swiss-Prot + UniRef50 (~10 B; ~2× at both orderings) is a high-value
 protein backbone**; raw TrEMBL is mostly redundant sequence and is better deduped
-to UniRef50. Emitting both orderings doubles the counts.
+to UniRef50. The **human genomic/regulatory/dogma types total only ~0.3 B** — a
+cheap, mostly-novel add (splicing, translation, cis-regulatory elements); going
+multi-species scales them ~100–300×. Emitting both orderings doubles the counts.
 
 ## Caveats — this is a POC, not a pipeline
 

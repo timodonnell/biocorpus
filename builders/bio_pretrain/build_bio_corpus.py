@@ -159,7 +159,8 @@ def _lead_sentence(rec: BioRecord) -> str:
             f"{rec.source_version} Regulatory Build ({rec.accession}){org}."
         )
     if rec.entity_type == "splice_junction":
-        return f"The sequence is a {rec.seq_len} bp window over a 5' splice donor site in gene {rec.gene or '?'}{org}."
+        label = rec.annotations.get("splice_site", "splice site")
+        return f"The sequence is a {rec.seq_len} bp window over a {label} site in gene {rec.gene or '?'}{org}."
     if rec.entity_type == "gene":
         biotype = rec.annotations.get("biotype")
         return (
@@ -198,6 +199,7 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         ("Intron location", "intron_location"),
         ("Intron length", "intron_length_bp"),
         ("Donor dinucleotide", "donor_dinucleotide"),
+        ("Acceptor dinucleotide", "acceptor_dinucleotide"),
     ):
         v = a.get(key)
         if v:
@@ -763,42 +765,59 @@ def iter_ensembl_splice(args) -> Iterator[BioRecord]:
         for i, ((sA, eA), (sB, eB)) in enumerate(zip(tx, tx[1:]), start=1):
             if args.per_transcript and i > args.per_transcript:
                 break
+            # intron genomic coords (a<b) + donor/acceptor windows in transcription orientation
             if strand == 1:
-                a, b, fs, fe = eA + 1, sB - 1, eA + 1 - w, eA + w
+                a, b = eA + 1, sB - 1
+                donor_win, accept_win = (eA + 1 - w, eA + w), (sB - w, sB + w - 1)
             else:
-                a, b, fs, fe = eB + 1, sA - 1, sA - w, sA + w - 1
-            try:
-                seq = _ensembl_region_seq(args.species, g["seqid"], fs, fe, strand)
-            except Exception:
-                continue
-            time.sleep(0.08)
-            donor = seq[w : w + 2]
-            donor_class = {"GT": "canonical (GT-AG)", "GC": "minor (GC-AG)"}.get(donor, "non-canonical")
-            annotations = {
-                "splice_site": "5' splice donor",
-                "transcript": ctx,
-                "intron": f"{i} of {n_intron}",
-                "intron_location": f"{g['seqid']}:{a:,}-{b:,} ({'+' if strand == 1 else '-'})",
-                "intron_length_bp": f"{b - a + 1:,} bp",
-                "donor_dinucleotide": f"{donor} — {donor_class}",
-            }
-            yield BioRecord(
-                id=f"ensembl_splice:{ctx}:intron{i}",
-                source="ensembl",
-                source_version=version,
-                source_url=gff,
-                license=LICENSES["ensembl"],
-                accession=f"{ctx}:intron{i}",
-                entity_type="splice_junction",
-                seq_type="dna",
-                seq_len=len(seq),
-                organism=args.organism,
-                taxid=args.taxid,
-                gene=g.get("name") or g["gene_id"],
-                name=None,
-                annotations=annotations,
-                sequence=seq,
-            )
+                a, b = eB + 1, sA - 1
+                donor_win, accept_win = (sA - w, sA + w - 1), (eB - w + 1, eB + w)
+            loc = f"{g['seqid']}:{a:,}-{b:,} ({'+' if strand == 1 else '-'})"
+            ilen = f"{b - a + 1:,} bp"
+            wanted = []
+            if args.site in ("donor", "both"):
+                wanted.append(("donor", donor_win))
+            if args.site in ("acceptor", "both"):
+                wanted.append(("acceptor", accept_win))
+            for site, (fs, fe) in wanted:
+                try:
+                    seq = _ensembl_region_seq(args.species, g["seqid"], fs, fe, strand)
+                except Exception:
+                    continue
+                time.sleep(0.08)
+                if site == "donor":  # exon|intron, GT at the intron's 5' end
+                    motif = seq[w : w + 2]
+                    klass = {"GT": "canonical (GT-AG)", "GC": "minor (GC-AG)"}.get(motif, "non-canonical")
+                    label, mkey = "5' splice donor", "donor_dinucleotide"
+                else:  # intron|exon, AG at the intron's 3' end
+                    motif = seq[w - 2 : w]
+                    klass = {"AG": "canonical (GT-AG)", "AC": "minor (AT-AC)"}.get(motif, "non-canonical")
+                    label, mkey = "3' splice acceptor", "acceptor_dinucleotide"
+                annotations = {
+                    "splice_site": label,
+                    "transcript": ctx,
+                    "intron": f"{i} of {n_intron}",
+                    "intron_location": loc,
+                    "intron_length_bp": ilen,
+                    mkey: f"{motif} — {klass}",
+                }
+                yield BioRecord(
+                    id=f"ensembl_splice:{ctx}:intron{i}:{site}",
+                    source="ensembl",
+                    source_version=version,
+                    source_url=gff,
+                    license=LICENSES["ensembl"],
+                    accession=f"{ctx}:intron{i}:{site}",
+                    entity_type="splice_junction",
+                    seq_type="dna",
+                    seq_len=len(seq),
+                    organism=args.organism,
+                    taxid=args.taxid,
+                    gene=g.get("name") or g["gene_id"],
+                    name=None,
+                    annotations=annotations,
+                    sequence=seq,
+                )
 
     cur = None
     for line in open_text(gff):
@@ -1183,8 +1202,9 @@ def main() -> None:
 
     spl = sub.add_parser("ensembl-splice", parents=[common], help="Ensembl 5' splice-donor junction windows (+ DNA via REST)")
     spl.add_argument("--gff", help="gene GFF3 .gz (default: human GRCh38 v112)")
-    spl.add_argument("--window", type=int, default=100, help="bp of exon/intron context each side of the donor site")
-    spl.add_argument("--per-transcript", type=int, default=1, help="max donor junctions per transcript")
+    spl.add_argument("--window", type=int, default=100, help="bp of exon/intron context each side of the splice site")
+    spl.add_argument("--site", choices=["donor", "acceptor", "both"], default="both", help="which splice site(s) to emit")
+    spl.add_argument("--per-transcript", type=int, default=1, help="max introns per transcript")
     spl.add_argument("--species", default="homo_sapiens")
     spl.add_argument("--organism", default="Homo sapiens")
     spl.add_argument("--taxid", default="9606")
