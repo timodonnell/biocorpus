@@ -57,9 +57,15 @@ Entry counts fetched 2026-07 from the UniProt / UniRef REST APIs.
 |---|--:|--:|--:|---|
 | **Swiss-Prot** (reviewed) | 575,503 | ~1000 | **~0.6 B** | measured (rich) |
 | **TrEMBL** (unreviewed) | 149,234,636 | 207 → 1014 | **~31 B (floor) – 151 B (ceiling)** | seq-floor → rich sample |
-| UniRef100 | 220,919,788 | 207 | ~46 B | seq + identity line |
-| UniRef90 | 121,389,642 | 207 | ~25 B | seq + identity line |
-| **UniRef50** | 38,794,121 | 207 | **~8 B** | seq + identity line |
+| UniRef100 | 220,919,788 | ~325 | ~72 B | measured (rep ~406 aa) |
+| UniRef90 | 121,389,642 | ~325 | ~39 B | measured |
+| **UniRef50** | 38,794,121 | ~325 | **~12.6 B** | measured (rep ~406 aa) |
+
+UniRef representatives run longer than average (~406 aa, they seed each cluster),
+so measured is ~325 tok/rec, not the 207 floor. The bulk FASTA is **sorted by
+descending length**, so use `uniref --stride N` for a representative subset
+(`--limit` alone takes only the giant-protein head). Full UniRef50 ~12.6 B
+overshoots a 4–10 B budget on its own — stride to dial it (see [RECIPE.md](RECIPE.md)).
 | Ensembl human (protein-coding genes) | ~20,000 | 333 | ~7 M | measured (pep) |
 | **Ensembl dogma** (DNA+RNA+protein, human coding tx) | ~20,000 | 1,805 | **~36 M** | measured |
 | **Ensembl regulatory** features (human) | 612,140 | 331 | **~203 M** | measured |
@@ -79,8 +85,9 @@ For scale reference, Marin 8B trained on **>12 T** tokens.
   it is essentially free; include it (and probably at both orderings).
 - **Raw TrEMBL (~31–151 B) is not worth it as-is** — it's dominated by
   low-information, highly redundant sequence tokens. If you want protein-sequence
-  breadth, **dedup to UniRef50 (~8 B)** — a ~4–18× reduction that removes near-duplicate
-  homologs while keeping diversity. UniRef50 is the natural "protein backbone".
+  breadth, **take UniRef50 (~12.6 B full, `--stride` to taste)** — a ~4× reduction
+  vs TrEMBL that removes near-duplicate homologs while keeping diversity. UniRef50
+  is the natural "protein backbone".
 - **Ensembl protein content overlaps UniProt** and one species is negligible
   (~7 M). Ensembl's real value is **genomic/regulatory** (gene models, splice
   sites, regulatory regions) — but nucleotide sequence is even less
@@ -99,8 +106,8 @@ For scale reference, Marin 8B trained on **>12 T** tokens.
   for (a) keeping the bio fraction small, (b) deduping hard (UniRef50), and
   (c) considering sequence-aware tokenization if the fraction grows.
 
-**Rule of thumb:** Swiss-Prot (~0.6 B, both orderings ≈ 1.2 B) + UniRef50 (~8 B)
-+ curated Ensembl gene/annotation records is a ~10 B-token, high-value protein
-backbone — a single-digit-% ingredient in a general run, or the core of a
-bio-specialised mid-training mix. Full TrEMBL is 4–18× larger for mostly
-redundant sequence and should be avoided.
+**Rule of thumb:** Swiss-Prot (both orderings ≈ 1.0 B) + a UniRef50 subset
+(`--stride` to hit the budget: stride 3 ≈ 4.2 B) + the human genomic accent
+(~0.3–0.7 B) lands a **4–10 B**, high-value protein-centric corpus — the concrete
+mixtures are in **[RECIPE.md](RECIPE.md)**. Full TrEMBL is far larger for mostly
+redundant sequence and should be taken as UniRef50 instead.

@@ -108,6 +108,9 @@ python build_bio_corpus.py ensembl-dogma --view all --min-exons 2 --out samples/
 python build_bio_corpus.py uniprot --query "reviewed:true"  --limit 500 --out sprot.jsonl
 python build_bio_corpus.py uniprot --query "reviewed:false" --limit 500 --out trembl.jsonl
 
+# UniRef50 deduped protein backbone from the bulk FASTA (local, no REST; --stride for a representative subset)
+python build_bio_corpus.py uniref --file uniref50.fasta.gz --stride 3 --limit 0 --out uniref50.jsonl
+
 # Emit both recognition and design orderings
 python build_bio_corpus.py uniprot --accessions P69905 --ordering both --out both.jsonl
 ```
@@ -171,7 +174,7 @@ calls. Committed example output is in [`samples/`](samples/):
 `ensembl_splice.sample.jsonl` (splice junctions, donor+acceptor),
 `ensembl_dogma.sample.jsonl` (DNA→RNA→protein records, all four views), and
 `ensembl_multispecies.sample.jsonl` (peptides across human, mouse, zebrafish,
-chicken, frog).
+chicken, frog), and `uniref50.sample.jsonl` (deduped protein clusters).
 
 ## Central dogma (DNA → RNA → protein in one document)
 
@@ -260,16 +263,17 @@ and caveats in [TOKEN_ESTIMATE.md](TOKEN_ESTIMATE.md), reproduce with
 
 | Subset | entries | total tokens (sequence-first) |
 |---|--:|--:|
-| Swiss-Prot (reviewed) | 0.58 M | ~0.6 B |
-| UniRef50 (protein backbone) | 38.8 M | ~8 B |
+| Swiss-Prot (reviewed) | 0.58 M | ~1.0 B (both orderings) |
+| UniRef50 (protein backbone, measured ~325 tok/rec) | 38.8 M | ~12.6 B (full) |
 | TrEMBL (unreviewed, redundant) | 149 M | ~31–151 B |
 | Ensembl human dogma / regulatory / splice | 20 K / 612 K / 360 K | ~36 M / ~203 M / ~86 M |
 
-Takeaway: **Swiss-Prot + UniRef50 (~10 B; ~2× at both orderings) is a high-value
-protein backbone**; raw TrEMBL is mostly redundant sequence and is better deduped
-to UniRef50. The **human genomic/regulatory/dogma types total only ~0.3 B** — a
-cheap, mostly-novel add (splicing, translation, cis-regulatory elements); going
-multi-species scales them ~100–300×. Emitting both orderings doubles the counts.
+Takeaway: **Swiss-Prot + a UniRef50 subset is the tunable protein backbone.** Full
+UniRef50 is ~12.6 B on its own, so `uniref --stride N` dials the token budget
+(stride 3 ≈ 4.2 B). Raw TrEMBL is mostly redundant and is better taken as
+UniRef50. The **human genomic/regulatory/dogma types total ~0.3 B** — cheap,
+mostly-novel signal; multi-species scales them ~100–300×. To assemble a
+**4–10 B corpus**, see **[RECIPE.md](RECIPE.md)**.
 
 ## Caveats — this is a POC, not a pipeline
 

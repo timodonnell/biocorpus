@@ -128,9 +128,14 @@ def _clean(s: Optional[str]) -> Optional[str]:
 
 
 def _anchor(rec: BioRecord) -> str:
-    prefix = {"uniprot_swissprot": "sp", "uniprot_trembl": "tr", "ensembl": "ensembl"}.get(
-        rec.source, "db"
-    )
+    prefix = {
+        "uniprot_swissprot": "sp",
+        "uniprot_trembl": "tr",
+        "uniprot_uniref50": "uniref50",
+        "uniprot_uniref90": "uniref90",
+        "uniprot_uniref100": "uniref100",
+        "ensembl": "ensembl",
+    }.get(rec.source, "db")
     bits = [f">{prefix}:{rec.accession}"]
     if rec.name:
         bits.append(rec.name)
@@ -200,6 +205,8 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         ("Intron length", "intron_length_bp"),
         ("Donor dinucleotide", "donor_dinucleotide"),
         ("Acceptor dinucleotide", "acceptor_dinucleotide"),
+        ("Cluster size", "cluster_size"),
+        ("Representative", "representative"),
     ):
         v = a.get(key)
         if v:
@@ -222,6 +229,9 @@ def _db_label(rec: BioRecord) -> str:
     return {
         "uniprot_swissprot": "UniProtKB/Swiss-Prot",
         "uniprot_trembl": "UniProtKB/TrEMBL",
+        "uniprot_uniref50": "UniRef50",
+        "uniprot_uniref90": "UniRef90",
+        "uniprot_uniref100": "UniRef100",
         "ensembl": "Ensembl",
     }.get(rec.source, rec.source)
 
@@ -428,6 +438,79 @@ def iter_uniprot(args) -> Iterator[BioRecord]:
         handle = open_text(src)
         for rec in SwissProt.parse(handle):
             yield _uniprot_record_from_swiss(rec, src, args.version or "current_release")
+
+
+# --------------------------------------------------------------------------- #
+# Source: UniRef (deduped protein clusters, bulk FASTA — no REST)              #
+# --------------------------------------------------------------------------- #
+
+UNIREF_URLS = {
+    lvl: f"https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref{lvl}/uniref{lvl}.fasta.gz"
+    for lvl in ("50", "90", "100")
+}
+_UNIREF_HDR = re.compile(r"^(\S+)\s+(.*?)\s+n=(\d+)\s+Tax=(.*?)\s+TaxID=(\S+)\s+RepID=(\S+)\s*$")
+
+
+def iter_uniref(args) -> Iterator[BioRecord]:
+    """One record per UniRef cluster representative. Streams the bulk FASTA locally.
+
+    UniRef50 (~38.8M clusters, 8.8GB gz) is the deduped protein backbone — far
+    less redundant than TrEMBL. Point --file at a downloaded uniref{50,90,100}.fasta.gz.
+    """
+    ident = args.identity
+    src = args.file or args.url or UNIREF_URLS[ident]
+    source = f"uniprot_uniref{ident}"
+    handle = open_text(src)
+    hdr: Optional[str] = None
+    seq: list[str] = []
+
+    def _emit(h: str, s: list):
+        m = _UNIREF_HDR.match(h)
+        if not m:
+            return None
+        cid, name, n, tax, taxid, rep = m.groups()
+        sequence = "".join(s)
+        acc = cid.replace(f"UniRef{ident}_", "")
+        return BioRecord(
+            id=f"uniref{ident}:{cid}",
+            source=source,
+            source_version=f"uniref{ident}",
+            source_url=src,
+            license=_UNIPROT_LICENSE,
+            accession=acc,
+            entity_type="protein",
+            seq_type="aa",
+            seq_len=len(sequence),
+            organism=_clean(tax),
+            taxid=taxid,
+            gene=None,
+            name=_clean(name),
+            annotations={"cluster_size": f"{n} member sequence(s)", "representative": rep},
+            sequence=sequence,
+        )
+
+    # The UniRef FASTA is sorted by descending length, so `--stride N` (emit every
+    # Nth cluster) yields a length-stratified, representative subsample; plain --limit
+    # alone would take only the giant-protein head.
+    stride = max(1, getattr(args, "stride", 1))
+    n_seen = 0
+    for line in handle:
+        if line.startswith(">"):
+            if hdr is not None:
+                n_seen += 1
+                if n_seen % stride == 0:
+                    r = _emit(hdr[1:].strip(), seq)
+                    if r:
+                        yield r
+            hdr, seq = line, []
+        else:
+            seq.append(line.strip())
+    if hdr is not None:
+        n_seen += 1
+        if n_seen % stride == 0:
+            r = _emit(hdr[1:].strip(), seq)
+            if r:
+                yield r
 
 
 # --------------------------------------------------------------------------- #
@@ -1197,6 +1280,7 @@ def _species_run_list(args) -> list:
 def build(args) -> None:
     dispatch = {
         "uniprot": iter_uniprot,
+        "uniref": iter_uniref,
         "ensembl": iter_ensembl,
         "ensembl-gff": iter_ensembl_gff,
         "ensembl-regulatory": iter_ensembl_regulatory,
@@ -1270,6 +1354,12 @@ def main() -> None:
     )
     up.add_argument("--dat", help="local/remote uniprot_sprot.dat[.gz] (default: UniProt FTP head)")
     up.add_argument("--version", help="source_version label")
+
+    ur = sub.add_parser("uniref", parents=[common], help="UniRef clusters (deduped proteins, bulk FASTA — no REST)")
+    ur.add_argument("--identity", choices=["50", "90", "100"], default="50", help="UniRef identity level")
+    ur.add_argument("--file", help="local uniref{50,90,100}.fasta.gz (bulk; avoids re-download)")
+    ur.add_argument("--url", help="override the UniRef FASTA URL")
+    ur.add_argument("--stride", type=int, default=1, help="emit 1 of every N clusters (representative subsample; the bulk FASTA is length-sorted)")
 
     en = sub.add_parser("ensembl", parents=[common], help="Ensembl FASTA (rich headers)")
     en.add_argument("--url", help="Ensembl pep/cdna FASTA .gz URL (overrides --species; default: yeast pep)")
