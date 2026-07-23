@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biocorpus — dataset report</title>
+<style>
+:root{--bg:#F5F8F6;--surface:#fff;--surface2:#EEF3F1;--spec:#F0F4F2;--ink:#13201D;--soft:#3B4A46;
+--muted:#697974;--line:#DCE4E1;--accent:#137A6B;--accent2:#1C9A86;--warn:#A9720C;--warnbg:rgba(169,114,12,.12);
+--fh:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--fb:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+--fm:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;}
+@media (prefers-color-scheme:dark){:root{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;
+--ink:#DBE5E1;--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;
+--warn:#DDA23F;--warnbg:rgba(221,162,63,.14);}}
+:root[data-theme=dark]{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;--ink:#DBE5E1;
+--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;--warn:#DDA23F;--warnbg:rgba(221,162,63,.14);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:17px;line-height:1.6;
+-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+h1,h2,h3,.eyebrow,th,.chip,.stat b,summary,.dmeta{font-family:var(--fh)}
+h1{font-size:clamp(1.9rem,4.6vw,2.7rem);font-weight:720;letter-spacing:-.025em;line-height:1.05;margin:.3em 0 .1em}
+h2{font-size:1.45rem;font-weight:650;letter-spacing:-.01em;margin:0 0 .2em}
+h3{font-size:1.02rem;font-weight:640;margin:1.8em 0 .1em}
+p{max-width:70ch} a{color:var(--accent)}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:640}
+header{padding:52px 0 34px} section{padding:44px 0;border-top:1px solid var(--line)}
+.lede{font-size:1.16rem;color:var(--soft);max-width:64ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-size:.76rem;padding:5px 11px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
+border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:26px}
+.stat{background:var(--surface);padding:16px 18px}
+.stat b{display:block;font-size:1.75rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.note{background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);
+border-radius:10px;padding:14px 18px;margin-top:22px;font-size:.95rem}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:18px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;font-family:var(--fh)}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--surface2)}
+tbody tr:last-child td{border-bottom:0}
+td small{display:block;font-family:var(--fb);color:var(--muted);font-size:.85rem;margin-top:3px;max-width:46ch}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{min-width:150px} .track{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden;display:inline-block;width:100px;vertical-align:middle}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.pct{font-size:.8rem;color:var(--muted);margin-left:8px;font-variant-numeric:tabular-nums}
+.why{color:var(--muted);font-size:.92rem;margin:.2em 0 .5em}
+details.doc{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+details.doc>summary{cursor:pointer;padding:11px 15px;background:var(--surface2);font-size:.84rem;list-style:none}
+details.doc>summary::-webkit-details-marker{display:none}
+details.doc>summary::before{content:"▶";color:var(--accent);font-size:.7rem;margin-right:8px}
+details.doc[open]>summary::before{content:"▼"}
+details.doc>summary code{font-family:var(--fm);font-size:.82rem}
+.dmeta{font-size:.74rem;color:var(--muted);padding:8px 15px 0}
+pre{margin:0;padding:12px 15px;background:var(--spec);font-family:var(--fm);font-size:.76rem;line-height:1.5;
+white-space:pre-wrap;word-break:break-word;max-height:34em;overflow:auto}
+footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--muted);font-size:.85rem}
+code{font-family:var(--fm);font-size:.85em}
+</style></head><body>
+<header><div class="wrap">
+<div class="eyebrow">Dataset report</div>
+<h1>biocorpus</h1>
+<p class="lede">A sequence-first biology pre-training corpus: 14,549,785 documents, ~4.43 B tokens,
+built from UniProt and Ensembl with full provenance and verified DNA→RNA→protein mappings.</p>
+<div class="chips">
+<span class="chip">14,549,785 documents</span><span class="chip">~4.43 B tokens</span>
+<span class="chip">25.4 GB raw · 3.5 GB compressed</span><span class="chip">32 zstd shards</span>
+<span class="chip">97,843 organisms</span><span class="chip">CC-BY-4.0 / open</span></div>
+<div class="kpis">
+<div class="stat"><b>4.43 B</b><span>tokens (Llama-3 / marin-tokenizer)</span></div>
+<div class="stat"><b>14.5 M</b><span>documents</span></div>
+<div class="stat"><b>98 K</b><span>distinct organisms</span></div>
+<div class="stat"><b>0.4%</b><span>cross-source redundancy removed</span></div>
+</div>
+<div class="note"><b>Status.</b> Staged for <a href="https://huggingface.co/buckets/timodonnell/biocorpus">hf://buckets/timodonnell/biocorpus</a>
+as 32 <code>.jsonl.zst</code> shards. The upload is <b>pending</b> — the sync returned <code>403 Forbidden</code>
+because the HF token lacks bucket-write permission. Shards are built and verified locally
+(record count checks out exactly at 14,549,785).</div>
+</div></header>
+
+<section><div class="wrap">
+<div class="eyebrow">Composition</div><h2>What's in it</h2>
+<p>Documents and tokens by record type. Token counts are measured with the Marin tokenizer over an unbiased
+systematic sample of every 200th record (72,748 documents tokenized).</p>
+<div class="tablewrap"><table>
+<thead><tr><th>record type</th><th class="num">documents</th><th class="num">tok/doc</th><th class="num">tokens</th><th>share of tokens</th></tr></thead>
+<tbody><tr><td><b>UniRef50</b><small>Deduped protein cluster representatives — the bulk of the corpus.</small></td><td class="num">12,867,202</td><td class="num">273</td><td class="num">3.508 B</td><td class="bar"><div class="track"><div class="fill" style="width:79.1%"></div></div><span class="pct">79.1%</span></td></tr><tr><td><b>Swiss-Prot</b><small>Curated proteins with function, GO, features and cross-references. Emitted in <em>both</em> orderings.</small></td><td class="num">974,474</td><td class="num">673</td><td class="num">0.656 B</td><td class="bar"><div class="track"><div class="fill" style="width:14.8%"></div></div><span class="pct">14.8%</span></td></tr><tr><td><b>Regulatory features</b><small>Ensembl Regulatory Build elements (enhancer, promoter, CTCF, open chromatin, TF binding) with their DNA.</small></td><td class="num">611,341</td><td class="num">325</td><td class="num">0.199 B</td><td class="bar"><div class="track"><div class="fill" style="width:4.5%"></div></div><span class="pct">4.5%</span></td></tr><tr><td><b>Central dogma</b><small>DNA (pre-mRNA) → spliced RNA → protein for one transcript, with the mapping verified.</small></td><td class="num">21,316</td><td class="num">2,462</td><td class="num">0.052 B</td><td class="bar"><div class="track"><div class="fill" style="width:1.2%"></div></div><span class="pct">1.2%</span></td></tr><tr><td><b>Splice sites</b><small>5′ donor and 3′ acceptor junction windows with the observed motif classified.</small></td><td class="num">75,452</td><td class="num">242</td><td class="num">0.018 B</td><td class="bar"><div class="track"><div class="fill" style="width:0.4%"></div></div><span class="pct">0.4%</span></td></tr></tbody></table></div>
+<p style="margin-top:16px"><b>Sequence types</b> — aa: 13,841,676 · dna: 686,793 · rna: 21,316.<br><b>Orderings</b> — sequence_first: 14,062,548 · metadata_first: 487,237.<br>
+<b>Most frequent organisms</b> — Homo sapiens (713,430), Actinomycetes (108,031), Bacteria (78,072), Streptomyces (70,067), Pseudomonadota (63,299), Mesangiospermae (49,258).</p>
+<p>The corpus is protein-weighted by construction: UniRef50 supplies breadth (deduplicated at 50% identity,
+subsampled every 3rd cluster), Swiss-Prot supplies richly annotated depth, and the human genomic records
+supply signal that protein databases don't carry — splicing, transcription/translation, and cis-regulatory elements.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Format</div><h2>One JSON object per line</h2>
+<p><code>text</code> is what a tokenizer consumes; every other field is queryable metadata:</p>
+<p><code>id · source · source_version · source_url · license · accession · entity_type · seq_type · seq_len ·
+organism · taxid · gene · name · annotations{…} · sequence · sequences{dna_genomic,rna,cds,protein} (dogma only) ·
+ordering · text</code></p>
+<p>Each document leads with a short identity anchor, then the sequence, then clean natural-language metadata.
+Missing fields are omitted rather than rendered as empty slots, and only claims that were checked are asserted.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Examples</div><h2>Example documents by type</h2>
+<p>Full documents, nothing truncated — long ones scroll inside their box.</p>
+<h3>Swiss-Prot — recognition ordering</h3><p class="why">Sequence first, then annotation: trains P(metadata | sequence).</p><details class="doc" open><summary><code>uniprot:Q6GZX4#se</code> · Frog virus 3 (isolate Goorha) (FV-3)</summary><div class="dmeta">source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=256  ordering=sequence_first</div><pre>&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+&lt;protein&gt;MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL&lt;/protein&gt;
+
+Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcription regulation
+Cross-references: EMBL AY548484; RefSeq YP_031579.1; KEGG vg:2947773; InterPro IPR007031; Pfam PF04947
+Lineage: Viruses &gt; Varidnaviria &gt; Bamfordvirae &gt; Nucleocytoviricota &gt; Megaviricetes &gt; Pimascovirales &gt; Pimascovirales incertae sedis &gt; Iridoviridae</pre></details><h3>Swiss-Prot — design ordering</h3><p class="why">The same entry rendered metadata-first: trains P(sequence | metadata).</p><details class="doc" open><summary><code>uniprot:Q6GZX4#me</code> · Frog virus 3 (isolate Goorha) (FV-3)</summary><div class="dmeta">source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=256  ordering=metadata_first</div><pre>Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcription regulation
+Cross-references: EMBL AY548484; RefSeq YP_031579.1; KEGG vg:2947773; InterPro IPR007031; Pfam PF04947
+Lineage: Viruses &gt; Varidnaviria &gt; Bamfordvirae &gt; Nucleocytoviricota &gt; Megaviricetes &gt; Pimascovirales &gt; Pimascovirales incertae sedis &gt; Iridoviridae
+
+&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+&lt;protein&gt;MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL&lt;/protein&gt;</pre></details><h3>UniRef50 cluster representative</h3><p class="why">Compact by design — this shape is ~79% of all tokens.</p><details class="doc" open><summary><code>uniref50:UniRef50_A0A0L0CIX3</code> · Schizophora</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=227  ordering=sequence_first</div><pre>&gt;uniref50:A0A0L0CIX3 Titin (Fragment) [Schizophora]
+&lt;protein&gt;GYCIEKRSSTSTTWTKVITLDAHCLQYTVDNLKEKSEYWFRVSAENEAGLGAPAVTESIALKTHATVPSPPTAPLETRVIAANAHVFEWGIPESDGGAPLLGYHIAIRDMKKSMWIEVGRVPAGVQKFQIRDLQENHEYMIRIFAKNEIGLSEPLESEEPYKAVTLGLASLPDEPRTEMSSCNTSSWLRDHHMDADIHSYARGKLLRRDEYFFRIWAKMPKKKKNSK&lt;/protein&gt;
+
+Titin (Fragment) — UniRef50 A0A0L0CIX3 — is a 227-residue protein from Schizophora (NCBI taxon 43738).
+Cluster size: 8 member sequence(s)
+Representative: A0A0L0CIX3_LUCCU</pre></details><h3>Central dogma — triple</h3><p class="why">DNA + RNA + protein together. Exons UPPERCASE, introns lowercase, so the splice is legible.</p><details class="doc" open><summary><code>ensembl-dogma:ENST00000304952:triple</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=central_dogma  seq_type=rna  seq_len=885  ordering=sequence_first  view=triple</div><pre>&gt;ensembl-dogma:ENST00000304952 HES4 [Homo sapiens]
+Gene HES4 (protein_coding), Ensembl canonical transcript ENST00000304952, 1:998,964-1,000,097 (-), 4 exon(s) / 3 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+&lt;dna&gt;GCGGGCCTGGAGCCGGGATCCGCCCTAGGGGCTCGGATCGCCGCGCGCTCGCCGCTCGCCCGCCAGCCCGCCCGTGGTCCGTGGCGGCGCGCTCCACCCGGCACGGGGAGGCGCGGGGCGCACCATGGCCGCAGACACGCCGGGGAAACCGAGCGCCTCGCCGATGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGgtggggtcccggccgggcgtgaggggggcgaccggggggcgggagggacgcgggactcagccggtgcccgacccgcagTCCTCCAAGCCGGTCATGGAGAAGCGGCGCCGAGCGCGTATTAACGAGAGCCTCGCTCAGCTCAAAACCCTCATCCTGGACGCCCTCAGAAAAGAGgtaagtcgggggcgaaggcccgagacccggagtctgggtcgcagctgacctggacctcccgcctatccccgcccccagAGCTCCCGCCACTCGAAGCTGGAGAAGGCGGACATCCTGGAGATGACCGTGAGACACCTGCGGAGCCTGCGTCGCGTGCAGGTGACGGgtgaggcgcgggcggcggcggcttggaggcggggggagggcgcgggacccccgggacccggcaccgacctctcctcctgtgtcgctcccgcagCCGCGCTCAGCGCCGACCCCGCCGTTCTGGGCAAGTACCGCGCCGGCTTCCACGAGTGTCTGGCGGAGGTGAACCGCTTCCTGGCCGGCTGCGAGGGCGTCCCGGCCGACGTGCGCTCCCGCCTGCTGGGCCACCTGGCAGCCTGCCTGCGCCAGCTGGGACCCTCCCGCCGCCCGGCCTCGCTGTCCCCGGCTGCCCCCGCAGAGGCCCCAGCGCCCGAGGTCTACGCGGGCCGCCCGCTGCTGCCATCGCTCGGCGGCCCCTTCCCTCTGCTCGCGCCGCCGCTGCTGCCGGGTCTGACCCGGGCGCTGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGTGGGCCCTGGAGGCCGTGGCTGCGCTGAGGCTGTGGCCCTGAGACTGCATCGGAGGCGGCGCCCCGTTCTAGGGCCGTGGCCTTTGCCGAGACTGTAGCAGAGAAAACGTATTTATTATTCCA&lt;/dna&gt;
+
+Transcription and splicing remove 3 intron(s) (249 nt) to give the mature mRNA (885 nt):
+&lt;rna&gt;GCGGGCCUGGAGCCGGGAUCCGCCCUAGGGGCUCGGAUCGCCGCGCGCUCGCCGCUCGCCCGCCAGCCCGCCCGUGGUCCGUGGCGGCGCGCUCCACCCGGCACGGGGAGGCGCGGGGCGCACCAUGGCCGCAGACACGCCGGGGAAACCGAGCGCCUCGCCGAUGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGUCCUCCAAGCCGGUCAUGGAGAAGCGGCGCCGAGCGCGUAUUAACGAGAGCCUCGCUCAGCUCAAAACCCUCAUCCUGGACGCCCUCAGAAAAGAGAGCUCCCGCCACUCGAAGCUGGAGAAGGCGGACAUCCUGGAGAUGACCGUGAGACACCUGCGGAGCCUGCGUCGCGUGCAGGUGACGGCCGCGCUCAGCGCCGACCCCGCCGUUCUGGGCAAGUACCGCGCCGGCUUCCACGAGUGUCUGGCGGAGGUGAACCGCUUCCUGGCCGGCUGCGAGGGCGUCCCGGCCGACGUGCGCUCCCGCCUGCUGGGCCACCUGGCAGCCUGCCUGCGCCAGCUGGGACCCUCCCGCCGCCCGGCCUCGCUGUCCCCGGCUGCCCCCGCAGAGGCCCCAGCGCCCGAGGUCUACGCGGGCCGCCCGCUGCUGCCAUCGCUCGGCGGCCCCUUCCCUCUGCUCGCGCCGCCGCUGCUGCCGGGUCUGACCCGGGCGCUGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGUGGGCCCUGGAGGCCGUGGCUGCGCUGAGGCUGUGGCCCUGAGACUGCAUCGGAGGCGGCGCCCCGUUCUAGGGCCGUGGCCUUUGCCGAGACUGUAGCAGAGAAAACGUAUUUAUUAUUCCA&lt;/rna&gt;
+Exon boundaries in the mRNA: 1-232, 233-328, 329-416, 417-885.
+5&#x27; UTR: 1-124 (124 nt); CDS: 125-790 (666 nt); 3&#x27; UTR: 791-885 (95 nt).
+
+Translation of the CDS (666 nt, standard genetic code) yields the 221-residue protein:
+&lt;protein&gt;MAADTPGKPSASPMAGAPASASRTPDKPRSAAEHRKSSKPVMEKRRRARINESLAQLKTLILDALRKESSRHSKLEKADILEMTVRHLRSLRRVQVTAALSADPAVLGKYRAGFHECLAEVNRFLAGCEGVPADVRSRLLGHLAACLRQLGPSRRPASLSPAAPAEAPAPEVYAGRPLLPSLGGPFPLLAPPLLPGLTRALPAAPRAGPQGPGGPWRPWLR&lt;/protein&gt;
+
+Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein.</pre></details><h3>Central dogma — DNA → RNA</h3><p class="why">Transcription and splicing only (used when there is no coding product).</p><details class="doc" open><summary><code>ensembl-dogma:ENST00000450305:dna_rna</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=central_dogma  seq_type=rna  seq_len=632  ordering=sequence_first  view=dna_rna</div><pre>&gt;ensembl-dogma:ENST00000450305 DDX11L1 [Homo sapiens]
+Gene DDX11L1 (transcribed_unprocessed_pseudogene), Ensembl canonical transcript ENST00000450305, 1:12,010-13,670 (+), 6 exon(s) / 5 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+&lt;dna&gt;GTGTCTGACTTCCAGCAACTGCTGGCCTGTGCCAGGGTGCAAGCTGAGcactggagtggagttttcctgtggagaggagccatgcctagagtgggatgggccattgttcatcttctggcccctgttgtctgcatgtaacttaataccacaaccaggcataggggaaagaTTGGAGGAAAGATGAGTGAGAGCATCAACTTCTCTCACAACCTAGGCCAgtaagtagtgcttgtgctcatctccttggctgtgatacgtggccggccctcgctccagcagctggacccctacctgccgtctgctgccatcggagcccaaagccgggctgtgactgctcagaccagccggctggagggaggggctcagcaggtctggctttggccctgggagagcaggtggaagatcaggcaggccatcgctgccacagaacccagtggattggcctaggtgggatctctgagctcaacaagccctctctgggtggtaggtgcagagacgggaggggcagagccgcaggcacagccaagagggctgaagaaatggtagaacggagcagctggtgatgtgtgggcccaccggccccaggctcctgtctccccccagGTGTGTGGTGATGCCAGGCATGCCCTTCCCCAGCATCAGGTCTCCAGAGCTGCAGAAGACGACGGCCGACTTGGATCACACTCTTgtgagtgtccccagtgttgcagaggtgagaggagagtagacagtgagtgggagtggcgtcgcccctagggctctacggggccggcgtctcctgtctcctggagaggcttcgatgcccctccacaccctcttgatcttccctgtgatgtcatctggagccctgctgcttgcggtggcctataaagcctcctagtctggctccaaggcctggcagagtctttcccagggaaagctacaagcagcaaacagtctgcatgggtcatccccttcactcccagCTCAGAGCCCAGGCCAGGGGCCCCCAAGAAAGGCTCTGGTGGAGAACCTGTGCATGAAGGCTGTCAACCAGTCCATAGgcaagcctggctgcctccagctgggtcgacagacaggggctggagaaggggagaagaggaaagtgaggttgcctgccctgtctcctacctgaggctgaggaaggagaaggggatgcactgttggggaggcagctgtaactcaaagccttagcctctgttcccacgaagGCAGGGCCATCAGGCACCAAAGGGATTCTGCCAGCATAGTGCTCCTGGACCAGTGATACACCCGGCACCCTGTCCTGGACACGCTGTTGGCCTGGATCTGAGCCCTGGTGGAGGTCAAAGCCACCTTTGGTTCTGCCATTGCTGCTGTGTGGAAgttcactcctgccttttcctttccctagagcctccaccaccccgagatcacatttctcactgccttttgtctgcccagTTTCACCAGAAGTAGGCCTCTTCCTGACAGGCAGCTGCACCACTGCCTGGCGCTGTGCCCTTCCTTTGCTCTGCCCGCTGGAGACGGTGTTTGTCATGGGCCTGGTCTGCAGGGATCCTGCTACAAAGGTGAAACCCAGGAGAGTGTGGAGTCCAGAGTGTTGCCAGGACCCAGGCACAGGCATTAGTGCCCGTTGGAGAAAACAGGGGAATCCCGAA&lt;/dna&gt;
+
+Transcription and splicing remove 5 intron(s) (1029 nt) to give the mature mRNA (632 nt):
+&lt;rna&gt;GUGUCUGACUUCCAGCAACUGCUGGCCUGUGCCAGGGUGCAAGCUGAGUUGGAGGAAAGAUGAGUGAGAGCAUCAACUUCUCUCACAACCUAGGCCAGUGUGUGGUGAUGCCAGGCAUGCCCUUCCCCAGCAUCAGGUCUCCAGAGCUGCAGAAGACGACGGCCGACUUGGAUCACACUCUUCUCAGAGCCCAGGCCAGGGGCCCCCAAGAAAGGCUCUGGUGGAGAACCUGUGCAUGAAGGCUGUCAACCAGUCCAUAGGCAGGGCCAUCAGGCACCAAAGGGAUUCUGCCAGCAUAGUGCUCCUGGACCAGUGAUACACCCGGCACCCUGUCCUGGACACGCUGUUGGCCUGGAUCUGAGCCCUGGUGGAGGUCAAAGCCACCUUUGGUUCUGCCAUUGCUGCUGUGUGGAAUUUCACCAGAAGUAGGCCUCUUCCUGACAGGCAGCUGCACCACUGCCUGGCGCUGUGCCCUUCCUUUGCUCUGCCCGCUGGAGACGGUGUUUGUCAUGGGCCUGGUCUGCAGGGAUCCUGCUACAAAGGUGAAACCCAGGAGAGUGUGGAGUCCAGAGUGUUGCCAGGACCCAGGCACAGGCAUUAGUGCCCGUUGGAGAAAACAGGGGAAUCCCGAA&lt;/rna&gt;
+Exon boundaries in the mRNA: 1-48, 49-97, 98-182, 183-260, 261-414, 415-632.
+
+Verified: the mRNA equals the genomic exons with introns removed.</pre></details><h3>Central dogma — RNA → protein</h3><p class="why">Translation only (used when the genomic span is too large to include).</p><details class="doc" open><summary><code>ensembl-dogma:ENST00000421241:rna_protein</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=central_dogma  seq_type=rna  seq_len=1,832  ordering=sequence_first  view=rna_protein</div><pre>&gt;ensembl-dogma:ENST00000421241 C1orf159 [Homo sapiens]
+Gene C1orf159 (protein_coding), Ensembl canonical transcript ENST00000421241, 1:1,081,823-1,116,089 (-), 10 exon(s) / 9 intron(s).
+
+Mature mRNA (1832 nt):
+&lt;rna&gt;GUACGAAAGAGAAACCCGGAGGGCGCCGGGGACUGGGCCGGGGUCUGCAGGGCUCAGCUGAGCCCAUGAGCUCCCAGAGCUAACCCCUGAACACCCAGGCGGGCAAAGGGCUGAUGUCGGUAGUCCCCAUCCUGGAGGGGCAGGCUCUGCGCAUCUGCUCCUGGCAUGGCGCUGCGGCACCUCGCCCUCCUGGCUGGCCUUCUCGUGGGAGUCGCCAGCAAGUCCAUGGAGAACACGGCCCAGCUGCCCGAGUGCUGUGUGGAUGUGGUGGGCGUCAACGCCAGCUGCCCAGGCGCAAGUCUGUGUGGUCCAGGCUGUUACAGGCGCUGGAACGCGGACGGGAGCGCCAGCUGCGUCCGCUGUGGGAACGGAACCCUCCCAGCCUACAACGGCUCCGAGUGUAGAAGCUUUGCUGGCCCGGGUGCGCCAUUCCCCAUGAACAGAAGCUCAGGGACCCCCGGGCGGCCACAUCCUGGGGCUCCGCGCGUGGCCGCCUCCCUCUUCCUGGGCACGUUCUUCAUUAGCUCCGGCCUCAUCCUCUCCGUAGCUGGGUUCUUCUACCUCAAGCGCUCCAGUAAACUCCCCAGGGCCUGCUACAGAAGAAACAAAGCUCCGGCCCUGCAGCCUGGCGAAGCCGCUGCAAUGAUCCCCCCGCCACAGUCCUCAGUACGGAAGCCGCGCUACGUCAGGCGGGAGCGGCCCCUGGACAGGGCCACGGAUCCCGCUGCCUUCCCGGGGGAGGCCCGUAUCAGCAAUGUCUGACCUGGAGGCCGAGACCACGCCACGCACUUGGCGGCAGGGACCCGGAGGCCGACCCCUUGGCGGGAACCAGCACAAAGUGUUGGCAUCGCCCGGCGCCCGGGACAGUCCUGGGCACAGCCUCGGCUCUGAGUCCCUCCGCCUCCCAGCGACGGACGCCAAAGGGUCCCGGGCCGCCUGAGGCUCCUCCCCACCACAGCCAUCUCGUUUAUCGGACCAGGAGCAGGCAUCCAUGAGACCUCAGAGCUUCAGAUCGAGGCCUUGGGGGGUCCGGGCCCCCCCAGGAAACACGGUGAGGCCCCAGCGCCUGCAGCCAAAGCUGGCACGAUCUAUGGGGCAGGUGCCGCUCUGCCUAGAAAAGCCAGGGGCUCUGCUGCCGUGCCCUCCAGAGCCCACAGCGGGCAGGACUCCUCCAGCACCACCACACCCAGUGGCCCGAGACCCCUCUGAGAACAGUGAGGCUGGUCCUCGUGCCGUUCCAGCCGGUGCCCGGCCAGUGGGGAGGACACAGCCUAGGAACCAGCUGCCUGAGACCAGGGUGCCUCUGGGCUGUCCUCCCGCGUGGCGGAGACCCCAAGCACGCAGCCACCCAUUUCCGGAGCUGCAGGAUAGAGCUUCCUCUUGAUCUCUGUUUUUAAGCAGAAAUUCAUUGUGCAGAAAAGUCCUCCAGAGCUCUGUGGCCCCGCUCGGAUCCGCUGGACCCCCAUGCCUGGCUGAUCCCUGCCCACGUGGGGCAGGCCCACAUCUAACCCCCACAAGUCACUGCCUCACUGCACCUGCCAAGGCUGCCCUGGCGCUGAGUCCUGGGGUCCCUCCCGGAGUUCCUGGGAGAAAGGCGCCGUCGUGGCCGCCUCCCGCACGCCAGGCCCGGGCUCCACCGUGGGUCUCAGACGCCCUGCGGCACCGGCACCGUCUGCUUUAGCAUGGGACCCCCCUCUGAGGGGUGGCCUGGCCUUCGGGGUCCCCACGCUCCUUUGCGAAGUCCACUGUGGGUGCCAUCAUGGUCUCCGGGACCUGGGCCAGCGGGAACGUGGGGGCACUGGGUGUGCUGAUAUAAAGUCGGCAUUACUCAA&lt;/rna&gt;
+5&#x27; UTR: 1-165 (165 nt); CDS: 166-762 (597 nt); 3&#x27; UTR: 763-1832 (1070 nt).
+
+Translation of the CDS (597 nt, standard genetic code) yields the 198-residue protein:
+&lt;protein&gt;MALRHLALLAGLLVGVASKSMENTAQLPECCVDVVGVNASCPGASLCGPGCYRRWNADGSASCVRCGNGTLPAYNGSECRSFAGPGAPFPMNRSSGTPGRPHPGAPRVAASLFLGTFFISSGLILSVAGFFYLKRSSKLPRACYRRNKAPALQPGEAAAMIPPPQSSVRKPRYVRRERPLDRATDPAAFPGEARISNV&lt;/protein&gt;
+
+Verified: translate(CDS) equals the protein.</pre></details><h3>Splice site — 5′ donor</h3><p class="why">Window over the exon→intron boundary; motif observed, not assumed.</p><details class="doc" open><summary><code>ensembl_splice:ENST00000456328:intron1:donor</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=splice_junction  seq_type=dna  seq_len=200  ordering=sequence_first</div><pre>&gt;ensembl:ENST00000456328:intron1:donor [Homo sapiens]
+&lt;dna&gt;CCCCTGTTGTCTGCATGTAACTTAATACCACAACCAGGCATAGGGGAAAGATTGGAGGAAAGATGAGTGAGAGCATCAACTTCTCTCACAACCTAGGCCAGTAAGTAGTGCTTGTGCTCATCTCCTTGGCTGTGATACGTGGCCGGCCCTCGCTCCAGCAGCTGGACCCCTACCTGCCGTCTGCTGCCATCGGAGCCCAA&lt;/dna&gt;
+
+The sequence is a 200 bp window over a 5&#x27; splice donor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 5&#x27; splice donor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Donor dinucleotide: GT — canonical (GT-AG)</pre></details><h3>Splice site — 3′ acceptor</h3><p class="why">The mirror: intron→exon.</p><details class="doc" open><summary><code>ensembl_splice:ENST00000456328:intron1:acceptor</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=splice_junction  seq_type=dna  seq_len=200  ordering=sequence_first</div><pre>&gt;ensembl:ENST00000456328:intron1:acceptor [Homo sapiens]
+&lt;dna&gt;GGCAGAGCCGCAGGCACAGCCAAGAGGGCTGAAGAAATGGTAGAACGGAGCAGCTGGTGATGTGTGGGCCCACCGGCCCCAGGCTCCTGTCTCCCCCCAGGTGTGTGGTGATGCCAGGCATGCCCTTCCCCAGCATCAGGTCTCCAGAGCTGCAGAAGACGACGGCCGACTTGGATCACACTCTTGTGAGTGTCCCCAGT&lt;/dna&gt;
+
+The sequence is a 200 bp window over a 3&#x27; splice acceptor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 3&#x27; splice acceptor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Acceptor dinucleotide: AG — canonical (GT-AG)</pre></details><h3>Regulatory feature — promoter</h3><p class="why">Cis-regulatory element with its DNA.</p><details class="doc" open><summary><code>ensembl_reg:ENSR00001295568</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=501  ordering=sequence_first</div><pre>&gt;ensembl:ENSR00001295568 promoter [Homo sapiens]
+&lt;dna&gt;ACAGGAGTCATGGTGCCTGTGGGTCGGAGCCGGAGCGTCAGAGCCACCCACGACCACCGGCACGCCCCCACCACAGGGCAGCGTGGTGTTGAGACAACACAGCCCTCATCCCAACTATGCACATAGCTTCAGCCTGCACAGATAGGGGAGTAGGGGACAGAGCATTTGCTGAGAGGCCAGGAGCGCATAGATGGGACTCTGCTGATGCCTGCTGAGTGAATGAGGGAAAGGGCAGGGCCCGGGACTGGGGAATCTGTAGGGTCAATGGAGGAGTTCAGAGAAGGTGCAACATTTCTGACCCCCTACAAGGTGCTTGCTACCTGCCAGGCACCCTTTCCATACCTTGTCTCAGTTCAGCTCCCCACCTTGGATAAACAAGAAACCTTGGTTGCAGAGGAAAAAAGAGGCTGGAAACAAAGGGGTAGAAATGGGGTAGCAGGGGAGATTGCCTGATCAACTGCCAAATGGTACACAGTTCTGGAAAAGCACAAAAAATGTGCA&lt;/dna&gt;
+
+The sequence is a promoter (501 bp) from the Ensembl release-112 Regulatory Build (ENSR00001295568) from Homo sapiens (NCBI taxon 9606).
+Location: 1:24,876-25,376
+Feature length: 501 bp</pre></details><h3>Regulatory feature — enhancer</h3><p class="why">Long features are shown as a centred window.</p><details class="doc" open><summary><code>ensembl_reg:ENSR00001164745</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first</div><pre>&gt;ensembl:ENSR00001164745 enhancer [Homo sapiens]
+&lt;dna&gt;GGGCAGGAGGCAGTCACTGACCCCGAGACGTTTGCATCCTGCACAGCTAGAGATCCTTTATTAAAAGCACACTGTTGGTTTCTGCTCAGTTCTTTATTGATTGGTGTGCCGTTTTCTCTGGAAGCCTCTTAAGAACACAGTGGCGCAGGCTGGGTGGAGCCGTCCCCCCATGGAGCACAGGCAGACAGAAGTCCCCGCCCCAGCTGTGTGGCCTCAAGCCAGCCTTCCGCTCCTTGAAGCTGGTCTCCACACAGTGCTGGTTCCGTCACCCCCTCCCAAGGAAGTAGGTCTGAGCAGCTTGTCCTGGCTGTGTCCATGTCAGAGCAACGGCCCAAGTCTGGGTCTGGGGGGGAAGGTGTCATGGAGCCCCCTACGATTCCCAGTCGTCCTCGTCCTCCTCTGCCTGTGGCTGCTGCGGTGGCGGCAGAGGAGGGATGGAGTCTGACACGCGGGCAAAGGCTCCTCCGGGCCCCTCACCAGCCCCAGGTCCTTTCCCAGAGATGCCTGGAGGGAAAAGGCTGAGTGAGGGTGGTTGGTGGGAAACCCTGGTTCCCCCAGCCCCCGGAGACTTAAATACAGGAAGAAAAAGGCAGGACAGAA&lt;/dna&gt;
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00001164745) from Homo sapiens (NCBI taxon 9606).
+Location: 1:12,802-16,450
+Feature length: 3,649 bp (central 600 bp shown)</pre></details>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Random sample</div><h2>15 documents sampled uniformly at random</h2>
+<p>Reservoir-sampled over all 14,549,785 records, so the mix reflects the corpus itself — which means
+mostly UniRef50. A larger
+<a href="corpus_sample_100.txt">100-document plain-text sample</a> is also in this repo.</p>
+<details class="doc"><summary><code>uniref50:UniRef50_UPI0018E22DA2</code> · Cyprinodon tularosa</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=892  ordering=sequence_first</div><pre>&gt;uniref50:UPI0018E22DA2 E3 ubiquitin-protein ligase TOM1-like isoform X9 [Cyprinodon tularosa]
+&lt;protein&gt;MSLDGKKRQVNELKRELQRRGLDMKGQRGDLIKRLNAALEAEAEADTSEQSGQEEYGDETQEEEDVQEQQDQDLGGGGGDDDDDDDSDDGGDNTQQEDDGSDSGSYYEEEESGAETEQFESQQTSDPGHDDVQRLSVMSEEGSKPEATFEGNTNDIKTEIITEDETGPVEDRQQEAQGSEQQGQAEIKVEDSKARSCRGMLPTTPTEESMPTGLYFHPFTVSDGRLSTMMRKTITAAENRSDIRRERQPVPQANIFSQYKSAVCFGDFSLKDEQDAASRRLPQHRRTPLHPAALQRPQQPTVPHPPRSIQGGSVGPGPQTPNHPSPLTSLTNLRGGSPAPLAANHPGGPTPNHVSPLLTSDPSSTVRSTLQPPGSRPVSQPALSPHQQRSEQGVLSHQPLTANYQAVQIHQSAELTYIKTEDEYWPVEDRQQEAQGTEQQGQAEIKVEDRKGGNSRKRPHEENRSYGYYEHREEKKSRTPQPPAEDEENVDDSIVTTDTYIKTEDEYWPIEDRQQEAQGTEQQGQAEIKVEDRKDSNLNDFHLSDLDLETITAAENRSDIRRERQPVPQANIFSQYKSAVCFGDFSLKDEQDAASRRLPQHRRTPLHPAALQRPQQPTVPHPPRSIQGGSGGPGPWTPNHPSPLTSLTNLRGGSPAPLAANHPGGPTPNHVSPLLTSDPSSTVRSTLQTPGSRPVSQPALSPHQQRSEQGVLSHQPLTANYQAVQIRQSPERGVQHSAEPDVTEAVVQDEIIVEARSGGENQQNKNTASIERADRSIPIERSDPSTFKTQRDTPPLALRNRLRAQPPMRRRNKIGNRRRRCRNPRNILLGLNRREGIASAPPNREDDSRRLAFHTLAAVSEFLSSPYNQDQDPRYRLSTLVNTFLICRDFFG&lt;/protein&gt;
+
+E3 ubiquitin-protein ligase TOM1-like isoform X9 — UniRef50 UPI0018E22DA2 — is a 892-residue protein from Cyprinodon tularosa (NCBI taxon 77115).
+Cluster size: 1 member sequence(s)
+Representative: UPI0018E22DA2</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0AAN7VPP1</code> · Pyrocoelia pectoralis</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=206  ordering=sequence_first</div><pre>&gt;uniref50:A0AAN7VPP1 Regulatory protein zeste [Pyrocoelia pectoralis]
+&lt;protein&gt;MSSKKRSANFSAKEESLLVSLAKGYKGVLECKISDMKTHNEKSECWLKIEKQFNSVSGEVHRPADVLRKKYENIKKRVKKKFSDEKCHARMTGGGPPHDFKFTDVDNEVKEILGKRVDGIPSEFDDDADTKMYKIHDAKNLNEADMLWLLEHDDSDVDNIETNLADSDDNEDYLSEQDEIPDEIFQEENDTISQNSNEGIKFQKMG&lt;/protein&gt;
+
+Regulatory protein zeste — UniRef50 A0AAN7VPP1 — is a 206-residue protein from Pyrocoelia pectoralis (NCBI taxon 417401).
+Cluster size: 1 member sequence(s)
+Representative: A0AAN7VPP1_9COLE</pre></details><details class="doc"><summary><code>uniref50:UniRef50_R0L9C0</code> · Anas platyrhynchos</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=372  ordering=sequence_first</div><pre>&gt;uniref50:R0L9C0 Uncharacterized protein [Anas platyrhynchos]
+&lt;protein&gt;MRDPRKKSWCYRPRTKYLSAGPMHMKLSTFFRATVGANSPLVPTAVPYSSCATAGTPRDGQNPKGAKSCTGMGQKCWEPPKRPQKAVIKMPRAPDECVAALMTRLGKVFTARILPPIEGQTHSGCELLLARQQKAERKPPPSRDTGETKIQCPNLFRGSIFLTKQRTVRFAHSSTAGIARSELNPLENPRRDHEAAAVSKSLPPPSVLNQVLRGKNWRGRLMGTNTGDPAQIVNGQHFAKPGLDGGPVKHRVKNNLQPIKCLLLLSTECKGEEILCLRSDTSSQVSLYTTRVMQKQVGTNTSSPQLDKPCCAYVQNPAMAPMNSCVLSPPASWAAKRKKRQLQQLQGLDRGDVLPPSCWGGVFSALCIHNNN&lt;/protein&gt;
+
+Uncharacterized protein — UniRef50 R0L9C0 — is a 372-residue protein from Anas platyrhynchos (NCBI taxon 8839).
+Cluster size: 1 member sequence(s)
+Representative: R0L9C0_ANAPL</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0ABM1YCG5</code> · Culicinae</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=527  ordering=sequence_first</div><pre>&gt;uniref50:A0ABM1YCG5 Piezo TM1-24 domain-containing protein [Culicinae]
+&lt;protein&gt;MANYFVCLVVQRLILPIIMAICCLMRPVGLSLPYLLFLFGLPFVPVATPRSIKGSAGLYFKLFISLSILLLVGQIAFQIVLIALGDQLIESCQFLEILLRHIGLVKFQDLNAAVVVYWISPEIIMSLTAVVVYVILRKLADGNIGSEQPASTSPSSLEAPEVVSLRCDPNPVSREKLAFLTKLGVLLSVAMLCLAAVLQPSVPSGIYFVIFLGSATWWACYKELDRAFGVVLRVTLVFLILHITGFLAYQNPWPQELLPANDTIARIFALTPIMSSSCDNLTDIRYVYFNSDLGSDYYLNPVVLMLCYYCISITSSLLMRPRMTEKEIKRQELFYQLESGVRLQRQISFRMQRKNILRKTLTSDRWRGAARKVKNVSSPLARRFYYHQPSPSKPRGRVLQLSVPSSPTAMSDVPDERTPLMRGGTRRVRDASTSDAQNTIPNDSIAMHTIGRKHVSEEEDTTSFFEQIMLATGNVANFIYKNSYIFTNVIMMTWSIMFHSWLTFVLLIWANLIWIMPNQRKNMLNSS&lt;/protein&gt;
+
+Piezo TM1-24 domain-containing protein — UniRef50 A0ABM1YCG5 — is a 527-residue protein from Culicinae (NCBI taxon 43817).
+Cluster size: 2 member sequence(s)
+Representative: A0ABM1YCG5_AEDAL</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0AAD9J8I2</code> · Paralvinella palmiformis</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=960  ordering=sequence_first</div><pre>&gt;uniref50:A0AAD9J8I2 Kringle domain-containing protein [Paralvinella palmiformis]
+&lt;protein&gt;MQIPHKHPYTDDDMYPDASVTDAANFCRNPSNDPALGPWCYTTDPDVRRETCAISKCSECMLDDLGRQYTGKQAVTNSGRTCQRWDTQSPHAHNFVNGTNFPDGTVDAAENYCRNPDGKKGGPWCYTMDFRVTWEYCGIYSCRECVVSYLGDEYDGTRSTTISGRQCQRWDSQYPHQHNYTENDLPDRSLLDATNKCRNPDKKSGSGPWCFTTDRNVRWESCGVPFCNQRGIRPNKEFRNYTGIRSVTASGTVCQYWSSQKHHPHNFTDPADFPDPTILSAVNYCRNPDGKPTGPWCYTMDPDKEWETCGIPLASDCRLTDLGKEYTGRYRITVSGRNCQRWDAQTPHSHQNNDSSLFPDATLEDAANYCRNPTGKDGGPWCYTTDPDRKWEYCDVLKCEDCKPTYLGTTYKGSRSRTVSGHICHRWNATTPYSHGFTAKDFPDESLSDANNYCRNPDGDPDGPWCYTIDPSIRRETCGIHLCMELGRRETKIGNLYRGHHFFTKSGILCQRWDRQYPHNHTHTSIAMFPDSSLEETANYCRNPDNDPEGPWCYTMDPGVVRESCNIPRANDCVRDNKYGTLYTGTRTKTMSGRLCQVWQSQSPHFSYYTSNTSFPDSSARDAKNYCRNPSNQTLGPWCYTTDEKRVKETCFIPSCLECRMTYIGYDYRGTISSTLSGRPCQRWDAQIPHRHNMTNPLRFPDKTLAEAANYCRNPDRKVGTGPWCYTDDPLVEWESCAIPICEDCTIDDTGTGYGGYINTALNFTRCKHWLDVSSVSYSNSYFNEVLVSRAKNYCRNPPIDSPLKGTGPWCHSSDDEQKVSCGIPRCSGREYTGRRSTTISGRTCQRWDRSYPSHHSYVEDKYFPDISIHEASNYCRNPDQRSTGPWCYTIEGTGDESCEIPFCFGKGFDSDRIVNSDFISSTTDKCSLNVFQYPTDKDANIMASRPTSVSSALDPYIAV&lt;/protein&gt;
+
+Kringle domain-containing protein — UniRef50 A0AAD9J8I2 — is a 960-residue protein from Paralvinella palmiformis (NCBI taxon 53620).
+Cluster size: 1 member sequence(s)
+Representative: A0AAD9J8I2_9ANNE</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A1G9GZK8</code> · Halarsenatibacter silvermanii</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=325  ordering=sequence_first</div><pre>&gt;uniref50:A0A1G9GZK8 UDP-N-acetylenolpyruvoylglucosamine reductase [Halarsenatibacter silvermanii]
+&lt;protein&gt;MNKQNRYRRLISSFAEVRRISISEDEPMKRHTSLRIGGPADLFIVPRRREAALEVFKKLESADIPWSVTGAGSNLLVADRGIRGAAVKLSDLDRVEIEGSSIKAEAGILLGRLAEISARSALSGLEFASGIPGTLGGAIFMNAGAYGGQMQDVLKEVEVFSPQDKRSYRLKKEELELSYRSSRLQQEGCIAVSAVLELSRGEKEQILERMAELEYKRWLKQPMDCPSAGSTFKRPEDDYAGRLIEAAGFKGSRVGNAMVSQKHAGFIVNLIEKGGAEAAEVIELMRRVQRGVEEEFDITLEPEPRPLGDFPPDELTPPFPNGTAV&lt;/protein&gt;
+
+UDP-N-acetylenolpyruvoylglucosamine reductase — UniRef50 A0A1G9GZK8 — is a 325-residue protein from Halarsenatibacter silvermanii (NCBI taxon 321763).
+Cluster size: 1 member sequence(s)
+Representative: A0A1G9GZK8_9FIRM</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A0F4LMF1</code> · Bombilactobacillus mellifer</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=219  ordering=sequence_first</div><pre>&gt;uniref50:A0A0F4LMF1 Uncharacterized protein [Bombilactobacillus mellifer]
+&lt;protein&gt;MNNTLLKLIIIITSGITLATAFIYKSEMDYHNNLVAEQNTSLNELKKQKRRYKTKQLKVQYQVKSAIKQSKNPNIKYIDNNNSDISRIARISKKFFYIYYTWDNQKQYARRTALVSDICSPRIISNKNLFDNGKDSLGGSYIDSLSLHCRFKEQKVSILDFSPLENHINALILVTFQSWRSSKVQESDSSKGQRIFKVTYDKKQNTITQISPIMRVNMD&lt;/protein&gt;
+
+Uncharacterized protein — UniRef50 A0A0F4LMF1 — is a 219-residue protein from Bombilactobacillus mellifer (NCBI taxon 1218492).
+Cluster size: 1 member sequence(s)
+Representative: A0A0F4LMF1_9LACO</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A0D3C696</code> · Brassica</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=523  ordering=sequence_first</div><pre>&gt;uniref50:A0A0D3C696 RNA helicase [Brassica]
+&lt;protein&gt;MKSYNPRTGMEFLLITPISKASATQRAGRAGRTSAGKCYRLYTAFNYKNDLEESTVPEVQRTNLASVVLALKSLGIHDLISFDFMDPPPAEALVKALELLFGLGALNKVGELTKAGRRMAEFPLDPMLSKMIVVSDKYKCSDEVLSIAAMLSVGGSVFYGPKDKQVHADNARMNFHAGNVGDHIALLKRFTARGRKRTTLHSGAMRTMFRFFPAHCEAAEEWIISNCEASSDGAHTSQFRLISGVVVYHELVLTSKEYMRQVTELKPEWLIELAPHYYQLKDVEDDWETPSSATYLRSVSISRFSMAPVSALAKYKLVFLGDQSVGKTSIITRFMYDKFDNTYQNVIITLKHVIATIGIDFLSKTMYLEDRTVRLQLWDTAGQERFRSLIPSYIRDSSVAVIVYDVASRQSFLNTAKWIDEVRTERGSDVIVVLVGNKTDLVDKRQVSIEEAEAKARELNVMFIETSAKAGFNIKALFRKIAAALPGMETLSSTKQEDMVDVNLKSSNANASSAQQQSGGCSC&lt;/protein&gt;
+
+RNA helicase — UniRef50 A0A0D3C696 — is a 523-residue protein from Brassica (NCBI taxon 3705).
+Cluster size: 4 member sequence(s)
+Representative: A0A0D3C696_BRAOL</pre></details><details class="doc"><summary><code>uniprot:P08432#se</code> · Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker&#x27;s yeast)</summary><div class="dmeta">source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=466  ordering=sequence_first</div><pre>&gt;sp:P08432 Ornithine decarboxylase [Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker&#x27;s yeast)]
+&lt;protein&gt;MSSTQVGNALSSSTTTLVDLSNSTVTQKKQYYKDGETLHNLLLELKNNQDLELLPHEQAHPKIFQALKARIGRINNETCDPGEENSFFICDLGEVKRLFNNWVKELPRIKPFYAVKCNPDTKVLSLLAELGVNFDCASKVEIDRVLSMNISPDRIVYANPCKVASFIRYAASKNVMKSTFDNVEELHKIKKFHPESQLLLRIATDDSTAQCRLSTKYGCEMENVDVLLKAIKELGLNLAGVSFHVGSGASDFTSLYKAVRDARTVFDKAANEYGLPPLKILDVGGGFQFESFKESTAVLRLALEEFFPVGCGVDIIAEPGRYFVATAFTLASHVIAKRKLSENEAMIYTNDGVYGNMNCILFDHQEPHPRTLYHNLEFHYDDFESTTAVLDSINKTRSEYPYKVSIWGPTCDGLDCIAKEYYMKHDVIVGDWFYFPALGAYTSSAATQFNGFEQTADIVYIDSELD&lt;/protein&gt;
+
+Ornithine decarboxylase — UniProtKB/Swiss-Prot P08432 — is a 466-residue protein from Saccharomyces cerevisiae (strain ATCC 204508 / S288c) (Baker&#x27;s yeast) (NCBI taxon 559292); gene SPE1.
+Function: Catalyzes the first and rate-limiting step of polyamine biosynthesis that converts ornithine into putrescine, which is the precursor for the polyamines, spermidine and spermine. Polyamines are essential for cell proliferation and are implicated in cellular processes, ranging from DNA replication to apoptosis
+Catalytic activity: Reaction=L-ornithine + H(+) = putrescine + CO2; Xref=Rhea:RHEA:22964, ChEBI:CHEBI:15378, ChEBI:CHEBI:16526, ChEBI:CHEBI:46911, ChEBI:CHEBI:326268; EC=4.1.1.17; Evidence=;
+Subcellular location: Cytoplasm
+Pathway: Amine and polyamine biosynthesis; putrescine biosynthesis via L-ornithine pathway; putrescine from L-ornithine: step 1/1
+GO annotations: cytoplasm (component); ornithine decarboxylase activity (function); pantothenate biosynthetic process (process); putrescine biosynthetic process (process); putrescine biosynthetic process from arginine, via ornithine (process)
+Sequence features: 16 binding [244; 247]; 1 chain; 1 act site [411 (Proton donor; shared with dimeric partner)]; 1 site [244 (Stacks against the aromatic ring of pyridoxal phosphate and stabilizes reaction intermediates)]; 1 mod res [116 (N6-(pyridoxal phosphate)lysine)]
+Keywords: Cytoplasm; Decarboxylase; Lyase; Polyamine biosynthesis; Pyridoxal phosphate; Reference proteome
+Cross-references: EMBL J02777, X74151, Z28184, BK006944; RefSeq NP_012737.1; KEGG sce:YKL184W; Reactome R-SCE-351143, R-SCE-351202; InterPro IPR009006, IPR022657, IPR022644, IPR022653 +3 more; Pfam PF02784
+Lineage: Eukaryota &gt; Fungi &gt; Dikarya &gt; Ascomycota &gt; Saccharomycotina &gt; Saccharomycetes &gt; Saccharomycetales &gt; Saccharomycetaceae</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A0C3A4G4</code> · Scleroderma citrinum Foug A</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=78  ordering=sequence_first</div><pre>&gt;uniref50:A0A0C3A4G4 Uncharacterized protein [Scleroderma citrinum Foug A]
+&lt;protein&gt;MAVRSPLILKVPSSPGLNHTNASNVSLGRWCSMSVCMEYPATSAVSLDAQISYSHPQDHPAHVSGVCASCSNLQVQWI&lt;/protein&gt;
+
+Uncharacterized protein — UniRef50 A0A0C3A4G4 — is a 78-residue protein from Scleroderma citrinum Foug A (NCBI taxon 1036808).
+Cluster size: 1 member sequence(s)
+Representative: A0A0C3A4G4_9AGAM</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A9P3HDM6</code> · Entomortierella parvispora</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=907  ordering=sequence_first</div><pre>&gt;uniref50:A0A9P3HDM6 Uncharacterized protein [Entomortierella parvispora]
+&lt;protein&gt;MPVLFSNSFPQFAFWKTYFTPARYSHDQIPNQSGKVAIVTGANTGLGYATTVALAAHGAHVFLACRSKERALAAIERAKKEIKANYPRAPEPKLEFLELDLNDMNMCKKAASKFLNKGLPLHLLVNNSGIMNTPFALSADGIEQQFAVNHMGHFVFTMGLLERIKESQPSRIVILSSLAHEGTVSGGIDFDTLNDPSTCGPMTRYGRSKLANVLFAKALARRLADTQVYVNIAHPGYVATELTRHSEDTMGKTMAQLTKVLTRLVAMAPEVGALTQLYLATSPEVVNKDIRGRYFIPIANEIQPSYLGRDEALQEKLWAFSEKLVREKVRALTRTSIIQASRLVNIVRLLLQRLPRKDVSNLLCAAYDIHPDPSIEQEQPSVSDSERNEQGDATTPRQMSGIDYLSYLRAFEFEKAIYMTRYYPTYLDIDILENYPRRLAEYVFRSKSSLKRNKEEEDQEFIVASGYGDGPHDHELAFPTVNLPNMTEVKLRQDALEATLRKDLTWTLCSPVFEQIQELSVPLSDLDRYLENVGRFSALTSISFLMDEPFLETNRQGLGTMEKLPADATEDEKRRHRQFKDMVQFVERHDRVFPGLLQNARCPNTYPCRMVMSCPSAVMYELSSALSSLASPTCIDQNNWRRVHSKLKDIDLSAVKTIHLLSHCEIRSNVFEPMPKLEVARNGPPWRRIVSLGSRGEAGVGPTTQPTCFPANRKCAEADERQRVLSLQDFRRSVASSTSCCTHGADEDYASSLIVASSVQELTLVGPWIMDDGLRSVVFKTTFPNLERLGERFTKGYSTWEGWIQVLQRKDMPKLKDVSRWLNTMESNRDHEDGLTDAERIMKSHGMISKPTIMHNLIADRRSRRKPVSSLKKDGEEEGDKEEEITYYLNLRTWVLAREDLDASTAE&lt;/protein&gt;
+
+Uncharacterized protein — UniRef50 A0A9P3HDM6 — is a 907-residue protein from Entomortierella parvispora (NCBI taxon 205924).
+Cluster size: 1 member sequence(s)
+Representative: A0A9P3HDM6_9FUNG</pre></details><details class="doc"><summary><code>ensembl_reg:ENSR00001255575</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first</div><pre>&gt;ensembl:ENSR00001255575 enhancer [Homo sapiens]
+&lt;dna&gt;TCTTCGAGTGAACAAAATTGAAGAGATTTAGAGATAAGAATTACGACCTTCTCTTGTAAATGAGACTCGCAAAGCACAGGAAGAGCTAAATTATTGACTTTTTGCTCTGTAACAACACTAAGAATAGCTAAGACTTGTTGCCTTCTTACTAGTGTCACAATTTGAAGTGCTTTATGGGCATTAAATCATTTAATCCTCATAACAATCCTACGAGGTAGGTTGAATTATTCACCTCATTTTACAAATAAGGAAAGTGAGGCTGAGGGAGGTTAAGTCACTTTCCCAAGTATTTCACCGAGGAGGTGGAATTCCATCCCAGAAAGCCTGGCTGCAAAGCCTGCACTCTCCACCACTGTGCAATGCTGCCCCCTAGTGCAAGTGTGCATACACGCTGCTCAGGTTCCTTCCCTGAGAGGCTGCTCATAAGGAAGAAAAAGGCAGAAATGTGGAATGAAGGGCTGATAACCAAACACACACACACATACACACACACACACGTGTATATACACACACATATCTGCAGGCATATATATAGTTGATATAAATATATGTCTATATTTAACAGTATATGAGTAGCATAAATAAGATTAGTATACTTTA&lt;/dna&gt;
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00001255575) from Homo sapiens (NCBI taxon 9606).
+Location: 4:181,528,401-181,529,008
+Feature length: 608 bp (central 600 bp shown)</pre></details><details class="doc"><summary><code>uniref50:UniRef50_Q97X38</code> · Sulfolobaceae</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=106  ordering=sequence_first</div><pre>&gt;uniref50:Q97X38 Archaeal PaREP1-like domain-containing protein [Sulfolobaceae]
+&lt;protein&gt;MERKWIKKKAHIVPTHAMYGLAQVLKDIGIDVISLVNYALNLHDYHYNGFEPGFSRYSKKEEVFRDLITLVKETRKVIDIYYSKYEVKEILGKINELIKELTEGNK&lt;/protein&gt;
+
+Archaeal PaREP1-like domain-containing protein — UniRef50 Q97X38 — is a 106-residue protein from Sulfolobaceae (NCBI taxon 118883).
+Cluster size: 2 member sequence(s)
+Representative: Q97X38_SACS2</pre></details><details class="doc"><summary><code>uniref50:UniRef50_UPI0025BC94C4</code> · Hydrogenophaga sp</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=118  ordering=sequence_first</div><pre>&gt;uniref50:UPI0025BC94C4 LysE/ArgO family amino acid transporter [Hydrogenophaga sp]
+&lt;protein&gt;QRFLNPRTIAIEGDSTVVAEPVSRRQAVLSALAFSWLNPHAWLDTAVLIGTASLAYGQGSRVFGMGAAAGSVVWFLALGVAAFWLGRRLNSLHVWRALDGMVALMMWGTALWLLSSLA&lt;/protein&gt;
+
+LysE/ArgO family amino acid transporter — UniRef50 UPI0025BC94C4 — is a 118-residue protein from Hydrogenophaga sp (NCBI taxon 1904254).
+Cluster size: 2 member sequence(s)
+Representative: UPI0025BC94C4</pre></details><details class="doc"><summary><code>uniref50:UniRef50_A0A1Q9E2M8</code> · Symbiodinium microadriaticum</summary><div class="dmeta">source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=193  ordering=sequence_first</div><pre>&gt;uniref50:A0A1Q9E2M8 Uncharacterized protein [Symbiodinium microadriaticum]
+&lt;protein&gt;MIEGGYWQQAHAATATKQKHEASRADMQVHDKKAPPQAACYGLAAFALIALRSRWESFAAWPWLTLRQLLASRLAVLSGNCSVPVRGTQVPTDQSTVTTLYVHVEVRVRGRKLAEHGDPGSAKWQTTPARVEVDVEHLVETIRQKFAPWDPQPAVSRPKSIRGFKSIAAELTPYEAHVAYGVRHLESALHHGL&lt;/protein&gt;
+
+Uncharacterized protein — UniRef50 A0A1Q9E2M8 — is a 193-residue protein from Symbiodinium microadriaticum (NCBI taxon 2951).
+Cluster size: 1 member sequence(s)
+Representative: A0A1Q9E2M8_SYMMI</pre></details>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Provenance</div><h2>Sources &amp; licensing</h2>
+<p><b>UniProtKB/Swiss-Prot</b> and <b>UniRef50</b> — UniProt, <a href="https://www.uniprot.org/help/license">CC-BY 4.0</a>; please cite UniProt.<br>
+<b>Ensembl release 112</b> (human GRCh38: genome, GFF3, cDNA/CDS/peptide, Regulatory Build) —
+<a href="https://www.ensembl.org/info/about/legal/disclaimer.html">no restrictions</a> on Ensembl's own annotation.</p>
+<p>Every record carries its own <code>source</code>, <code>source_url</code>, <code>source_version</code> and
+<code>license</code>, so any subset stays attributable.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Caveats</div><h2>Known limits</h2>
+<p>Genomics is <b>human-only</b> (the builder supports ~356 Ensembl vertebrates; this build used GRCh38).
+UniRef50 is <b>subsampled at stride 3</b>. Splice records use <b>one intron per transcript</b>.
+Dedup is <b>exact-sequence</b>, not homology clustering — UniRef already does the latter for proteins.
+Nucleotide is token-expensive (~0.55 tok/nt), so DNA-bearing records are deliberately bounded.</p>
+</div></section>
+
+<footer><div class="wrap">
+<p>Built with <a href="https://github.com/timodonnell/biocorpus">timodonnell/biocorpus</a>
+(<code>builders/bio_pretrain</code>) — see the
+<a href="https://github.com/timodonnell/biocorpus/blob/main/builders/bio_pretrain/RECIPE.md">recipe</a>,
+<a href="https://github.com/timodonnell/biocorpus/blob/main/builders/bio_pretrain/TOKEN_ESTIMATE.md">token estimates</a>,
+and the <a href="thebiocollection-review.html">review of TheBioCollection</a> that motivated the design.
+Generated 2026-07-23.</p>
+</div></footer>
+<script>
+// honour a ?theme= override and the viewer's toggle if embedded
+const t=new URLSearchParams(location.search).get('theme'); if(t) document.documentElement.dataset.theme=t;
+</script>
+</body></html>
