@@ -47,7 +47,7 @@ BASE=https://ftp.uniprot.org/pub/databases/uniprot
 DL () { curl -sL "$1" -o "$2"; }
 
 # --- bulk downloads (one-time) ---
-DL $BASE/current_release/knowledgebase/complete/uniprot_sprot.dat.gz uniprot_sprot.dat.gz   # ~150 MB
+DL $BASE/current_release/knowledgebase/complete/uniprot_sprot.dat.gz uniprot_sprot.dat.gz   # 0.70 GB
 DL $BASE/uniref/uniref50/uniref50.fasta.gz                           uniref50.fasta.gz      # 8.8 GB
 
 # --- 1. Swiss-Prot, both orderings (~1.0 B) ---
@@ -67,6 +67,26 @@ python build_bio_corpus.py ensembl-dogma --species "mus_musculus,danio_rerio,gal
 ```
 
 `--limit 0` = uncapped (the default `--limit` is 50, for quick sampling).
+
+## Runtime
+
+Measured on one core (rates benchmarked on real data; download at ~40 MB/s):
+
+| step | work | rate | time |
+|---|---|---|--:|
+| download `uniprot_sprot.dat.gz` (0.70 GB) + `uniref50.fasta.gz` (8.77 GB) | 9.5 GB | ~40 MB/s | ~4 min |
+| Swiss-Prot, both orderings | 575 K records | 1,755 rec/s | ~7 min |
+| UniRef50 stride 3 (**reads all 38.8 M**, emits 12.9 M) | 38.8 M records | 37,000 rec/s | ~18 min |
+| human genomic offline (dogma + splice + regulatory) | ~1 M records + genome index | — | ~5 min |
+| `dedup.py` cross-file pass | ~14 M records, ~25 GB I/O | I/O bound | ~5–10 min |
+| **total** | | | **~40 min**, ~25 GB JSONL |
+
+Notes: it's **single-threaded**, and the four generation steps are independent —
+run them concurrently and wall-clock drops to roughly the longest (UniRef, ~18 min)
+plus the dedup pass. `--stride` barely changes UniRef *time* (you always stream the
+whole file) but does change output size: full UniRef50 is ~68 GB JSONL vs ~23 GB at
+stride 3. Multi-species genomics is what actually costs hours — budget a genome
+download (~0.2–1 GB) plus a few minutes of processing per species.
 
 ## Run notes & honest limits
 
