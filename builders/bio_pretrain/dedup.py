@@ -40,14 +40,20 @@ def _open(path: str, mode: str = "rt") -> io.TextIOBase:
 
 
 def _key(rec: dict):
-    """16-byte namespaced dedup key, or None to always keep."""
+    """16-byte namespaced dedup key, or None to always keep.
+
+    `ordering` is part of the key: under `--ordering both` the recognition and
+    design renderings of one entry share a sequence but are *deliberate*
+    variants, not redundancy — dropping one would delete half the corpus.
+    """
+    ordering = (rec.get("ordering") or "").encode("ascii")
     if rec.get("entity_type") == "central_dogma":
-        payload = b"D\x00" + (rec.get("id") or "").encode("utf-8")
+        payload = b"D\x00" + ordering + b"\x00" + (rec.get("id") or "").encode("utf-8")
     else:
         seq = rec.get("sequence") or ""
         if not seq:
             return None
-        payload = (rec.get("seq_type") or "?").encode("ascii") + b"\x00" + seq.encode("utf-8")
+        payload = (rec.get("seq_type") or "?").encode("ascii") + b"\x00" + ordering + b"\x00" + seq.encode("utf-8")
     return hashlib.blake2b(payload, digest_size=16).digest()
 
 

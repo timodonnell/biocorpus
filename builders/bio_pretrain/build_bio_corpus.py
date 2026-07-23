@@ -9,7 +9,7 @@ that motivated these choices):
 
   * SEQUENCE-FIRST ordering. Each document is rendered as
         >{db}:{accession} {name} [{organism}]
-        <protein> ...sequence... </protein>
+        ...sequence...
 
         <clean natural-language metadata about the sequence>
     In an autoregressive LM the loss factorises left-to-right, so putting the
@@ -66,8 +66,6 @@ from typing import Iterator, Optional
 # --------------------------------------------------------------------------- #
 
 SCHEMA_VERSION = "0.1"
-
-SEQ_DELIMS = {"aa": ("<protein>", "</protein>"), "dna": ("<dna>", "</dna>")}
 
 _UNIPROT_LICENSE = "CC-BY-4.0 (https://www.uniprot.org/help/license)"
 LICENSES = {
@@ -145,10 +143,9 @@ def _anchor(rec: BioRecord) -> str:
 
 
 def _seq_block(rec: BioRecord) -> str:
-    if not rec.sequence:  # gene-annotation records may carry no sequence
-        return ""
-    o, c = SEQ_DELIMS[rec.seq_type]
-    return f"{o}{rec.sequence}{c}"
+    # Sequences are emitted bare: the anchor line above already delimits them
+    # FASTA-style, and markup tags are noise the model would have to learn around.
+    return rec.sequence or ""
 
 
 def _lead_sentence(rec: BioRecord) -> str:
@@ -205,8 +202,6 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         ("Intron length", "intron_length_bp"),
         ("Donor dinucleotide", "donor_dinucleotide"),
         ("Acceptor dinucleotide", "acceptor_dinucleotide"),
-        ("Cluster size", "cluster_size"),
-        ("Representative", "representative"),
     ):
         v = a.get(key)
         if v:
@@ -218,8 +213,6 @@ def _metadata_lines(rec: BioRecord) -> list[str]:
         lines.append("Sequence features: " + a["features"])
     if a.get("keywords"):
         lines.append("Keywords: " + a["keywords"])
-    if a.get("xrefs"):
-        lines.append("Cross-references: " + a["xrefs"])
     if a.get("lineage"):
         lines.append("Lineage: " + a["lineage"])
     return lines
@@ -234,6 +227,34 @@ def _db_label(rec: BioRecord) -> str:
         "uniprot_uniref100": "UniRef100",
         "ensembl": "Ensembl",
     }.get(rec.source, rec.source)
+
+
+# Annotations that describe the *biology of this sequence* and could in principle be
+# learned from it: function, catalysis, localisation, pathway, disease, GO terms, and
+# per-residue features (domains, active/binding sites, PTMs, signal peptides,
+# transmembrane spans, disulfides). Bookkeeping (cluster size, accession lists,
+# representative ids) is deliberately excluded.
+_SUBSTANTIVE = ("function", "catalytic_activity", "subcellular_location", "pathway",
+                "disease", "go", "features")
+_UNCHARACTERISED = re.compile(
+    r"uncharacteri[sz]ed|hypothetical protein|protein of unknown function|unknown function|"
+    r"\bDUF\d+|putative uncharacteri[sz]ed", re.I)
+
+
+def is_informative(rec: BioRecord) -> bool:
+    """True if the record carries real, learnable annotation.
+
+    Genomic records (dogma / splice / regulatory) are intrinsically annotated —
+    coding regions, UTRs, exon structure, splice motifs, cis-regulatory element
+    type. Protein records must carry at least one substantive field and must not
+    be an uncharacterised entry.
+    """
+    if rec.entity_type in ("central_dogma", "splice_junction", "regulatory_feature"):
+        return True
+    if _UNCHARACTERISED.search(rec.name or ""):
+        return False
+    a = rec.annotations or {}
+    return any(a.get(k) for k in _SUBSTANTIVE)
 
 
 def render(rec: BioRecord, ordering: str) -> BioRecord:
@@ -511,9 +532,7 @@ def _uniprot_record_from_swiss(rec, source_url: str, version: str) -> BioRecord:
         else None,
         "features": _summarise_features(rec.features),
         "keywords": "; ".join(rec.keywords[:12]) if rec.keywords else None,
-        "xrefs": xref_txt or None,
         "lineage": " > ".join((rec.organism_classification or [])[:8]) or None,
-        "entry_name": rec.entry_name,
     }
     annotations = {k: v for k, v in annotations.items() if v}
 
@@ -618,7 +637,7 @@ def iter_uniref(args) -> Iterator[BioRecord]:
             taxid=taxid,
             gene=None,
             name=_clean(name),
-            annotations={"cluster_size": f"{n} member sequence(s)", "representative": rep},
+            annotations={},  # UniRef carries no per-sequence annotation (see quality gate)
             sequence=sequence,
         )
 
@@ -1127,7 +1146,7 @@ def _render_dogma(view, gene, tx, biotype, loc, n_exon, n_intron, dna, rna, prot
         if utr3:
             parts.append(f"3' UTR: {cds_span[1] + 1}-{cds_span[1] + utr3} ({utr3} nt)")
         cds_utr = "; ".join(parts) + "."
-    dna_block = "Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):\n" f"<dna>{dna}</dna>"
+    dna_block = "Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):\n" f"{dna}"
     splice_line = (
         f"Transcription and splicing remove {n_intron} intron(s) ({intron_total} nt) "
         f"to give the mature mRNA ({len(rna) if rna else 0} nt):"
@@ -1138,27 +1157,27 @@ def _render_dogma(view, gene, tx, biotype, loc, n_exon, n_intron, dna, rna, prot
     )
     p = [head, ""]
     if view == "triple":
-        p += [dna_block, "", splice_line, f"<rna>{rna}</rna>", exon_line]
+        p += [dna_block, "", splice_line, f"{rna}", exon_line]
         if cds_utr:
             p.append(cds_utr)
-        p += ["", translate_line, f"<protein>{protein}</protein>", "",
+        p += ["", translate_line, f"{protein}", "",
               "Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein."]
     elif view == "dna_rna":
-        p += [dna_block, "", splice_line, f"<rna>{rna}</rna>", exon_line]
+        p += [dna_block, "", splice_line, f"{rna}", exon_line]
         if cds_utr:
             p.append(cds_utr)
         p += ["", "Verified: the mRNA equals the genomic exons with introns removed."]
     elif view == "rna_protein":
-        p += [f"Mature mRNA ({len(rna)} nt):", f"<rna>{rna}</rna>"]
+        p += [f"Mature mRNA ({len(rna)} nt):", f"{rna}"]
         if cds_utr:
             p.append(cds_utr)
-        p += ["", translate_line, f"<protein>{protein}</protein>", "",
+        p += ["", translate_line, f"{protein}", "",
               "Verified: translate(CDS) equals the protein."]
     elif view == "dna_protein":
         p += [dna_block, "",
               f"After transcription, splicing out {n_intron} intron(s), and translation of the CDS, "
               f"this locus encodes the {len(protein)}-residue protein:",
-              f"<protein>{protein}</protein>", "",
+              f"{protein}", "",
               "Verified: translate(the CDS of the spliced mRNA) equals the protein."]
     return "\n".join(p)
 
@@ -1450,7 +1469,7 @@ def build(args) -> None:
     multi = len(runs) > 1
 
     seen_seq: set[str] = set()
-    n_written = n_dup = n_toolong = n_in = 0
+    n_written = n_dup = n_toolong = n_in = n_unannotated = 0
     orderings = ["sequence_first", "metadata_first"] if args.ordering == "both" else [args.ordering]
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
@@ -1462,6 +1481,9 @@ def build(args) -> None:
                     n_in += 1
                     if args.max_seq_len and rec.seq_len > args.max_seq_len:
                         n_toolong += 1
+                        continue
+                    if getattr(args, "require_annotations", True) and not is_informative(rec):
+                        n_unannotated += 1
                         continue
                     if rec.sequence:  # exact-sequence dedup (skip for metadata-only records)
                         h = hashlib.sha1(rec.sequence.encode()).hexdigest()
@@ -1486,7 +1508,7 @@ def build(args) -> None:
     print(
         f"[{args.source}] wrote {n_written} entries "
         f"({n_written * len(orderings)} docs, ordering={args.ordering}, species={len(runs)}) -> {args.out}\n"
-        f"          read={n_in} dup_seq_skipped={n_dup} too_long_skipped={n_toolong}",
+        f"          read={n_in} dup_seq_skipped={n_dup} too_long_skipped={n_toolong} unannotated_skipped={n_unannotated}",
         file=sys.stderr,
     )
 
@@ -1504,6 +1526,8 @@ def main() -> None:
         default="sequence_first",
     )
     common.add_argument("--max-seq-len", type=int, default=0, help="skip sequences longer than this (0=off)")
+    common.add_argument("--allow-unannotated", dest="require_annotations", action="store_false",
+                        help="keep records with no substantive annotation (default: skip them)")
 
     up = sub.add_parser("uniprot", parents=[common], help="UniProtKB/Swiss-Prot")
     up.add_argument("--accessions", help="comma-separated accessions (fetched via UniProt REST)")

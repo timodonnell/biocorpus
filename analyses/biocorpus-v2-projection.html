@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biocorpus v2 — annotation-quality pass (projection)</title>
+<style>
+:root{--bg:#F5F8F6;--surface:#fff;--surface2:#EEF3F1;--spec:#F0F4F2;--ink:#13201D;--soft:#3B4A46;
+--muted:#697974;--line:#DCE4E1;--accent:#137A6B;--accent2:#1C9A86;--warn:#A9720C;--warnbg:rgba(169,114,12,.12);
+--bad:#B03A31;--badbg:rgba(176,58,49,.09);
+--fh:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--fb:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+--fm:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;
+--ink:#DBE5E1;--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;
+--warn:#DDA23F;--warnbg:rgba(221,162,63,.14);--bad:#E3746A;--badbg:rgba(227,116,106,.12)}}
+:root[data-theme=dark]{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;--ink:#DBE5E1;
+--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;--warn:#DDA23F;
+--warnbg:rgba(221,162,63,.14);--bad:#E3746A;--badbg:rgba(227,116,106,.12)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+h1,h2,h3,.eyebrow,th,.chip,.stat b,summary,.dmeta,.tag{font-family:var(--fh)}
+h1{font-size:clamp(1.9rem,4.6vw,2.7rem);font-weight:720;letter-spacing:-.025em;line-height:1.05;margin:.3em 0 .1em}
+h2{font-size:1.45rem;font-weight:650;margin:0 0 .2em}
+h3{font-size:1.02rem;font-weight:640;margin:1.8em 0 .1em}
+p{max-width:70ch} a{color:var(--accent)}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:640}
+header{padding:52px 0 34px} section{padding:44px 0;border-top:1px solid var(--line)}
+.lede{font-size:1.16rem;color:var(--soft);max-width:66ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);
+border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:26px}
+.stat{background:var(--surface);padding:16px 18px}
+.stat b{display:block;font-size:1.7rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.note{background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);
+border-radius:10px;padding:14px 18px;margin-top:22px;font-size:.95rem}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:18px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;font-family:var(--fh)}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--surface2)}
+tbody tr:last-child td{border-bottom:0}
+tr.gone td{background:var(--badbg)} tr.gone .num:last-child{color:var(--bad);font-weight:700}
+td small{display:block;font-family:var(--fb);color:var(--muted);font-size:.85rem;margin-top:3px;max-width:48ch}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.why{color:var(--muted);font-size:.92rem;margin:.2em 0 .5em}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:760px){.ba{grid-template-columns:1fr}}
+.ba>div{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.ba h4{margin:0;padding:9px 14px;font-family:var(--fh);font-size:.78rem;letter-spacing:.06em;
+text-transform:uppercase;background:var(--surface2);color:var(--muted)}
+.ba .before h4{color:var(--bad)} .ba .after h4{color:var(--accent)}
+details.doc{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+details.doc>summary{cursor:pointer;padding:11px 15px;background:var(--surface2);font-size:.84rem;list-style:none}
+details.doc>summary::-webkit-details-marker{display:none}
+details.doc>summary::before{content:"\25B6";color:var(--accent);font-size:.7rem;margin-right:8px}
+details.doc[open]>summary::before{content:"\25BC"}
+details.doc>summary code{font-family:var(--fm);font-size:.82rem}
+.dmeta{font-size:.74rem;color:var(--muted);padding:8px 15px 0}
+pre{margin:0;padding:12px 15px;background:var(--spec);font-family:var(--fm);font-size:.75rem;line-height:1.5;
+white-space:pre-wrap;word-break:break-word;max-height:34em;overflow:auto}
+ul{max-width:70ch} li{margin:.4em 0}
+footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--muted);font-size:.85rem}
+code{font-family:var(--fm);font-size:.85em}
+</style></head><body>
+<header><div class="wrap">
+<div class="eyebrow">Projection · not yet run on the full dataset</div>
+<h1>biocorpus v2 — annotation-quality pass</h1>
+<p class="lede">Sequence markup removed, bookkeeping fields dropped, and a gate that keeps only records
+carrying <b>real annotation that could in principle be learned from the sequence</b>. This is what the
+full rebuild would produce, measured on samples of each source.</p>
+<div class="kpis">
+<div class="stat"><b>4.43 B → 0.90 B</b><span>tokens (-80%)</span></div>
+<div class="stat"><b>14.5 M → 1.67 M</b><span>documents</span></div>
+<div class="stat"><b>98.7%</b><span>of Swiss-Prot retained</span></div>
+<div class="stat"><b>0%</b><span>of UniRef50 retained</span></div>
+</div>
+<div class="note"><b>The headline.</b> The quality bar removes <b>UniRef50 in its entirety</b> —
+12,931,373 records, 79% of the corpus by tokens. UniRef ships a cluster name, a member count and a
+representative accession; none of that is an annotation <em>of the sequence</em>. What remains is small
+but almost entirely curated. See <a href="#scale">recovering scale</a>.</div>
+</div></header>
+
+<section><div class="wrap">
+<div class="eyebrow">Changes</div><h2>What changed</h2>
+<ul>
+<li><b>Sequence markup removed.</b> <code>&lt;protein&gt;</code>, <code>&lt;dna&gt;</code> and
+<code>&lt;rna&gt;</code> tags are gone — the anchor line already delimits the sequence FASTA-style, and the
+tags were syntax the model would have to learn around.</li>
+<li><b>Bookkeeping dropped.</b> <code>Cluster size: 5 member sequence(s)</code>,
+<code>Representative: A0ABP8NCJ6_9BACT</code>, entry names and bare accession lists (PDB/EMBL/KEGG/RefSeq
+cross-references) are removed. They are identifiers, not biology, and nothing about them is predictable
+from a sequence.</li>
+<li><b>Quality gate.</b> A protein record is kept only if it carries at least one substantive annotation —
+function, catalytic activity, subcellular localisation, pathway, disease, GO terms, or per-residue features
+(domains, active/binding sites, PTMs, signal peptides, transmembrane spans, disulfides) — and is not an
+uncharacterised entry. Genomic records pass intrinsically: they carry coding regions, UTRs, exon structure,
+splice motifs, or cis-regulatory element type.</li>
+</ul>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Before / after</div><h2>The same record, both ways</h2>
+<p>Swiss-Prot loses only markup and the accession dump; UniRef50 loses everything that was not the sequence
+itself — which is why it no longer qualifies.</p>
+<h3>Swiss-Prot</h3>
+<div class="ba">
+<div class="before"><h4>before</h4><pre>&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+&lt;protein&gt;MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL&lt;/protein&gt;
+
+Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcripti
+… [clipped for the comparison]</pre></div>
+<div class="after"><h4>after</h4><pre>&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL
+
+Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcription regulation
+Linea
+… [clipped for the comparison]</pre></div>
+</div>
+<h3>UniRef50 — now dropped entirely</h3>
+<div class="ba">
+<div class="before"><h4>before</h4><pre>&gt;uniref50:A0A0L0CIX3 Titin (Fragment) [Schizophora]
+&lt;protein&gt;GYCIEKRSSTSTTWTKVITLDAHCLQYTVDNLKEKSEYWFRVSAENEAGLGAPAVTESIALKTHATVPSPPTAPLETRVIAANAHVFEWGIPESDGGAPLLGYHIAIRDMKKSMWIEVGRVPAGVQKFQIRDLQENHEYMIRIFAKNEIGLSEPLESEEPYKAVTLGLASLPDEPRTEMSSCNTSSWLRDHHMDADIHSYARGKLLRRDEYFFRIWAKMPKKKKNSK&lt;/protein&gt;
+
+Titin (Fragment) — UniRef50 A0A0L0CIX3 — is a 227-residue protein from Schizophora (NCBI taxon 43738).
+Cluster size: 8 member sequence(s)
+Representative: A0A0L0CIX3_LUCCU</pre></div>
+<div class="after"><h4>after — removed</h4><pre>Only the name and the sequence would remain.
+45% of UniRef50 cluster names are "Uncharacterized protein"
+(measured on a representative sample), and none of the
+entries carry function, GO terms or per-residue features.
+
+No substantive annotation -> the record does not qualify.</pre></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Projection</div><h2>What a full rebuild would produce</h2>
+<p>Retention measured on samples: 22,852 Swiss-Prot entries, 12.9 M UniRef50 records, and 2–3 K each of the
+genomic types. Token rates re-measured under the new rendering.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>record type</th><th class="num">docs before</th><th class="num">docs after</th>
+<th class="num">tokens before</th><th class="num">tokens after</th><th class="num">Δ tokens</th></tr></thead>
+<tbody><tr class="gone"><td><b>UniRef50</b><small>Carries no per-sequence annotation — only a cluster name, size and representative id. <b>Entirely removed.</b></small></td><td class="num">12,867,202</td><td class="num">0</td><td class="num">3.508 B</td><td class="num">0.000 B</td><td class="num">−100%</td></tr><tr><td><b>Swiss-Prot</b><small>Curated: function, catalysis, localisation, GO, and per-residue features. Survives almost intact.</small></td><td class="num">974,474</td><td class="num">961,540</td><td class="num">0.656 B</td><td class="num">0.634 B</td><td class="num">-3%</td></tr><tr><td><b>Regulatory features</b><small>Cis-regulatory element type + genomic location — an annotation of the DNA.</small></td><td class="num">611,341</td><td class="num">611,341</td><td class="num">0.199 B</td><td class="num">0.198 B</td><td class="num">-1%</td></tr><tr><td><b>Central dogma</b><small>Coding region, UTRs, exon structure, verified translation.</small></td><td class="num">21,316</td><td class="num">21,316</td><td class="num">0.052 B</td><td class="num">0.054 B</td><td class="num">+3%</td></tr><tr><td><b>Splice sites</b><small>Donor/acceptor position with the observed motif classified.</small></td><td class="num">75,452</td><td class="num">75,452</td><td class="num">0.018 B</td><td class="num">0.018 B</td><td class="num">-0%</td></tr>
+<tr><td><b>Total</b></td><td class="num">14,549,785</td><td class="num">1,669,649</td>
+<td class="num">4.43 B</td><td class="num">0.90 B</td>
+<td class="num">-80%</td></tr>
+</tbody></table></div>
+<p>Swiss-Prot becomes the backbone at ~70% of tokens, with the human genomic records supplying splicing,
+transcription/translation and regulatory signal. Every surviving document carries annotation a model could
+in principle predict from sequence.</p>
+</div></section>
+
+<section id="scale"><div class="wrap">
+<div class="eyebrow">Next</div><h2>Recovering scale without lowering the bar</h2>
+<p>0.90 B is high-quality but small. Three ways to grow it that keep the same standard:</p>
+<ul>
+<li><b>Annotated TrEMBL instead of UniRef50.</b> TrEMBL has 149 M entries, many with computed GO terms and
+features — exactly the fields the gate wants. If even a third qualify, that is billions of tokens of
+annotated protein. <em>The annotated fraction has not been measured yet</em> — that is the first thing to check,
+and it needs the TrEMBL flat file rather than the API (whose ordering favours well-annotated entries and
+would flatter the estimate).</li>
+<li><b>Multi-species genomics.</b> Dogma + splice are ~0.07 B for human; the builder already handles ~356
+Ensembl vertebrates offline via <code>--genome</code>. Fifty species would be a few billion tokens.
+(Regulatory Build exists only for human and mouse.)</li>
+<li><b>Join annotation onto UniRef.</b> Each UniRef representative maps to a UniProt accession, so GO and
+features could be attached — recovering breadth at Swiss-Prot-like quality. It is a 39 M-row join, the most
+expensive option but the one that preserves the deduplicated diversity UniRef was chosen for.</li>
+</ul>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Examples</div><h2>Documents in the new format</h2>
+<p>Full documents, nothing truncated — long ones scroll inside their box.</p>
+<h3>Swiss-Prot — recognition ordering</h3><p class="why">Domains, active sites, PTMs, GO, localisation — the annotation classes worth learning.</p><details class="doc" open><summary><code>uniprot:Q6GZX4#se</code> · Frog virus 3 (isolate Goorha) (FV-3)</summary><div class="dmeta">entity_type=protein  seq_len=256  ordering=sequence_first</div><pre>&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL
+
+Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcription regulation
+Lineage: Viruses &gt; Varidnaviria &gt; Bamfordvirae &gt; Nucleocytoviricota &gt; Megaviricetes &gt; Pimascovirales &gt; Pimascovirales incertae sedis &gt; Iridoviridae</pre></details><h3>Swiss-Prot — design ordering</h3><p class="why">Same entry, metadata first.</p><details class="doc" open><summary><code>uniprot:Q6GZX4#me</code> · Frog virus 3 (isolate Goorha) (FV-3)</summary><div class="dmeta">entity_type=protein  seq_len=256  ordering=metadata_first</div><pre>Putative transcription factor 001R — UniProtKB/Swiss-Prot Q6GZX4 — is a 256-residue protein from Frog virus 3 (isolate Goorha) (FV-3) (NCBI taxon 654924); gene FV3-001R.
+Function: Transcription activation
+GO annotations: DNA-templated transcription (process); regulation of viral transcription (process)
+Sequence features: 1 chain
+Keywords: Activator; Reference proteome; Transcription; Transcription regulation
+Lineage: Viruses &gt; Varidnaviria &gt; Bamfordvirae &gt; Nucleocytoviricota &gt; Megaviricetes &gt; Pimascovirales &gt; Pimascovirales incertae sedis &gt; Iridoviridae
+
+&gt;sp:Q6GZX4 Putative transcription factor 001R [Frog virus 3 (isolate Goorha) (FV-3)]
+MAFSAEDVLKEYDRRRRMEALLLSLYYPNDRKLLDYKEWSPPRVQVECPKAPVEWNNPPSEKGLIVGHFSGIKYKGEKAQASEVDVNKMCCWVSKFKDAMRRYQGIQTCKIPGKVLSDLDAKIKAYNLTVEGVEGFVRYSRVTKQHVAAFLKELRHSKQYENVNLIHYILTDKRVDIQHLEKDLVKDFKALVESAHRMRQGHMINVKYILYQLLKKHGHGPDGPDILTVKTGSKGVLYDDSFRKIYTDLGWKFTPL</pre></details><h3>Central dogma — triple</h3><p class="why">Coding region, UTR spans and exon boundaries; exons UPPERCASE, introns lowercase.</p><details class="doc" open><summary><code>ensembl-dogma:ENST00000304952:triple</code> · Homo sapiens</summary><div class="dmeta">entity_type=central_dogma  seq_len=885  ordering=sequence_first  view=triple</div><pre>&gt;ensembl-dogma:ENST00000304952 HES4 [Homo sapiens]
+Gene HES4 (protein_coding), Ensembl canonical transcript ENST00000304952, 1:998,964-1,000,097 (-), 4 exon(s) / 3 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+GCGGGCCTGGAGCCGGGATCCGCCCTAGGGGCTCGGATCGCCGCGCGCTCGCCGCTCGCCCGCCAGCCCGCCCGTGGTCCGTGGCGGCGCGCTCCACCCGGCACGGGGAGGCGCGGGGCGCACCATGGCCGCAGACACGCCGGGGAAACCGAGCGCCTCGCCGATGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGgtggggtcccggccgggcgtgaggggggcgaccggggggcgggagggacgcgggactcagccggtgcccgacccgcagTCCTCCAAGCCGGTCATGGAGAAGCGGCGCCGAGCGCGTATTAACGAGAGCCTCGCTCAGCTCAAAACCCTCATCCTGGACGCCCTCAGAAAAGAGgtaagtcgggggcgaaggcccgagacccggagtctgggtcgcagctgacctggacctcccgcctatccccgcccccagAGCTCCCGCCACTCGAAGCTGGAGAAGGCGGACATCCTGGAGATGACCGTGAGACACCTGCGGAGCCTGCGTCGCGTGCAGGTGACGGgtgaggcgcgggcggcggcggcttggaggcggggggagggcgcgggacccccgggacccggcaccgacctctcctcctgtgtcgctcccgcagCCGCGCTCAGCGCCGACCCCGCCGTTCTGGGCAAGTACCGCGCCGGCTTCCACGAGTGTCTGGCGGAGGTGAACCGCTTCCTGGCCGGCTGCGAGGGCGTCCCGGCCGACGTGCGCTCCCGCCTGCTGGGCCACCTGGCAGCCTGCCTGCGCCAGCTGGGACCCTCCCGCCGCCCGGCCTCGCTGTCCCCGGCTGCCCCCGCAGAGGCCCCAGCGCCCGAGGTCTACGCGGGCCGCCCGCTGCTGCCATCGCTCGGCGGCCCCTTCCCTCTGCTCGCGCCGCCGCTGCTGCCGGGTCTGACCCGGGCGCTGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGTGGGCCCTGGAGGCCGTGGCTGCGCTGAGGCTGTGGCCCTGAGACTGCATCGGAGGCGGCGCCCCGTTCTAGGGCCGTGGCCTTTGCCGAGACTGTAGCAGAGAAAACGTATTTATTATTCCA
+
+Transcription and splicing remove 3 intron(s) (249 nt) to give the mature mRNA (885 nt):
+GCGGGCCUGGAGCCGGGAUCCGCCCUAGGGGCUCGGAUCGCCGCGCGCUCGCCGCUCGCCCGCCAGCCCGCCCGUGGUCCGUGGCGGCGCGCUCCACCCGGCACGGGGAGGCGCGGGGCGCACCAUGGCCGCAGACACGCCGGGGAAACCGAGCGCCUCGCCGAUGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGUCCUCCAAGCCGGUCAUGGAGAAGCGGCGCCGAGCGCGUAUUAACGAGAGCCUCGCUCAGCUCAAAACCCUCAUCCUGGACGCCCUCAGAAAAGAGAGCUCCCGCCACUCGAAGCUGGAGAAGGCGGACAUCCUGGAGAUGACCGUGAGACACCUGCGGAGCCUGCGUCGCGUGCAGGUGACGGCCGCGCUCAGCGCCGACCCCGCCGUUCUGGGCAAGUACCGCGCCGGCUUCCACGAGUGUCUGGCGGAGGUGAACCGCUUCCUGGCCGGCUGCGAGGGCGUCCCGGCCGACGUGCGCUCCCGCCUGCUGGGCCACCUGGCAGCCUGCCUGCGCCAGCUGGGACCCUCCCGCCGCCCGGCCUCGCUGUCCCCGGCUGCCCCCGCAGAGGCCCCAGCGCCCGAGGUCUACGCGGGCCGCCCGCUGCUGCCAUCGCUCGGCGGCCCCUUCCCUCUGCUCGCGCCGCCGCUGCUGCCGGGUCUGACCCGGGCGCUGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGUGGGCCCUGGAGGCCGUGGCUGCGCUGAGGCUGUGGCCCUGAGACUGCAUCGGAGGCGGCGCCCCGUUCUAGGGCCGUGGCCUUUGCCGAGACUGUAGCAGAGAAAACGUAUUUAUUAUUCCA
+Exon boundaries in the mRNA: 1-232, 233-328, 329-416, 417-885.
+5&#x27; UTR: 1-124 (124 nt); CDS: 125-790 (666 nt); 3&#x27; UTR: 791-885 (95 nt).
+
+Translation of the CDS (666 nt, standard genetic code) yields the 221-residue protein:
+MAADTPGKPSASPMAGAPASASRTPDKPRSAAEHRKSSKPVMEKRRRARINESLAQLKTLILDALRKESSRHSKLEKADILEMTVRHLRSLRRVQVTAALSADPAVLGKYRAGFHECLAEVNRFLAGCEGVPADVRSRLLGHLAACLRQLGPSRRPASLSPAAPAEAPAPEVYAGRPLLPSLGGPFPLLAPPLLPGLTRALPAAPRAGPQGPGGPWRPWLR
+
+Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein.</pre></details><h3>Central dogma — RNA → protein</h3><p class="why">CDS/UTR structure with a verified translation.</p><details class="doc" open><summary><code>ensembl-dogma:ENST00000421241:rna_protein</code> · Homo sapiens</summary><div class="dmeta">entity_type=central_dogma  seq_len=1,832  ordering=sequence_first  view=rna_protein</div><pre>&gt;ensembl-dogma:ENST00000421241 C1orf159 [Homo sapiens]
+Gene C1orf159 (protein_coding), Ensembl canonical transcript ENST00000421241, 1:1,081,823-1,116,089 (-), 10 exon(s) / 9 intron(s).
+
+Mature mRNA (1832 nt):
+GUACGAAAGAGAAACCCGGAGGGCGCCGGGGACUGGGCCGGGGUCUGCAGGGCUCAGCUGAGCCCAUGAGCUCCCAGAGCUAACCCCUGAACACCCAGGCGGGCAAAGGGCUGAUGUCGGUAGUCCCCAUCCUGGAGGGGCAGGCUCUGCGCAUCUGCUCCUGGCAUGGCGCUGCGGCACCUCGCCCUCCUGGCUGGCCUUCUCGUGGGAGUCGCCAGCAAGUCCAUGGAGAACACGGCCCAGCUGCCCGAGUGCUGUGUGGAUGUGGUGGGCGUCAACGCCAGCUGCCCAGGCGCAAGUCUGUGUGGUCCAGGCUGUUACAGGCGCUGGAACGCGGACGGGAGCGCCAGCUGCGUCCGCUGUGGGAACGGAACCCUCCCAGCCUACAACGGCUCCGAGUGUAGAAGCUUUGCUGGCCCGGGUGCGCCAUUCCCCAUGAACAGAAGCUCAGGGACCCCCGGGCGGCCACAUCCUGGGGCUCCGCGCGUGGCCGCCUCCCUCUUCCUGGGCACGUUCUUCAUUAGCUCCGGCCUCAUCCUCUCCGUAGCUGGGUUCUUCUACCUCAAGCGCUCCAGUAAACUCCCCAGGGCCUGCUACAGAAGAAACAAAGCUCCGGCCCUGCAGCCUGGCGAAGCCGCUGCAAUGAUCCCCCCGCCACAGUCCUCAGUACGGAAGCCGCGCUACGUCAGGCGGGAGCGGCCCCUGGACAGGGCCACGGAUCCCGCUGCCUUCCCGGGGGAGGCCCGUAUCAGCAAUGUCUGACCUGGAGGCCGAGACCACGCCACGCACUUGGCGGCAGGGACCCGGAGGCCGACCCCUUGGCGGGAACCAGCACAAAGUGUUGGCAUCGCCCGGCGCCCGGGACAGUCCUGGGCACAGCCUCGGCUCUGAGUCCCUCCGCCUCCCAGCGACGGACGCCAAAGGGUCCCGGGCCGCCUGAGGCUCCUCCCCACCACAGCCAUCUCGUUUAUCGGACCAGGAGCAGGCAUCCAUGAGACCUCAGAGCUUCAGAUCGAGGCCUUGGGGGGUCCGGGCCCCCCCAGGAAACACGGUGAGGCCCCAGCGCCUGCAGCCAAAGCUGGCACGAUCUAUGGGGCAGGUGCCGCUCUGCCUAGAAAAGCCAGGGGCUCUGCUGCCGUGCCCUCCAGAGCCCACAGCGGGCAGGACUCCUCCAGCACCACCACACCCAGUGGCCCGAGACCCCUCUGAGAACAGUGAGGCUGGUCCUCGUGCCGUUCCAGCCGGUGCCCGGCCAGUGGGGAGGACACAGCCUAGGAACCAGCUGCCUGAGACCAGGGUGCCUCUGGGCUGUCCUCCCGCGUGGCGGAGACCCCAAGCACGCAGCCACCCAUUUCCGGAGCUGCAGGAUAGAGCUUCCUCUUGAUCUCUGUUUUUAAGCAGAAAUUCAUUGUGCAGAAAAGUCCUCCAGAGCUCUGUGGCCCCGCUCGGAUCCGCUGGACCCCCAUGCCUGGCUGAUCCCUGCCCACGUGGGGCAGGCCCACAUCUAACCCCCACAAGUCACUGCCUCACUGCACCUGCCAAGGCUGCCCUGGCGCUGAGUCCUGGGGUCCCUCCCGGAGUUCCUGGGAGAAAGGCGCCGUCGUGGCCGCCUCCCGCACGCCAGGCCCGGGCUCCACCGUGGGUCUCAGACGCCCUGCGGCACCGGCACCGUCUGCUUUAGCAUGGGACCCCCCUCUGAGGGGUGGCCUGGCCUUCGGGGUCCCCACGCUCCUUUGCGAAGUCCACUGUGGGUGCCAUCAUGGUCUCCGGGACCUGGGCCAGCGGGAACGUGGGGGCACUGGGUGUGCUGAUAUAAAGUCGGCAUUACUCAA
+5&#x27; UTR: 1-165 (165 nt); CDS: 166-762 (597 nt); 3&#x27; UTR: 763-1832 (1070 nt).
+
+Translation of the CDS (597 nt, standard genetic code) yields the 198-residue protein:
+MALRHLALLAGLLVGVASKSMENTAQLPECCVDVVGVNASCPGASLCGPGCYRRWNADGSASCVRCGNGTLPAYNGSECRSFAGPGAPFPMNRSSGTPGRPHPGAPRVAASLFLGTFFISSGLILSVAGFFYLKRSSKLPRACYRRNKAPALQPGEAAAMIPPPQSSVRKPRYVRRERPLDRATDPAAFPGEARISNV
+
+Verified: translate(CDS) equals the protein.</pre></details><h3>Splice site — 5′ donor</h3><p class="why">Observed motif, classified rather than assumed.</p><details class="doc" open><summary><code>ensembl_splice:ENST00000456328:intron1:donor</code> · Homo sapiens</summary><div class="dmeta">entity_type=splice_junction  seq_len=200  ordering=sequence_first</div><pre>&gt;ensembl:ENST00000456328:intron1:donor [Homo sapiens]
+CCCCTGTTGTCTGCATGTAACTTAATACCACAACCAGGCATAGGGGAAAGATTGGAGGAAAGATGAGTGAGAGCATCAACTTCTCTCACAACCTAGGCCAGTAAGTAGTGCTTGTGCTCATCTCCTTGGCTGTGATACGTGGCCGGCCCTCGCTCCAGCAGCTGGACCCCTACCTGCCGTCTGCTGCCATCGGAGCCCAA
+
+The sequence is a 200 bp window over a 5&#x27; splice donor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 5&#x27; splice donor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Donor dinucleotide: GT — canonical (GT-AG)</pre></details><h3>Splice site — 3′ acceptor</h3><p class="why">The mirror: intron→exon.</p><details class="doc" open><summary><code>ensembl_splice:ENST00000456328:intron1:acceptor</code> · Homo sapiens</summary><div class="dmeta">entity_type=splice_junction  seq_len=200  ordering=sequence_first</div><pre>&gt;ensembl:ENST00000456328:intron1:acceptor [Homo sapiens]
+GGCAGAGCCGCAGGCACAGCCAAGAGGGCTGAAGAAATGGTAGAACGGAGCAGCTGGTGATGTGTGGGCCCACCGGCCCCAGGCTCCTGTCTCCCCCCAGGTGTGTGGTGATGCCAGGCATGCCCTTCCCCAGCATCAGGTCTCCAGAGCTGCAGAAGACGACGGCCGACTTGGATCACACTCTTGTGAGTGTCCCCAGT
+
+The sequence is a 200 bp window over a 3&#x27; splice acceptor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 3&#x27; splice acceptor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Acceptor dinucleotide: AG — canonical (GT-AG)</pre></details><h3>Regulatory feature — promoter</h3><p class="why">Cis-regulatory element with its DNA.</p><details class="doc" open><summary><code>ensembl_reg:ENSR00001295568</code> · Homo sapiens</summary><div class="dmeta">entity_type=regulatory_feature  seq_len=501  ordering=sequence_first</div><pre>&gt;ensembl:ENSR00001295568 promoter [Homo sapiens]
+ACAGGAGTCATGGTGCCTGTGGGTCGGAGCCGGAGCGTCAGAGCCACCCACGACCACCGGCACGCCCCCACCACAGGGCAGCGTGGTGTTGAGACAACACAGCCCTCATCCCAACTATGCACATAGCTTCAGCCTGCACAGATAGGGGAGTAGGGGACAGAGCATTTGCTGAGAGGCCAGGAGCGCATAGATGGGACTCTGCTGATGCCTGCTGAGTGAATGAGGGAAAGGGCAGGGCCCGGGACTGGGGAATCTGTAGGGTCAATGGAGGAGTTCAGAGAAGGTGCAACATTTCTGACCCCCTACAAGGTGCTTGCTACCTGCCAGGCACCCTTTCCATACCTTGTCTCAGTTCAGCTCCCCACCTTGGATAAACAAGAAACCTTGGTTGCAGAGGAAAAAAGAGGCTGGAAACAAAGGGGTAGAAATGGGGTAGCAGGGGAGATTGCCTGATCAACTGCCAAATGGTACACAGTTCTGGAAAAGCACAAAAAATGTGCA
+
+The sequence is a promoter (501 bp) from the Ensembl release-112 Regulatory Build (ENSR00001295568) from Homo sapiens (NCBI taxon 9606).
+Location: 1:24,876-25,376
+Feature length: 501 bp</pre></details><h3>Regulatory feature — enhancer</h3><p class="why">Long features shown as a centred window.</p><details class="doc" open><summary><code>ensembl_reg:ENSR00001164745</code> · Homo sapiens</summary><div class="dmeta">entity_type=regulatory_feature  seq_len=600  ordering=sequence_first</div><pre>&gt;ensembl:ENSR00001164745 enhancer [Homo sapiens]
+GGGCAGGAGGCAGTCACTGACCCCGAGACGTTTGCATCCTGCACAGCTAGAGATCCTTTATTAAAAGCACACTGTTGGTTTCTGCTCAGTTCTTTATTGATTGGTGTGCCGTTTTCTCTGGAAGCCTCTTAAGAACACAGTGGCGCAGGCTGGGTGGAGCCGTCCCCCCATGGAGCACAGGCAGACAGAAGTCCCCGCCCCAGCTGTGTGGCCTCAAGCCAGCCTTCCGCTCCTTGAAGCTGGTCTCCACACAGTGCTGGTTCCGTCACCCCCTCCCAAGGAAGTAGGTCTGAGCAGCTTGTCCTGGCTGTGTCCATGTCAGAGCAACGGCCCAAGTCTGGGTCTGGGGGGGAAGGTGTCATGGAGCCCCCTACGATTCCCAGTCGTCCTCGTCCTCCTCTGCCTGTGGCTGCTGCGGTGGCGGCAGAGGAGGGATGGAGTCTGACACGCGGGCAAAGGCTCCTCCGGGCCCCTCACCAGCCCCAGGTCCTTTCCCAGAGATGCCTGGAGGGAAAAGGCTGAGTGAGGGTGGTTGGTGGGAAACCCTGGTTCCCCCAGCCCCCGGAGACTTAAATACAGGAAGAAAAAGGCAGGACAGAA
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00001164745) from Homo sapiens (NCBI taxon 9606).
+Location: 1:12,802-16,450
+Feature length: 3,649 bp (central 600 bp shown)</pre></details>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Method</div><h2>How these numbers were produced</h2>
+<p>Counts marked <em>before</em> are exact, from the built corpus. <em>After</em> counts apply the measured
+retention rate to those exact counts; token rates are re-measured with the Llama-3 /
+<code>marin-community/marin-tokenizer</code> tokenizer over the regenerated samples. Genomic record counts
+are unchanged because the gate passes them intrinsically. Nothing here has been run over the whole dataset
+yet — that is the next step once the rules settle.</p>
+</div></section>
+
+<footer><div class="wrap"><p>Built with
+<a href="https://github.com/timodonnell/biocorpus">timodonnell/biocorpus</a> · previous
+<a href="biocorpus-report.html">v1 dataset report</a> ·
+<a href="thebiocollection-review.html">TheBioCollection review</a>. Generated 2026-07-23.</p>
+</div></footer>
+<script>const t=new URLSearchParams(location.search).get('theme'); if(t) document.documentElement.dataset.theme=t;</script>
+</body></html>
