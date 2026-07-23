@@ -48,6 +48,78 @@ Ensembl sources are **multi-species**: `--species` is a name, comma-list, or
 annotations{…} · sequence · sequences{dna_genomic,rna,cds,protein}` (dogma only)
 `· ordering · text`. `text` is what a tokenizer consumes; the rest is queryable.
 
+## Example records
+
+The `text` field, verbatim from [`samples/`](samples/) — sequences and long lists
+truncated with `…`.
+
+**Protein** (Swiss-Prot; UniProt annotation rendered as prose):
+
+```
+>sp:P69905 Hemoglobin subunit alpha [Homo sapiens (Human)]
+<protein>MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPH…</protein>
+
+Hemoglobin subunit alpha — UniProtKB/Swiss-Prot P69905 — is a 142-residue protein from Homo sapiens (Human) (NCBI taxon 9606); gene HBA1.
+Function: Involved in oxygen transport from the lung to the various peripheral tissues
+GO annotations: blood microparticle (component); hemoglobin complex (component); heme binding (function); oxygen binding (function); …
+Sequence features: 151 variant; 17 mod res [4 (Phosphoserine)]; 12 helix; 2 binding [59; 88 (proximal binding residue)]; …
+Keywords: 3D-structure; Heme; Hereditary hemolytic anemia; Iron; Metal-binding; Oxygen transport; …
+Cross-references: PDB 1A00, 1A01, 1A0U +343 more; Reactome R-HSA-1237044 …; Pfam PF00042
+Lineage: Eukaryota > Metazoa > Chordata > … > Mammalia > Eutheria
+```
+
+**UniRef50 cluster** (the deduped protein backbone — compact by design):
+
+```
+>uniref50:A0A007 MoeK5 [Streptomyces viridosporus]
+<protein>MGYIHTALKSAGFHHVIQVDTPALGLDSEGLRKLLADFEPDLVGVS…</protein>
+
+MoeK5 — UniRef50 A0A007 — is a 407-residue protein from Streptomyces viridosporus (NCBI taxon 67581).
+Cluster size: 1 member sequence(s)
+Representative: A0A007_STRVD
+```
+
+**Central dogma** — DNA → RNA → protein in one document, verified:
+
+```
+>ensembl-dogma:ENST00000641515 OR4F5 [Homo sapiens]
+Gene OR4F5 (protein_coding), Ensembl canonical transcript ENST00000641515, 1:65,419-71,585 (+), 3 exon(s) / 2 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+<dna>CCCAGATCTCTTCAGgtacatctagtccattcataaagggcttttaattaaccaag…</dna>
+
+Transcription and splicing remove 2 intron(s) (3549 nt) to give the mature mRNA (2618 nt):
+<rna>CCCAGAUCUCUUCAGUUUUUAUGCCUCAUUCUGUGAAAAUUGCUGUAGUCUCUUCC…</rna>
+Exon boundaries in the mRNA: 1-15, 16-69, 70-2618.
+5' UTR: 1-60 (60 nt); CDS: 61-1041 (981 nt); 3' UTR: 1042-2618 (1577 nt).
+
+Translation of the CDS (981 nt, standard genetic code) yields the 326-residue protein:
+<protein>MKKVTAEAISWNESTSETNNSMVTEFIFLGLSDSQELQTFLFMLFF…</protein>
+
+Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein.
+```
+
+The splice is legible in the DNA itself: `…TTCAG` (exon, UPPER) → `gtacatct…`
+(intron, lower, canonical `gt`).
+
+**Splice site** (donor; the acceptor record is its mirror, intron→exon):
+
+```
+>ensembl:ENST00000456328:intron1:donor [Homo sapiens]
+<dna>CCCCTGTTGTCTGCATGTAACTTAATACCACAACCAGGCATAGGGG…</dna>
+
+The sequence is a 200 bp window over a 5' splice donor site in gene DDX11L2 from Homo sapiens (NCBI taxon 9606).
+Splice site: 5' splice donor
+Transcript: ENST00000456328
+Intron: 1 of 2
+Intron location: 1:12,228-12,612 (+)
+Intron length: 385 bp
+Donor dinucleotide: GT — canonical (GT-AG)
+```
+
+Gene-model, regulatory-feature, multi-species and TrEMBL examples are in
+[`samples/`](samples/).
+
 ## Usage
 
 ```bash
