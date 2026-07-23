@@ -158,21 +158,36 @@ in principle predict from sequence.</p>
 </div></section>
 
 <section id="scale"><div class="wrap">
-<div class="eyebrow">Next</div><h2>Recovering scale without lowering the bar</h2>
-<p>0.90 B is high-quality but small. Three ways to grow it that keep the same standard:</p>
+<div class="eyebrow">Measured</div><h2>Recovering scale: TrEMBL is annotated where UniRef50 is not</h2>
+<p>The reason UniRef50 fails the gate is that its FASTA carries no annotation — but the underlying UniProt
+entries do. Measured on ~40,000 TrEMBL entries streamed from the flat file (<b>not</b> the API, whose
+ordering favours annotated entries):</p>
+<div class="tablewrap"><table>
+<thead><tr><th>TrEMBL entries with…</th><th class="num">fraction</th><th>what it teaches</th></tr></thead>
+<tbody>
+<tr><td>sequence features (domains, transmembrane, sites, disordered regions)</td><td class="num">83%</td><td>domain boundaries, membrane topology, active/binding sites</td></tr>
+<tr><td>GO terms</td><td class="num">63%</td><td>molecular function / process / localisation</td></tr>
+<tr><td>a FUNCTION or catalytic-activity statement</td><td class="num">~11%</td><td>curated/rule-based function</td></tr>
+<tr><td><b>≥1 substantive annotation (passes the gate)</b></td><td class="num"><b>88%</b></td><td>—</td></tr>
+</tbody></table></div>
+<p>So TrEMBL (~149 M entries) holds on the order of <b>tens of billions of tokens</b> of annotated protein
+(88% × 149 M × ~407 tok ≈ <b>~50 B raw</b>). The catch is redundancy — TrEMBL is un-deduplicated (that is
+why UniRef exists), so the right target is <b>annotated + deduplicated</b>:</p>
 <ul>
-<li><b>Annotated TrEMBL instead of UniRef50.</b> TrEMBL has 149 M entries, many with computed GO terms and
-features — exactly the fields the gate wants. If even a third qualify, that is billions of tokens of
-annotated protein. <em>The annotated fraction has not been measured yet</em> — that is the first thing to check,
-and it needs the TrEMBL flat file rather than the API (whose ordering favours well-annotated entries and
-would flatter the estimate).</li>
-<li><b>Multi-species genomics.</b> Dogma + splice are ~0.07 B for human; the builder already handles ~356
-Ensembl vertebrates offline via <code>--genome</code>. Fifty species would be a few billion tokens.
-(Regulatory Build exists only for human and mouse.)</li>
-<li><b>Join annotation onto UniRef.</b> Each UniRef representative maps to a UniProt accession, so GO and
-features could be attached — recovering breadth at Swiss-Prot-like quality. It is a 39 M-row join, the most
-expensive option but the one that preserves the deduplicated diversity UniRef was chosen for.</li>
+<li><b>Annotated UniRef50 (recommended).</b> Join UniProt annotations onto the 38.8 M UniRef50
+representatives (each has a <code>RepID</code> accession) and keep the annotated ones: ~88% × 38.8 M × ~450 tok
+≈ <b>~15 B tokens</b> — deduplicated and annotated, i.e. the original protein backbone, restored at the new
+quality bar. Cost: a 38.8 M-row join that requires processing the full TrEMBL flat file (118 GB gzipped).</li>
+<li><b>Annotated TrEMBL + exact-sequence dedup (simpler).</b> Skips the join but removes less redundancy than
+UniRef clustering; <code>--stride</code> can trim it to budget.</li>
+<li><b>Multi-species genomics.</b> Human dogma+splice is ~0.07 B; ~50 of the 356 Ensembl vertebrates the
+builder already handles offline would add a few billion (Regulatory Build is human/mouse only).</li>
 </ul>
+<div class="note"><b>Caveat on this measurement.</b> The 118 GB flat file is a single gzip stream — not
+randomly seekable — so this sample is the file <em>head</em>, which happens to be archaea-heavy (Haloterrigena,
+Natrinema, …; 1,078 organisms but a few proteomes dominate). The 88% is for that taxonomic slice; a
+representative figure needs a deeper or full pass. The qualitative gap is robust regardless: TrEMBL carries
+per-residue and GO annotation at 60–80%+, UniRef50's FASTA carries none.</div>
 </div></section>
 
 <section><div class="wrap">

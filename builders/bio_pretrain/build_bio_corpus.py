@@ -236,9 +236,6 @@ def _db_label(rec: BioRecord) -> str:
 # representative ids) is deliberately excluded.
 _SUBSTANTIVE = ("function", "catalytic_activity", "subcellular_location", "pathway",
                 "disease", "go", "features")
-_UNCHARACTERISED = re.compile(
-    r"uncharacteri[sz]ed|hypothetical protein|protein of unknown function|unknown function|"
-    r"\bDUF\d+|putative uncharacteri[sz]ed", re.I)
 
 
 def is_informative(rec: BioRecord) -> bool:
@@ -246,13 +243,16 @@ def is_informative(rec: BioRecord) -> bool:
 
     Genomic records (dogma / splice / regulatory) are intrinsically annotated —
     coding regions, UTRs, exon structure, splice motifs, cis-regulatory element
-    type. Protein records must carry at least one substantive field and must not
-    be an uncharacterised entry.
+    type. A protein record is kept iff it carries at least one substantive field:
+    function, catalytic activity, localisation, pathway, disease, GO terms, or
+    per-residue features (domains, sites, PTMs, signal/transmembrane spans, …).
+
+    The protein *name* is not used: an entry named "Uncharacterized protein" that
+    still has InterPro domain boundaries or GO terms carries learnable content and
+    is kept; a truly bare entry has none of these fields and is dropped here.
     """
     if rec.entity_type in ("central_dogma", "splice_junction", "regulatory_feature"):
         return True
-    if _UNCHARACTERISED.search(rec.name or ""):
-        return False
     a = rec.annotations or {}
     return any(a.get(k) for k in _SUBSTANTIVE)
 
