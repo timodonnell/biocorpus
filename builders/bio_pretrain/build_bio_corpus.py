@@ -611,6 +611,9 @@ def iter_uniref(args) -> Iterator[BioRecord]:
     """
     ident = args.identity
     src = args.file or args.url or UNIREF_URLS[ident]
+    if getattr(args, "annotate", False):
+        yield from _iter_uniref_annotated(args, src, ident)
+        return
     source = f"uniprot_uniref{ident}"
     handle = open_text(src)
     hdr: Optional[str] = None
@@ -663,6 +666,48 @@ def iter_uniref(args) -> Iterator[BioRecord]:
             r = _emit(hdr[1:].strip(), seq)
             if r:
                 yield r
+
+
+def _iter_uniref_annotated(args, src: str, ident: str) -> Iterator[BioRecord]:
+    """Deduplicated + annotated proteins: one UniProt entry per UniRef cluster representative.
+
+    UniRef gives the deduplicated *set* (one representative per cluster); its
+    annotation lives in the representative's UniProt entry. We read only the FASTA
+    headers to enumerate representative accessions, then batch-fetch their UniProt
+    flat entries and render those (the build-level gate drops any that lack
+    substantive annotation). The `accessions` endpoint fetches *specific* entries,
+    so there is no annotation-score ordering bias.
+    """
+    from Bio import SwissProt
+
+    stride = max(1, getattr(args, "stride", 1))
+    batch = max(1, getattr(args, "annotate_batch", 100))
+
+    def _flush(accs):
+        if not accs:
+            return
+        url = f"https://rest.uniprot.org/uniprotkb/accessions?accessions={','.join(accs)}&format=txt"
+        try:
+            txt = fetch_text(url)
+        except Exception:
+            return
+        for rec in SwissProt.parse(io.StringIO(txt)):
+            yield _uniprot_record_from_swiss(rec, url, f"uniref{ident}-rep")
+        time.sleep(0.1)
+
+    accs, n_seen = [], 0
+    for line in open_text(src):
+        if not line.startswith(">"):
+            continue
+        n_seen += 1
+        if n_seen % stride:
+            continue
+        cid = line[1:].split(None, 1)[0]  # UniRef50_A0A007
+        accs.append(cid.split("_", 1)[1] if "_" in cid else cid)  # -> A0A007
+        if len(accs) >= batch:
+            yield from _flush(accs)
+            accs = []
+    yield from _flush(accs)
 
 
 # --------------------------------------------------------------------------- #
@@ -1543,6 +1588,9 @@ def main() -> None:
     ur.add_argument("--file", help="local uniref{50,90,100}.fasta.gz (bulk; avoids re-download)")
     ur.add_argument("--url", help="override the UniRef FASTA URL")
     ur.add_argument("--stride", type=int, default=1, help="emit 1 of every N clusters (representative subsample; the bulk FASTA is length-sorted)")
+    ur.add_argument("--annotate", action="store_true",
+                    help="join UniProt annotation onto each representative (deduplicated + annotated proteins)")
+    ur.add_argument("--annotate-batch", type=int, default=100, help="accessions per UniProt REST batch fetch")
 
     en = sub.add_parser("ensembl", parents=[common], help="Ensembl FASTA (rich headers)")
     en.add_argument("--url", help="Ensembl pep/cdna FASTA .gz URL (overrides --species; default: yeast pep)")
