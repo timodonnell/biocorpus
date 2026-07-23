@@ -1,6 +1,8 @@
-100 documents sampled uniformly at random from biocorpus
-corpus: 14,549,785 records (~4.5B tokens)   sampled: 2026-07-23   seed: 20260723
-method: reservoir sampling over every record (uniform, unbiased)
+100 documents sampled uniformly at random from the biocorpus HuggingFace upload
+source: the 32 zstd shards published as hf://buckets/timodonnell/biocorpus
+        (data/biocorpus_part_00.jsonl.zst .. part_31.jsonl.zst, 3.5 GB compressed / 25.4 GB raw)
+corpus: 14,549,785 records, ~4.5B tokens   sampled: 2026-07-23   seed: 20260723
+method: reservoir sampling over every record in the decompressed shard stream (uniform, unbiased)
 
 composition of THIS sample (mirrors the corpus, which is ~88% UniRef50):
   uniprot_uniref50        85
