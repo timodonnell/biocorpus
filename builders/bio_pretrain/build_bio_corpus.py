@@ -445,6 +445,14 @@ _FEATURE_INTEREST = (
     "SIGNAL", "TRANSMEM", "DOMAIN", "ACT_SITE", "BINDING", "METAL",
     "SITE", "MOD_RES", "DISULFID", "CARBOHYD", "MOTIF", "REGION",
 )
+# Features that carry no learnable signal: the whole-protein chain, fragment
+# markers, sequence conflicts/variants and low-complexity flags. Excluded from the
+# rendered "Sequence features" line and, therefore, from the annotation gate — an
+# entry whose only feature is CHAIN counts as uncharacterised.
+_FT_UNINFORMATIVE = {
+    "CHAIN", "PEPTIDE", "NON_TER", "NON_CONS", "NON_STD", "CONFLICT", "UNSURE",
+    "COMPBIAS", "VARIANT", "VAR_SEQ", "MUTAGEN", "INIT_MET",
+}
 
 
 def _gene_from_uniprot(gene_name) -> Optional[str]:
@@ -466,7 +474,7 @@ def _summarise_features(features) -> Optional[str]:
     examples: dict[str, list[str]] = defaultdict(list)
     for ft in features or []:
         t = getattr(ft, "type", None)
-        if not t:
+        if not t or t in _FT_UNINFORMATIVE:
             continue
         counts[t] += 1
         if t in _FEATURE_INTEREST and len(examples[t]) < 2:
@@ -601,6 +609,9 @@ UNIREF_URLS = {
     for lvl in ("50", "90", "100")
 }
 _UNIREF_HDR = re.compile(r"^(\S+)\s+(.*?)\s+n=(\d+)\s+Tax=(.*?)\s+TaxID=(\S+)\s+RepID=(\S+)\s*$")
+# UniProtKB accession format — used to drop UniParc (UPI…) UniRef representatives,
+# which are archive-only sequences with no UniProtKB annotation.
+_UNIPROT_ACC = re.compile(r"^[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$|^[OPQ][0-9][A-Z0-9]{3}[0-9]$")
 
 
 def iter_uniref(args) -> Iterator[BioRecord]:
@@ -703,7 +714,10 @@ def _iter_uniref_annotated(args, src: str, ident: str) -> Iterator[BioRecord]:
         if n_seen % stride:
             continue
         cid = line[1:].split(None, 1)[0]  # UniRef50_A0A007
-        accs.append(cid.split("_", 1)[1] if "_" in cid else cid)  # -> A0A007
+        acc = cid.split("_", 1)[1] if "_" in cid else cid  # -> A0A007
+        if not _UNIPROT_ACC.match(acc):  # drop UniParc (UPI…) reps: no UniProtKB annotation
+            continue
+        accs.append(acc)
         if len(accs) >= batch:
             yield from _flush(accs)
             accs = []
