@@ -1,0 +1,1164 @@
+100 documents sampled uniformly at random from biocorpus
+corpus: 14,549,785 records (~4.5B tokens)   sampled: 2026-07-23   seed: 20260723
+method: reservoir sampling over every record (uniform, unbiased)
+
+composition of THIS sample (mirrors the corpus, which is ~88% UniRef50):
+  uniprot_uniref50        85
+  uniprot_swissprot        9
+  ensembl                  6
+  entity types: protein=94, regulatory_feature=6
+
+the `text` field of each record is reproduced in full below.
+
+====================================================================================================
+[1/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=831  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAN8HY43   organism=Euteleostomi
+====================================================================================================
+>uniref50:A0AAN8HY43 Sushi domain containing 2 [Euteleostomi]
+<protein>MHTRGHLKETIFLYGIFLLYSSKTAGQTCRGQCGDVLEKCSCHATCVSLLKCCADYNQSCVQVTPHSSSMLGGRALRILGVALHPGGRLLCRFKGEIEREGFIDDEGHGYCISPLLYETGWIPFTVSIDGIHFDRSGEFLSVHPSKADPAFEVILVNATQWQYYGTPNVSGRLKVTWNSSLIGAETVNIELWGYREFSRSTEAGVNGSSSLQAELSYLYSLGRNLPNTGAFSFVPEPSEDYSDWKLGNIRITASSKSDGARDVEGLWSGGHVLAWHLEQAFRDESAGWARSRCLQWDVLENKLPNFLEDLITCPCTLAQARADTGRFHTDYSCDIERGSVCTYHPGSVHCVRAIQASPTHGSGQQCCYDSTGALVLTGDSIGGSTPDRAHDWGSPPYREPPRVPGYSHWLYDVMSFYYCCLWSDHCNIYFKHRPSSGCRSYQPPKAGVVLGDPHFVTFDGLSYTFNGKGEYYLVSSPDRELSVQARTEALKFKNGTSAKATVLSSVAMKGNTSDVIEVRLADGHLQVLRNQKVLPFTEQRWMDLHGVFVFTPSLQHVTVIFLSGVGVEVRVREGAMAVTVLLPSEFTNHTQGLLGLMNSDPSDDLLTGLGEILSPADATPEEIFTFGAGWNISKTSSLFTYDSKYLMDTYYFPPSHDTAFVPAFSLPETPDDPLMADMLAMCLGEGAQFCKYDTLTAQSLRMGNATLGAYQSHLALTEALEQVVSCGWLPTPRNGKKNGTHYLEGSCLSFTCNEGFSLNGSTERTCLDDGSWTGEQPYCITDDNVRFVLGAVGSLSALVMMAVMIHLHNRKQVREKKEERKERKETQEQTC</protein>
+
+Sushi domain containing 2 — UniRef50 A0AAN8HY43 — is a 831-residue protein from Euteleostomi (NCBI taxon 117571).
+Cluster size: 192 member sequence(s)
+Representative: A0AAN8HY43_CHAGU
+
+====================================================================================================
+[2/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=206  ordering=sequence_first
+         id=uniref50:UniRef50_A0A0N0BF59   organism=Melipona quadrifasciata
+====================================================================================================
+>uniref50:A0A0N0BF59 LON peptidase N-terminal domain and RING finger protein 3 [Melipona quadrifasciata]
+<protein>MVRRCVESGVRQFGIAACLNREATGTKSLQFFKVQIAVEKIFKILINSVYILLRKNFLMICHHLRVITVLQIQEDQLLNLLELHDKVRTKGRRWWDTVPLSQQLEIQRVFGRMPDTEEDWSRLPDGPSWTWWLLAILPLGPQLQVGILGTTSLEKRLRAIEKTLDHMEQRQLTVAPAPSEETTTSSSICRDEGGLTDTTVSVVQQS</protein>
+
+LON peptidase N-terminal domain and RING finger protein 3 — UniRef50 A0A0N0BF59 — is a 206-residue protein from Melipona quadrifasciata (NCBI taxon 166423).
+Cluster size: 1 member sequence(s)
+Representative: A0A0N0BF59_9HYME
+
+====================================================================================================
+[3/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=372  ordering=sequence_first
+         id=uniref50:UniRef50_A0ACM8ANV2   organism=Petromyzon marinus
+====================================================================================================
+>uniref50:A0ACM8ANV2 DDB1- and CUL4-associated factor 8-like [Petromyzon marinus]
+<protein>MVKFESGHRSNVFQAKFLPQSGDSTLVSSSRDGQLSLDDSSPSVFLSAGEDAVVFSIDLRSNKPASKLLVCREAMDKVPLYTVHSRPLNSHHFVLGGKDPYVRLFDRRKINDSINNGVLHKYSPQHLRGERKANVTCVVYNYNGTELLASYNDDDVFLFQCGGGGGGGGGGGGGGGGGVGDSDEPARRFKGHRNSATVKGVNFLGPRAEFVVSGSDCGHIFIWDKESGCVLQCLEGDQGGVVNCLEPHPHTVAMATSGLDHDVKIWSPTATEETDLSGLPRVMKKNKRERDNESRSRGSDVLDSHVLWFLMHNLRHRARTQRWRRRVGDERDTSDDGDDGDDDDDDDDDDDENDDDDDDDDVANERVQCVPS</protein>
+
+DDB1- and CUL4-associated factor 8-like — UniRef50 A0ACM8ANV2 — is a 372-residue protein from Petromyzon marinus (NCBI taxon 7757).
+Cluster size: 1 member sequence(s)
+Representative: A0ACM8ANV2_PETMA
+
+====================================================================================================
+[4/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=527  ordering=sequence_first
+         id=uniref50:UniRef50_A0A401SNL7   organism=Orectolobiformes
+====================================================================================================
+>uniref50:A0A401SNL7 Ig-like domain-containing protein [Orectolobiformes]
+<protein>MAARTSHLYFVLTLKFLLTTVCSFQIQLQPESLPWIRVGQELVLRCESKECPSPSFSWRTGIDKPLGGKVNTQGSVSTLTFSPVTRQNENTFICVATCGDQKKQKSREVNVYSFPDALILETVGTLEVGKKSTVTCTVPDVYPPGRVEVKLMKGKTILAEKQHFEEDRITLSNELIPTLDDSGQEITCQAQFYIQKISKSLEGKLTLQVLYAPRMTEISVTPSATVREGQDLQLTCTAQSKPTASFVWSKLSAQGWSLIAQNKSTLQLPKAQLTDSGIYRCEANNRLGQEAKQVQIHVLTAPRNTHLTISPSVVKEGQRVTITCTSHSNPSAQIVLSKKTESGQKNLHAKNGTFIIDAAQSSDEGQYECEARNDLGIQIQNTELIVQVLTVWVHPSNLVNEGENVTIGCTVHSNFSANFTWKKMENNSETILPSTNDSFSILQITQSDAGHYIVEVVNELGNQTGTVNIHVNETKLSAPIAEKPRGILETACVGASLGSAGLLLGMTYYIYRRSNCKGSYKMATQQV</protein>
+
+Ig-like domain-containing protein — UniRef50 A0A401SNL7 — is a 527-residue protein from Orectolobiformes (NCBI taxon 30503).
+Cluster size: 2 member sequence(s)
+Representative: A0A401SNL7_CHIPU
+
+====================================================================================================
+[5/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=960  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABR2NI55   organism=Hibiscus sabdariffa
+====================================================================================================
+>uniref50:A0ABR2NI55 ABC transmembrane type-1 domain-containing protein [Hibiscus sabdariffa]
+<protein>MRVVVAAVVVAAVVVAAVVVVAVVVADVVVVAVVVVVVVVAAAVVAAVVAAAVVAAAVVVAVVVVAAVVAAVVVAAAVVAAAVVAVVVAVAVVAAAVVAAAVVVAAVVVAAVVVAAAVVAAAVVAAAVAAAVVATAAVVAAVVVAAVVVAAAVVVVVVVVVVVVVVVVAAAAAAAAAAAVVVVVVVVVVVVVVVVVVVVVVAVVVVDVVVVVVAVVVVVAVVVVVAVVVGVVVVVVVVVVVVVAVVVVVVAVVAVVAVVVAVVAVVVAVAVVVVVVVAVVVVVAVAVAVAVAVVVAVVVVAAVAVVVVVAVAVAVDVAVVVVVVAVVVAVVVVVVVAVAVVVAVVVVAIVVDVAVVAVVVVVVVVVSSLLSSLWLLLWLLSLLVVVVVVVVVVVVVVVVAVVVAVVVVVGVVVVVVVVVVVVVVAVVVAVAVVVAVAVVVVVAVVVAVVVVVVVVVVVVVAVVVVVVVAVVVAVVVFVVVVVVVAVAVVAAVVVAVVVVVAVVVVVIVVAAAVVAVVVVAAVVVAAVVVAAVVVVAVVVADVVVVAVVVVVVVAAAVVAAVVAAAVVAAAVVVAAVVVAAVVVAAVVAVVVVAAAVVAAAVVAVVVAAAVVAAAVVAAAVVGAAVVVAAVVVAAAVVAAAVVAAAVVAAAVVAAVVAAAAAVVAAVVVAAVVVAAAVVVVVVVVVVVVVVVVVVVVVVVVAAAAAAAAAAAAAAAAAVLLLLLLLLLLLLLLLLLLLCYLLVISLLQREMKASFKGRYADEKNTAAATFALNAGDVKLRASITDATVVDVPSLNGLTLAVEKPGSFTIDYDVPKKGFRFQFMNTVRVAEFPLKLTYIHSRGDNRTVFDGALMFDSANKVSANYTLGTGNCKLKYSYVHDEVTTFEHSYDWGKKAWDFAVSRRANDDIFKATYQTWNSDLSLEWSRNSNFNGTFKISAHMNLGEESKIPKIIAESSWDLEI</protein>
+
+ABC transmembrane type-1 domain-containing protein — UniRef50 A0ABR2NI55 — is a 960-residue protein from Hibiscus sabdariffa (NCBI taxon 183260).
+Cluster size: 2 member sequence(s)
+Representative: A0ABR2NI55_9ROSI
+
+====================================================================================================
+[6/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=325  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABW3J9I0   organism=Methyloligella solikamskensis
+====================================================================================================
+>uniref50:A0ABW3J9I0 Gfo/Idh/MocA family protein [Methyloligella solikamskensis]
+<protein>MATPRVAVIGCGAWGKNLIRNFADLGALEAVIDNAPGTAAAFAEQHGARALDFAAALQDETIDGFVVAVPGDAHYEIAKQALQAGKHVYVEKPLTLSLAQSEELCALAEEKGLTLMVGHLLQYHPVFQALRKLVEDGKLGDLRFVYSNRLALGRIVRDQNALWDLAPHDISMVLSLMDAEPDEIEAVGACHLKPDVADTVTIHLNFPGKPHAKIFVSWFHPFKEHKLVVIGSKAMAVFNDGEAWENKLMLYPHGLSWDDDLPVPSKADAEPVPVPQAEPLKEECRHFLDCIATGATPRTDGREALRVQKVLEKASQEMAARAIEG</protein>
+
+Gfo/Idh/MocA family protein — UniRef50 A0ABW3J9I0 — is a 325-residue protein from Methyloligella solikamskensis (NCBI taxon 1177756).
+Cluster size: 1 member sequence(s)
+Representative: A0ABW3J9I0_9HYPH
+
+====================================================================================================
+[7/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=219  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABW8JX77   organism=Dyella ginsengisoli
+====================================================================================================
+>uniref50:A0ABW8JX77 Uncharacterized protein [Dyella ginsengisoli]
+<protein>MRKKICWLALLMVLGFFMLGGAAMAQVVSIGDVNGLKTFRWGGVTFEIPKEFFFGFRPYTHEDKEVWIQFGYINSKVTFVSPNEDGYDFWIDVHVRLINTEDPKAALATIHRAGLPFEKVSALGRAEFGGMTYLGSSSLGPYFRMNGQDVYVGCHQVIHGRGLFPNVGSNALNDKYFCNTAFALPGGLYAWMTLSGVHLSEVAKAIVEAQRKVHSFINE</protein>
+
+Uncharacterized protein — UniRef50 A0ABW8JX77 — is a 219-residue protein from Dyella ginsengisoli (NCBI taxon 363848).
+Cluster size: 1 member sequence(s)
+Representative: A0ABW8JX77_9GAMM
+
+====================================================================================================
+[8/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=601  ordering=sequence_first
+         id=uniref50:UniRef50_A0A2K1J043   organism=Bryopsida
+====================================================================================================
+>uniref50:A0A2K1J043 Methyltransferase domain-containing protein [Bryopsida]
+<protein>MRLGVSGEVPDMATPALAYSTALFPSFYDSMVDSLPPEFEVAESHGFYSNLALKSVPEPGGAVKILDLCTGTGSIPRCIAKAWADKCGKESKCRIIGVDNSEEMLKVARRGWIEVSGVNVEWKLGTLGQEGALAGVDNVDLAVISAGSFHHLRTHEEQLIALREVKASLKEGGLLVMNLFGLDEIVEEVSSGDHGGQDVWHLKDGFWKQTLSKEVETLEDGGITGTETFKVGCEMWNEEMVCKWTLRAVWWEDVRELCEELGLVILQEFHSFRDALDGSKAALKETGETGRIFVIQKQNEFHGDVQKMATPTLAYNTALFPFFYDAMVTSLPVEFEVLESRTFYTNLALNVAPETDVDVKVLDLCTGTGRISRDIAAAWSKVASKCRSCNKNRSLQLIGLDNSEEMLKAARREWIQVPDVEVEWMLGTLGQRGALASVRDIDLAIVSAGSFHLLTTYEEQLVAMGEVKESLKVGGILVLNLFGVDEIVEEVSLGDHGGLDIWHLNDGFWKQTLDKEVETLEDGGITGTETFKVGCKKWNEEMVCKWTLRAVWWEDVRELCEEVGLVVQKEFRSFADALCGRTADTNEIGDAGRIFVIQRES</protein>
+
+Methyltransferase domain-containing protein — UniRef50 A0A2K1J043 — is a 601-residue protein from Bryopsida (NCBI taxon 3214).
+Cluster size: 2 member sequence(s)
+Representative: A0A2K1J043_PHYPA
+
+====================================================================================================
+[9/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=972  ordering=sequence_first
+         id=uniprot:Q5QJC4#se   organism=Gallus gallus (Chicken)
+====================================================================================================
+>sp:Q5QJC4 DNA cross-link repair 1A protein [Gallus gallus (Chicken)]
+<protein>MSEDVLLEEDIWEYKSIRKRKPQSNPDSTSVSMQTVTKGKCRPKRKGSGNRKKSVEKNSTPQKSEQRLRPSEDLDPCKDDSSVYAQESVSSLTEQGSPSTRPVCDGYCPSCQMPFSLLVVQTPRWHVAECLDTPGSVEKECPDGLLCTSTIPSHYKRYSHFLLAASRAGEYLVNSTANTVERKMTCSTAAKSSCFPSPVEDSQAEKPSKNLKNVPNNECTSKIKDSEQRKSLNITSESTSSFADVQKPQQVFQLTQTTDNSCKFEFYDFTSSQESVSEDLCSQKDTSQPSLLQSKADFSDWEISYSPLSTCEESEGEAEEEKEVKTSQNKLLKVQNFEGPESNTEVFKFKKQHCEEINTSSCLYHSEKSASQSHVDSKCSNSPCVDNQQEMLSAESSFPLNCNQEFQQPGLLSPAINTGNKESQDKGACVLDSVYSCLTRTQSLLLTEGGRSPLSQKNKVLRAPSVVLTNTDKMTADATEKGTCQESLQPAVKKEENLDSTGVCFPSPISKTVSSHSLASMNAKSSPAKELKQMDIGVFFGLKPKVKEESKGEACLSEGKQIPSSVAPSGKRPRQQKRKAEGSVEDLEAVEESSNKDGGDANVTSGGQRKWRKRFRESSTTDEGARKKQCPFYKKIPGTGFTVDAFQYGEIEGCTAYFLTHFHSDHYCGLTKNFVFPLYCNKITGNLVKSKLRVKEQYINVLPMDTECIVNGIKVLLLDANHCPGATMILFYLPSGTAILHTGDFRADPSMERYPALIGQKIHTLYLDTTYCSPEYTFPSQQEVIQFAVNTAFEMVTLNPRTLVVCGTYSIGKEKVFLAIAEVLGSKASMSRDKYKTLQCLESAAVNSLITMNWDGTLLHILPMMQINFKGLQDHLNKFSENFDQVLAFKPTGWTYSDSCLSVMDIKPQTRGNITIYGIPYSEHSSYLEMKRFVQWLKPQKIIPTVNVGDWRARSLMEKHFRDWMIEGSGHK</protein>
+
+DNA cross-link repair 1A protein — UniProtKB/Swiss-Prot Q5QJC4 — is a 972-residue protein from Gallus gallus (Chicken) (NCBI taxon 9031); gene DCLRE1A.
+Function: May be required for DNA interstrand cross-link repair
+Catalytic activity: Reaction=a beta-lactam + H2O = a substituted beta-amino acid; Xref=Rhea:RHEA:20401, ChEBI:CHEBI:15377, ChEBI:CHEBI:35627, ChEBI:CHEBI:140347; EC=3.5.2.6; Evidence=;
+Subcellular location: Nucleus
+GO annotations: nucleoplasm (component); nucleus (component); 5'-3' DNA exonuclease activity (function); beta-lactamase activity (function); damaged DNA binding (function); zinc ion binding (function); double-strand break repair via nonhomologous end joining (process); interstrand cross-link repair (process)
+Sequence features: 4 compbias; 4 binding [108; 111]; 3 region [14-80 (Disordered); 191-219 (Disordered)]; 1 chain; 1 zn fing
+Keywords: DNA damage; DNA repair; Hydrolase; Metal-binding; Nucleus; Reference proteome; Zinc; Zinc-finger
+Cross-references: EMBL AY376896; RefSeq NP_001008683.1; KEGG gga:423902; Reactome R-GGA-353248, R-GGA-353303; InterPro IPR011084, IPR006642, IPR036866; Pfam PF07522
+Lineage: Eukaryota > Metazoa > Chordata > Craniata > Vertebrata > Euteleostomi > Archelosauria > Archosauria
+
+====================================================================================================
+[10/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=78  ordering=sequence_first
+         id=uniref50:UniRef50_A0A1Q5UD56   organism=Penicillium subrubescens
+====================================================================================================
+>uniref50:A0A1Q5UD56 Uncharacterized protein [Penicillium subrubescens]
+<protein>MLDRIRLKAACRLIRISSRHTLPIHSQLRDIRKNGPADPPPIYTIPGAKQPSTGDVELPLRHRQSGAAKTGSRGRSYN</protein>
+
+Uncharacterized protein — UniRef50 A0A1Q5UD56 — is a 78-residue protein from Penicillium subrubescens (NCBI taxon 1316194).
+Cluster size: 1 member sequence(s)
+Representative: A0A1Q5UD56_9EURO
+
+====================================================================================================
+[11/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=907  ordering=sequence_first
+         id=uniref50:UniRef50_A0A564Z8D7   organism=Hymenolepis diminuta
+====================================================================================================
+>uniref50:A0A564Z8D7 FATC domain-containing protein (Fragment) [Hymenolepis diminuta]
+<protein>LRQRHPARLYVADRFVEFTAGRLLPSWSENLLHHLRNALNNLHQIAWARVSRTVRRPATSLGPFQSSIQSITCPLPSWMAKELQDIVTYCGLPPPIVATSEDMLTEDSENRSGSALVYVDNIQLAYTLLANEAEADPWFKPIKEALSSALSGIGSLNLLTAISLLSKELIPMVERRVNSLPYISYLSDRGAGNLIELISSLNVQSILGPYPRSFQNSTTSPSPSVVSAAALLELPGEATRLKFIPALHQSGYNQQMQQKEGVSHLQSGVNPNPIVAANNAIANEINQPGLLYLADVLPTVVRVPSGGGRRIALRANNGRVFHYDVPCLPRETPAGRGVTVTTADPTEAGSLAPTLAAYEGWREAWCPPHLFQLINDVAARSHEAAKRRMNLVTPRTMDLGSHGMRLIQAGTSVSATAMVTANTVAFGNPTMTGFGSLLAQQLHPQSSTNGNSQPVPLTDDLLPPSAPEIAPTSFPRLDAFAHLRESGKQQQSIPQQTTSSLNGNSTGYAGSRGNALEVSGNPTSLDTGCYAACMSLSSIIDSEIDKESSGSLKSRELVTAFFERLSALTQVADPKSVNLKAALMKVFEELLQMVPRGAKLNSPAAPSIPVISDEYSSPGSVIRVWAYRRMADAESYWLFRNGVSISCGAIAAMETLFSMTPLNASGVILDPRVGRVETRSIRFDLPPTPNNALNIPQLQQRNAPSADLISKSSIQLANFFSSYFAPLRSHTPLSAAPVAGRPTTVAQPISISSRPASLRLTPQLAGFICLPGVPATIGPFSAAMTMLNQAIGQKIQKVAACLRTLLRDDFILWHRGRQAAVHASLLADLLAIENDEEALMASTSGSPINVPDLSNDALMHLITLSLESFRHRNKVLSTGDKVVNEIINASCSYENLACMDPTWLPWY</protein>
+
+FATC domain-containing protein (Fragment) — UniRef50 A0A564Z8D7 — is a 907-residue protein from Hymenolepis diminuta (NCBI taxon 6216).
+Cluster size: 1 member sequence(s)
+Representative: A0A564Z8D7_HYMDI
+
+====================================================================================================
+[12/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first
+         id=ensembl_reg:ENSR00000744761   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000744761 enhancer [Homo sapiens]
+<dna>TGTCATCAAAGCTGAGTCAGTCAGGGCACACACATAGAGGCAGTGAGGTGCTTCACTGGCCAATACAAAAAAACCACTCCTCAGTATTCCCCCACTCTGCCCCGCCATCTTTGGACCTCACTGGAAGCCAGTGGCCCTCATATTCTGAGTATTCCTGTGGGCAGGAAACATAGTTGTTGGGATGCCAAACACTTGTGCTTCTTATAGCTCTGAAATGCCTTGGGGGCACAGTAGTGATTCTGGATTGAAAGCATGTGGGCATCATAGGAAAAAAATATTAATAGGTTAAAAATGTTCTCCAAGTCTGTGATCTCAGATATCTCAAAATATATGTGGTTAGGCGTGGTCTTTCTGTGGAACTTGCAGCAAAAATCTACCTTCCCAGGCGGTGGTTCTTCAGGAAGACTGTAGCGTGCAATCTCCAGTGTTAGTAAAGACAGATGTTGTCTTGTGATTCTTCCATGCACCAATTCTGCAGTTTCTAAAGAGTAGCAGAACTGGCCTCGGTGTGCTCCAAGATTTAGAGTAAGAATAGCAGAGAGCAAACAGCAAGCTGGAACTACTACACATGTACACACGGGAGCCATCTCTCACAAGCTG</dna>
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00000744761) from Homo sapiens (NCBI taxon 9606).
+Location: 4:182,234,801-182,235,801
+Feature length: 1,001 bp (central 600 bp shown)
+
+====================================================================================================
+[13/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=106  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABD3WCR1   organism=Sinanodonta woodiana
+====================================================================================================
+>uniref50:A0ABD3WCR1 Uncharacterized protein [Sinanodonta woodiana]
+<protein>MDHNSDLNMDIDSEGSDIEVDDFDYSDNDIDVNDGLRQNQVDGRNDAWLRAIFDSDSENEAEFEGFQEEWAKDEFSVRFQPKFKLLEGATVQHPEEADALHYFELL</protein>
+
+Uncharacterized protein — UniRef50 A0ABD3WCR1 — is a 106-residue protein from Sinanodonta woodiana (NCBI taxon 1069815).
+Cluster size: 2 member sequence(s)
+Representative: A0ABD3WCR1_SINWO
+
+====================================================================================================
+[14/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=118  ordering=sequence_first
+         id=uniref50:UniRef50_UPI000E44750A   organism=Agathobacter rectalis
+====================================================================================================
+>uniref50:UPI000E44750A hypothetical protein [Agathobacter rectalis]
+<protein>MKIKSFNAKKPKKMLTKAVNGTYGGEIFISIGRSYDFIEASCSSLYHPDYKYKRFPCNYDGYLSAHSWVIKIAEDMLYNRLSTVSINSFTEAKYPRCYDWTEENKINEPCQLSIELGF</protein>
+
+hypothetical protein — UniRef50 UPI000E44750A — is a 118-residue protein from Agathobacter rectalis (NCBI taxon 39491).
+Cluster size: 1 member sequence(s)
+Representative: UPI000E44750A
+
+====================================================================================================
+[15/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=193  ordering=sequence_first
+         id=uniref50:UniRef50_A0A9D4XB40   organism=Pisum sativum
+====================================================================================================
+>uniref50:A0A9D4XB40 Uncharacterized protein [Pisum sativum]
+<protein>MAHLTRLLIWDSDLPRLDLDLSWLSETMSTEIYSGPNETKFPIFSPFPNFIEIRPKFRFFFSPNRPANAPPSRRSRPARQPASFPARIFAVRVGSFAARPSVTPKHPSPSLEQHILFTPALSMDPEAARSARESLDLAFHMSNILDTGLDRHALSILIALCDLGVNPEALAAIVKELRKERLPPSSLHPTPPS</protein>
+
+Uncharacterized protein — UniRef50 A0A9D4XB40 — is a 193-residue protein from Pisum sativum (NCBI taxon 3888).
+Cluster size: 2 member sequence(s)
+Representative: A0A9D4XB40_PEA
+
+====================================================================================================
+[16/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first
+         id=ensembl_reg:ENSR00000230655   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000230655 enhancer [Homo sapiens]
+<dna>ATACAAATCCCTGGTCAGATACATGTGCTGCAAATATTTTCTTCCAGTCTCTACTCACACTGTCTCTTTTAATCCTCCCAGCAACTTGATGAAGTAGATGTTACTATCCTCTTCTTTATTTCCTAGAAGCCAAAACTGAAGCACAGAAAGTTTAAGTGAAATGTTCAGAATCACACAGCTACTCAGTATGGCAGTGAGAGTGTGGGCCTACTGCAGTGTGACTCAGAGCATTGATGTCCAGAAAATCCCAGGAAGCTTCTTTCCACACACGAAGCCTTGTATCTCCCTGGCAGTCTGGAGGCATGTGGCCCTCGAGCCAGTGCTGGGCTGGGTTATTTCGGTTCACACTCTCGCCCTCTGCCTTGCACATACCAGACCATCCTGGGAAGTAGGCGGCTCCCACAACCCGGTTGGGAGCGTGGTCTTCTGGGGAGGATGCCACACAGCTTTGAGTTGCTCTGATGAAAGACAAACTGCGGGGATTCTTATGGGCCTCCGAGGACGCTGACAGTATTACCTCATGCCAGGAATAACAATGAGGGGCCTAGGCGAGCTCGCCGCCAGCCCTTCTCTGGGAGGCACCGCTGGAGGAAACCAGCC</dna>
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00000230655) from Homo sapiens (NCBI taxon 9606).
+Location: 8:128,107,802-128,110,399
+Feature length: 2,598 bp (central 600 bp shown)
+
+====================================================================================================
+[17/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=439  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAU9T4S6   organism=Thlaspi arvense
+====================================================================================================
+>uniref50:A0AAU9T4S6 Uncharacterized protein (Fragment) [Thlaspi arvense]
+<protein>MNIKLEERKTFIWALWALVIRLSKPYSVSLKDPTTQTDRRYENSRCKKIAVINGKKIAVINGYIDGFVLCFIFRARTDSRKDCNRHEIVNNQSPGDVPGNVLLVTFEGVESHGVSIDVIHLTYYSNYNIPTLMKYARITDVDASLLKSFGREFGNSIVMLADDRIHSDSRWFLEMVLHEIIHAPSCSLSFSTPSMALSLLSMACATFSIKRFSTPSYQSWSRLLSYLVVFSKPLWLGLQGRLHVLLSLGKRPRIHLLTWSFLEVFIIRFLPSTFQGQILEVEDDDFIYKCDEEDVVDQILDAREGEEDQDIDIFDVVNMEKSFEFMPIFQENKNSLLTGKTAEKRLKQSIEKDLELVYVAQSCLSWEALQHQYITLKESLKSDDSKGGFYNDNISKELQKFQVLLERFLEDERCEGKRVLSFVQRRFDLIRFFQVPRLS</protein>
+
+Uncharacterized protein (Fragment) — UniRef50 A0AAU9T4S6 — is a 439-residue protein from Thlaspi arvense (NCBI taxon 13288).
+Cluster size: 1 member sequence(s)
+Representative: A0AAU9T4S6_THLAR
+
+====================================================================================================
+[18/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=993  ordering=sequence_first
+         id=uniref50:UniRef50_A0A0B2UTI0   organism=Spirurina
+====================================================================================================
+>uniref50:A0A0B2UTI0 Nipped-B protein [Spirurina]
+<protein>MSGADKMRKVQRALIDYLVEKKGDADVSIEYAVMFYVGEWYKEVYEEGESAKQKLKQALSSSELSDKEKRKFEKKTERVLERCQLMKDFFMKTADKKQMRKRAEHIARTGNILMDSDAVWLVKYLASNREFSQSFDMYLKQILMGIHIEGAVGLRTKAMRCLTLIIESDPEVLRIPEVQKAVHVRMMDSNAAVREATIELVGKYVIAKPDVLPQYYEILIERVKDSGVAVRKRVIRIMREMCEKQPDFEKVPEMLSRIVRRITDEEGVKKLTVETFQALWFQPTRERDSATLIRKVMSMTEMVQICVKENSVEFFEQLLNCLLKSGDRILLSASRQMVDTLVDNVLTLDSKIASDESKVNGSVEESASLNAAAAHASHQERMLACLTTLSLFSKVRPDLMVKHAETLQPYLSMNINSPSEQQVMNQVINMLERVVPLMEHPSESFLKSLDEGLCTLVKDSGMRIIASALACISAIYNKWKKRRPAVIDTFLSYLKFLNQMKDDVENKSGHSIPPEKGPLVQRSLYSIGLMCRYFDVDAILESDTEARKNLSTYCCPLRPTNADASATTNHTRVGDEQIAIQDGDQTTPKKPQPFKEDVFSVLSFFCRNRDGGIRMKALNSLGNFTATHADFLLRREMRNMYVTLLNADDKEYLNLKIQTLRNLELFLTAEESKLVKNNDEWQKAKEVQDLKEMELANSGLASTIIQIYWNAVLSSYYNPVDAVRTAAVQVTVLTLSQGLVTPGASIPTLIAMSTDRIPAIRNKVENMLKDIDSKYAGMVPSKAVSGIRCSFRLQRHLKRDQGTPLRGIRACDPSAASGAKGTAVRMQHGVPKMTNEGQAILSGLYQSLRVNRQQRRSFLSSVLRKVQEYSPSEAAKVYEKALSSRKNITMFYPQTALQELRPEAAHQRDTVNGHINMANQIVYFRNMLLSLDRADDDEDVTEENPIANHRNEGSEEDGESGIAAATEAEDKDKESGEEHTEALSAGEQANGAQ</protein>
+
+Nipped-B protein — UniRef50 A0A0B2UTI0 — is a 993-residue protein from Spirurina (NCBI taxon 6274).
+Cluster size: 5 member sequence(s)
+Representative: A0A0B2UTI0_TOXCA
+
+====================================================================================================
+[19/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=100  ordering=sequence_first
+         id=uniref50:UniRef50_Q6EZF2   organism=Bacteria
+====================================================================================================
+>uniref50:Q6EZF2 Glm [Bacteria]
+<protein>MVRKYFGTDGIRGKANEGAMTAETALRVGMAAGRVFRRGDHRHRVVIGKDTRLSGYMLEPALTAGFTSMGMDVFLFGPLPTTYRKNKRPFHPSPTALDRS</protein>
+
+Glm — UniRef50 Q6EZF2 — is a 100-residue protein from Bacteria (NCBI taxon 2).
+Cluster size: 77 member sequence(s)
+Representative: Q6EZF2_ECOLX
+
+====================================================================================================
+[20/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=307  ordering=sequence_first
+         id=uniref50:UniRef50_A0A4P2VN75   organism=Conexivisphaera calida
+====================================================================================================
+>uniref50:A0A4P2VN75 UDP-glucose 4-epimerase [Conexivisphaera calida]
+<protein>MSYLVIGGTGFIGSRLVRILVEDGHDVTVLSPSGNTSKLGDVASRVRVEKGSVGELPDILHAIKRNSVRMVAYLAAESPPWTPMNVTKTMMIGFLNVLEASRIMDVERLVWASSYAQIGPPELYGGRKVDEDAPVRPMSPHGVSYVANEFAANFYAENYGLDVLGMRLGLVFGHGRNRSGFMDVLVDLFEGAASGRPVRVPDGDSVWVLQYVKESANAMAFGFNVKNHSRRVYNTCDEAVSLRQLAEYVQEFIPSAHIEVEPGGRTIRAPVDASRIRGELGYREAYSVRDGVRDYLRELGVKVPEGR</protein>
+
+UDP-glucose 4-epimerase — UniRef50 A0A4P2VN75 — is a 307-residue protein from Conexivisphaera calida (NCBI taxon 1874277).
+Cluster size: 1 member sequence(s)
+Representative: A0A4P2VN75_9ARCH
+
+====================================================================================================
+[21/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=204  ordering=sequence_first
+         id=uniref50:UniRef50_X6MD03   organism=Reticulomyxa filosa
+====================================================================================================
+>uniref50:X6MD03 Uncharacterized protein (Fragment) [Reticulomyxa filosa]
+<protein>MQFVKKYRLYLLWPFTKRQMHDYINKFATMRSKNNIKNKNNDWTAQQYNVLSSLVKQYKYNLEKLRIQMNVNKIKSALKQYCLNLGLDMFIQGDPIAVESDFPNENKNEIISNKLDPNMKSENKNDINSVWEKYFNDDSIAKYILKRVKYYVAQKILFDIILWKPNIVGNINNQQFQQQFEIHDQKFLINRKLLNEKVGIIQFI</protein>
+
+Uncharacterized protein (Fragment) — UniRef50 X6MD03 — is a 204-residue protein from Reticulomyxa filosa (NCBI taxon 46433).
+Cluster size: 1 member sequence(s)
+Representative: X6MD03_RETFI
+
+====================================================================================================
+[22/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first
+         id=ensembl_reg:ENSR00000307917   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000307917 CTCF binding site [Homo sapiens]
+<dna>CAAAGTGCTGGGATTACAGGCGTGAGCCACGGCGCCTGGCCCAAGAAGTTTCTTTAAGGCAGCTCCAGCTTTTTCAGTCAAAGTGAAATGGTCCTGAAATTTGCATATGCAATGTTTACCTTTCTTTTTCATTAAACGAGAGAGGGAACCAAAACAAAAATACAGTTTGACCATTTAAAATGTTGGAAGAGCTGCCAACTTGGTAGCACTATCTAGAGTGGCTCCATTCTGCCATCTAGTGGAAGGGAAAAGACAAATTTAGACCAAAATACTTCCATCTTTAATTTACAAAAAAGTGTGTTCTTTTGTTTTTTGTTTTTTAAAGTTGGGGTCTTGCTCTGTTACCTAGGCTGGAGTGCAAGCAGTGTGATCATAGCTCAACAGCCTGGAGCTCCTGGGCTGAAGCCATCCTCCCACTTCAACCTTCCTGGTCACTGGGATTACAGGCATGAGCCGCAGCACCAGGCTGTGTTTTCTGATTAGCATAATTTAAATTATCTACTAAATTTGCTCGTTAATAGATTCACTTTGTAAAGAAAAACCACACAGTATTCTAAACACTAAGCAGTAAAACTAAATTTCCCAAAACATTTATATTTA</dna>
+
+The sequence is a CTCF binding site (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00000307917) from Homo sapiens (NCBI taxon 9606).
+Location: 3:186,821,201-186,822,200
+Feature length: 1,000 bp (central 600 bp shown)
+
+====================================================================================================
+[23/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=607  ordering=sequence_first
+         id=uniref50:UniRef50_A0A363UQ26   organism=Abyssibacter profundi
+====================================================================================================
+>uniref50:A0A363UQ26 Tetratricopeptide repeat protein [Abyssibacter profundi]
+<protein>MPFSRATTRAALRGRSRSLVVVGDPSKRAKEQDLIQRMLATFIPAVLVAGCATAPEPGERLDALFQAAGGTGVQASEPLPDRAQAMYHVLVGQIAAERGDVAQAATEYLAAAKLAQQPSIAREATRYALASNDKTLSVTASQLWRESDPDNVQAQEAAFRVAVRARAYTTALEMARSFVAAQPESDVGEALRVVAGTLVRDNVAAEPAMAIMQPLVEAHADSAEAHYALGLVAMNVERWSLARASAQQASALRPGWSEAVLLEAGVLIKQQRVLEGIAVVEPLVRDGQAPDTRFALARLLLEANALDLAEIQLDQVLAEQADHPEARYARGLLALDRGNVDLAEQHFLALIEQPAQRFDAAYYLGRISEARGDLDAARGWYRRVAGGRHQSDALTRRAYLMAEGGHVDEARAYLQGLSRMNPGMQLQLLLVEADILLQSDQPEAALALYEQGLAEFPEEPDLLYGRSLAYEQLGQVDAAIADLRAMVEQDADDARALNALGYILTNHSQRYEEARGYIARALALRPNDPAVIDSMGWVEFRLGNLDAAAELLRRAYARLKDPEIAAHLGEVLWQMGEREEARQVWGTALSQHPEHGTLQETMTRLVP</protein>
+
+Tetratricopeptide repeat protein — UniRef50 A0A363UQ26 — is a 607-residue protein from Abyssibacter profundi (NCBI taxon 2182787).
+Cluster size: 2 member sequence(s)
+Representative: A0A363UQ26_9GAMM
+
+====================================================================================================
+[24/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=180  ordering=sequence_first
+         id=uniref50:UniRef50_A0ACG4FNU1   organism=Loktanella agnita
+====================================================================================================
+>uniref50:A0ACG4FNU1 Uncharacterized protein [Loktanella agnita]
+<protein>MKDIIQSMCPNSLEEVMGFHSDTVVLRFQEIYAVDYEASLEIFNEVKKWLWLSAQRNYEEDVLNLDPPVLSMFSAMAVLDEMWHNFIICSVDYTRFCDTHFGQYLHHQVVPRAGHAKIYHDAGKDYDVPQFDNAQLRAMMMYVYRKLGEDTYHRWFETYPEIYTLDKLRALSRHLTSENP</protein>
+
+Uncharacterized protein — UniRef50 A0ACG4FNU1 — is a 180-residue protein from Loktanella agnita (NCBI taxon 287097).
+Cluster size: 1 member sequence(s)
+Representative: A0ACG4FNU1_9RHOB
+
+====================================================================================================
+[25/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=171  ordering=sequence_first
+         id=uniref50:UniRef50_A0A078H9V8   organism=malvids
+====================================================================================================
+>uniref50:A0A078H9V8 BnaA01g13870D protein [malvids]
+<protein>MRRGKEEYDEVEQLLQAAQDEMILKLSVDSHASRSKPDYLDPDLHSRFLALRSKPSRQQKKTKTTTEQKRRPVSPPKSKDVEETPDDLMLRFAALKSTLPSSSVPPSVLRPGEMGDDADELGEDDEVEKLIQWAIDAARLDPSPPSDDDDDDENRSSDNDDENGSKRHVKP</protein>
+
+BnaA01g13870D protein — UniRef50 A0A078H9V8 — is a 171-residue protein from malvids (NCBI taxon 91836).
+Cluster size: 8 member sequence(s)
+Representative: A0A078H9V8_BRANA
+
+====================================================================================================
+[26/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=99  ordering=sequence_first
+         id=uniprot:Q8DKB4#se   organism=Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1)
+====================================================================================================
+>sp:Q8DKB4 Carboxysome shell vertex protein CcmL [Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1)]
+<protein>MKIARVCGTVTSTQKEDTLTGVKFLVLQYLGEDGEFLPDYEVAADTVGAGQDEWVLVSRGSAARHIINGTDKPIDAAVVAIIDTVSRDNYLLYSKRTQY</protein>
+
+Carboxysome shell vertex protein CcmL — UniProtKB/Swiss-Prot Q8DKB4 — is a 99-residue protein from Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1) (NCBI taxon 197221); gene ccmL.
+Function: Probably forms vertices in the carboxysome, a polyhedral inclusion where RuBisCO (ribulose bisphosphate carboxylase, rbcL-rbcS) is sequestered. Has been modeled to induce curvature upon insertion into an otherwise flat hexagonal molecular layer of CcmK subunits
+Subcellular location: Carboxysome. Note=This cyanobacterium makes beta- type carboxysomes (Probable). Probably forms vertices in the carboxysome (Probable)
+GO annotations: carboxysome (component); structural constituent of carboxysome shell (function); carbon fixation (process); photosynthesis (process)
+Sequence features: 8 strand; 2 helix; 1 chain; 1 domain [1-83 (BMV)]; 1 turn
+Keywords: 3D-structure; Bacterial microcompartment; Carbon dioxide fixation; Carboxysome; Photosynthesis; Reference proteome
+Cross-references: EMBL BA000039; RefSeq WP_011056789.1; PDB 4JVZ, 4N8F, 7WKC; KEGG tel:tll0945; InterPro IPR046387, IPR004992, IPR036677; Pfam PF03319
+Lineage: Bacteria > Bacillati > Cyanobacteriota > Cyanophyceae > Acaryochloridales > Thermosynechococcaceae > Thermosynechococcus
+
+====================================================================================================
+[27/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=355  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABT7TDR0   organism=Curtobacterium
+====================================================================================================
+>uniref50:A0ABT7TDR0 MFS transporter [Curtobacterium]
+<protein>MSKLDIVVYFIVSAAVVVAYSLGVVPRLGRRGYPAGALRGTTAAVPAGTLLVLYGADRPVLLYIGAVVMLATTTSVPQVFGRVAAMHSADPGAVVFRLRQTMVAGFILGLGVYSAASFVGVEPLLVGSGFAAISAFTAWSRYFSGAVREPANNGANPSSKHTRTVAAALVAGAILVVALMKGVDTLRAIYLPLYATQVGISNEAIAPLFIVTAVTELLLLPVLRKVTLKLGEFATLAVICAIAVVAFLVLFALRGYGTILASQVLYAAFAAGFQSIGVVVLARVTGKDVGQGAAIFMTVIQTGSVLGAVLPLTVPGYQSGIFVIAAALCLLSTAVCLALQRGESVRSSPGGSVSP</protein>
+
+MFS transporter — UniRef50 A0ABT7TDR0 — is a 355-residue protein from Curtobacterium (NCBI taxon 2034).
+Cluster size: 2 member sequence(s)
+Representative: A0ABT7TDR0_9MICO
+
+====================================================================================================
+[28/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=63  ordering=sequence_first
+         id=uniref50:UniRef50_A0A4R6G6H6   organism=Herminiimonas fonticola
+====================================================================================================
+>uniref50:A0A4R6G6H6 Uncharacterized protein [Herminiimonas fonticola]
+<protein>MQGLFICACRFIDLFGNHYLTCENVQINSKKKIRIRNLLVMERPVHTAEGEAVWMQASRTSWA</protein>
+
+Uncharacterized protein — UniRef50 A0A4R6G6H6 — is a 63-residue protein from Herminiimonas fonticola (NCBI taxon 303380).
+Cluster size: 1 member sequence(s)
+Representative: A0A4R6G6H6_9BURK
+
+====================================================================================================
+[29/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=398  ordering=sequence_first
+         id=uniref50:UniRef50_A0A8X7STM9   organism=Tilletia
+====================================================================================================
+>uniref50:A0A8X7STM9 Uncharacterized protein [Tilletia]
+<protein>MPASANRITPQRAASSSSGRAKSHWQVHYRPEIEEIQARYALKIKALSQQAKIDPSTARRIIDQRSKHFRSRNGWNSYQAWVKHKARETAEQTEGPAPTEGPAATEGSAAAPPANDIDEPTAPASAAKQDVGAAYEALTPANKQAIDKWATKRLDEKPARDTQKEFSAACRDVMTRIGHLQLRYGITAVAFLSHSQEGIDPFLGYSDQAGVALASALNRLKTGTTGDDVSRMFDRAVKLKVWEDERNAREMDGPLVVCRLNPTQRLARDLILRLHSAVSAALVGGSAALTKWVKATSGGTRLRYKDLFSMVAETGCYVEGWPEEATGLLKDDVVMEQARDANTASTGAGIVKVWSGSLHNTSVWKEEPMEALRKALRENNLRARQITAPEDPFTDMDE</protein>
+
+Uncharacterized protein — UniRef50 A0A8X7STM9 — is a 398-residue protein from Tilletia (NCBI taxon 13289).
+Cluster size: 3 member sequence(s)
+Representative: A0A8X7STM9_9BASI
+
+====================================================================================================
+[30/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=128  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAD8WKX6   organism=Lolium multiflorum
+====================================================================================================
+>uniref50:A0AAD8WKX6 Prolamin [Lolium multiflorum]
+<protein>MQQQLNQCQEFLVQQCKPVTKVPFLSWILQQSSCQVMQQRCCQQLAQIPKQLRSPAIHSIVNAIIMRQQQQQQPFQPQPQQVGQGFIQPQQLAQFQAMRMYALQTLPAMCNVEVPLYSTDPFGSIGGF</protein>
+
+Prolamin — UniRef50 A0AAD8WKX6 — is a 128-residue protein from Lolium multiflorum (NCBI taxon 4521).
+Cluster size: 2 member sequence(s)
+Representative: A0AAD8WKX6_LOLMU
+
+====================================================================================================
+[31/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=157  ordering=sequence_first
+         id=uniref50:UniRef50_A0A923HST5   organism=Undibacterium nitidum
+====================================================================================================
+>uniref50:A0A923HST5 GNAT family N-acetyltransferase [Undibacterium nitidum]
+<protein>MTQLRQATCNDLVSILSWVPTAETLKLWGGPLLTFPPDVAKTWIEIGANDSNSFVLVDKQDRVLGFGQTLQRQAQAIHLARIILAPETRGRGLGRVLCEELMKTAIAQHQPAKFTLNVYQDNAAAVSLYRSLGFVLADQHSMQGAYAMEFVCGVETK</protein>
+
+GNAT family N-acetyltransferase — UniRef50 A0A923HST5 — is a 157-residue protein from Undibacterium nitidum (NCBI taxon 2762298).
+Cluster size: 1 member sequence(s)
+Representative: A0A923HST5_9BURK
+
+====================================================================================================
+[32/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=454  ordering=sequence_first
+         id=uniref50:UniRef50_A0A6P7YS45   organism=Gymnophiona
+====================================================================================================
+>uniref50:A0A6P7YS45 Leukosialin [Gymnophiona]
+<protein>MMAMLGKNQRAKTVWLVMNLLAMLSESVMGNRETTEVVSESISTTESNVARAENSKFPSAGKTDNSGAATESMRIISLYNSTHEAPTVEDLTRRDVLDPLTTMRIFTNVIAEALEKIATTVPQALTSDSLMKFSHPSSMALPTEISASRNTAGNITILPTVDRDTPATSAAFFSKITTGSNPSPVRTGQNISPTSEQLFTSSVSSIISVISSTKHTAKHDEMVPTPMPMSSSSTMKISTLLTDTTPVEKKGINHLYLIIVVVILFLLIMVFCFVCVAKKKRRSGSTSFHVKKHKKGEDAWAGPVMIPEDNGMAAEDMEEGKDKDQAGKHLTLTTFFGKRKSRQCSVLLEDVTVNVDQPAKQEEKPLLNQEANGQMTSNEKSEEPPASSTKEHRPESEPQPNGHVLSPEDMIPENKGESPTDLPSPATIPAPDTDFPLPPSELEIIQDDEADKAC</protein>
+
+Leukosialin — UniRef50 A0A6P7YS45 — is a 454-residue protein from Gymnophiona (NCBI taxon 8445).
+Cluster size: 2 member sequence(s)
+Representative: A0A6P7YS45_9AMPH
+
+====================================================================================================
+[33/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=200  ordering=sequence_first
+         id=ensembl_reg:ENSR00000688248   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000688248 enhancer [Homo sapiens]
+<dna>GAGAGCCTGGCCTGAATACCTTTCTTCTGGAAGCAGCCCTCTAGAATTCTGGGTAACAGATTTGCTATCTTGTTCTATAGAGAAGTTCATTACAAGAAATGCCTCCATTCCTGGCTCAACGCTCACTTAACCTTCTTCTAGAGGCCACAGGCAGATGATCTTCCAAGTTTCTCTTACCCTAGAATAGTAGTGAAGAAAAA</dna>
+
+The sequence is a enhancer (200 bp) from the Ensembl release-112 Regulatory Build (ENSR00000688248) from Homo sapiens (NCBI taxon 9606).
+Location: 3:61,095,801-61,096,000
+Feature length: 200 bp
+
+====================================================================================================
+[34/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=226  ordering=sequence_first
+         id=uniref50:UniRef50_A0A453T7T8   organism=Aegilops tauschii subsp. strangulata
+====================================================================================================
+>uniref50:A0A453T7T8 glutathione transferase [Aegilops tauschii subsp. strangulata]
+<protein>MRSSSIEMQLSVQPPLLTCAVDLGIHGDGGESEGVRAGEIHLRGAGAGVPGRGRRRVRAGARPPPRRRAQGPRASRPHQSRAISRYVLRKGASDLLRENSLAESATVDAWLEAESHNFDRAMSAITFQCFVVPMFMGGTTDHKIVEENMEKLKAALGVYEERLTRFKYLAGDFISLADLSHCPMAHYLLASPCASVLDAYPRVKDWVDGMMDRPSVKKVMELMDAS</protein>
+
+glutathione transferase — UniRef50 A0A453T7T8 — is a 226-residue protein from Aegilops tauschii subsp. strangulata (NCBI taxon 200361).
+Cluster size: 2 member sequence(s)
+Representative: A0A453T7T8_AEGTS
+
+====================================================================================================
+[35/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=237  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAE9CEI0   organism=Serbinvirus
+====================================================================================================
+>uniref50:A0AAE9CEI0 Scaffold protein [Serbinvirus]
+<protein>MAKVPKKFTNKEDIPEGLEQYYHEVDGEWVLEGVDGEEDTGALKRAKQHEKTQRQAAEQKARELQAQIDELQEQIDSGDKSAETARLQRQLETANRKLTETTKQLGETETQWKARFEKKFVDSAAMDLARDLSDTPGLILPHIRSRLVMDFDGEEPTLRVKGEDGQVSDLSLEAFKKSINDNVDYAPALRGSGASGGGADPSKKGPGAQGTKGQKPDFLTASAKEIAAWVEQNQTEE</protein>
+
+Scaffold protein — UniRef50 A0AAE9CEI0 — is a 237-residue protein from Serbinvirus (NCBI taxon 3153074).
+Cluster size: 3 member sequence(s)
+Representative: A0AAE9CEI0_9CAUD
+
+====================================================================================================
+[36/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=67  ordering=sequence_first
+         id=uniref50:UniRef50_A0A8E4DHQ3   organism=Methyloradius palustris
+====================================================================================================
+>uniref50:A0A8E4DHQ3 Uncharacterized protein [Methyloradius palustris]
+<protein>MDLKDAGMTDNNEKIQENNTTSYTTLEEVVAHTCSCKLRTICPDKHSSECLKDRNLYQEFMLARAAH</protein>
+
+Uncharacterized protein — UniRef50 A0A8E4DHQ3 — is a 67-residue protein from Methyloradius palustris (NCBI taxon 2778876).
+Cluster size: 2 member sequence(s)
+Representative: A0A8E4DHQ3_9PROT
+
+====================================================================================================
+[37/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=277  ordering=sequence_first
+         id=uniref50:UniRef50_A0A6A6JX60   organism=Westerdykella ornata
+====================================================================================================
+>uniref50:A0A6A6JX60 F-box domain-containing protein [Westerdykella ornata]
+<protein>MSGVICGSRFSVASSRLLSIWQLILGFVRWTFGLFVCSKRQSHKNVLSRFEFLNIPGEIRNPIYDFIIDDLPDTISVENIRRLPALALTNKQIREEFISRLFCRKFVDIPTTSSLWALESLIFDTPLRPHALDMITHIRLPDFCEIASSPTRASEVFDACNWLPNVRSLQLNLLLDPIKLPILRNPSLSPGHIVERVAEALGLDKLVKIQQLGFLSVLCVLEDCGLEIRNSEALLEELGSWIGDRLDRAESVSAVEGSVAILGDARTGLIGFGISRP</protein>
+
+F-box domain-containing protein — UniRef50 A0A6A6JX60 — is a 277-residue protein from Westerdykella ornata (NCBI taxon 318751).
+Cluster size: 1 member sequence(s)
+Representative: A0A6A6JX60_WESOR
+
+====================================================================================================
+[38/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=595  ordering=sequence_first
+         id=uniref50:UniRef50_A0A1X7QWX8   organism=Maudiozyma
+====================================================================================================
+>uniref50:A0A1X7QWX8 Transcription factor STP1 [Maudiozyma]
+<protein>MSDTPMDNKNSPGDKTNNIDNILNQGKFEQDIPQESSLVGSLFNKNTSLSTADAAIKMSHSPSLLGTNHSQNQDITNLNNVETLSLKDNNTTVFSPFQRNYGKSDSSNHTSLNKNVLPITPDSNNSSPNDIQINRTNPKIRGHSSLNQSLTSSPERESPVEIDIDGEYVCHYCDARFKMRGYLTRHIKKHALEKAYHCPFFNTDINKEDRCHATGGFSRRDTYKTHMKARHFTYPDGVKPADRNKYGGHCNACNEYFSSANVWIKEHIENGQCKGLPKEYLEQLPSQDSKQKITNRLKMIKTSTGHARYISTMESVVEPNVLLNKEALEAMVIVAKNTNRNDVLSKFGDDKLILNSDNFKGYKRPKRKYKKRTPKIKSSESSATPVDMTQSSVVSSTVETPNIDSPINTPQTFAETSSSFNYKENHSLEYHNTHFNKNNNNNNNNTMHIDEQQHQHQHQPDNHTNFNKDGMNNDYQTDNISIEISPKQIVEDQGLNSEPIPLESYAYPSAVMQQSENHYHNSNINNKFEVFPLDSEQQSYFVDVNEDDQLHEINDKISINKTLDEQYIPEKINQTQLEETREYLKFYNDFFGSGV</protein>
+
+Transcription factor STP1 — UniRef50 A0A1X7QWX8 — is a 595-residue protein from Maudiozyma (NCBI taxon 3162980).
+Cluster size: 3 member sequence(s)
+Representative: A0A1X7QWX8_9SACH
+
+====================================================================================================
+[39/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=276  ordering=sequence_first
+         id=uniref50:UniRef50_W3WIT2   organism=Xylariomycetidae
+====================================================================================================
+>uniref50:W3WIT2 Thioesterase domain-containing protein [Xylariomycetidae]
+<protein>MSAYLGNPALIYEGPDWLPEPRAPLILIHDGGGTTFSYHCLDPTNRPLWGVENARLHEGGWWEGGIPEMARHYIDLIGKALPNGGEIILGGWSLGGILSLEMAHQIATDKDLRPKFTVLGIVMVDSLLPPPRGTPATDTTQKPQELGRVTDRTPDEIRALDLKAKVDVNMTHARRMVARWEPPRWKKAAAGPVLRPPPTILLRANEAVDGPTPSFADFARGDRMLGWGWYNEENGRFLRGVVDIQGHHFSVFKDEYIEDITAKICEAANKLEDEYY</protein>
+
+Thioesterase domain-containing protein — UniRef50 W3WIT2 — is a 276-residue protein from Xylariomycetidae (NCBI taxon 222545).
+Cluster size: 27 member sequence(s)
+Representative: W3WIT2_PESFW
+
+====================================================================================================
+[40/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=47  ordering=sequence_first
+         id=uniref50:UniRef50_A0A0B0N0S7   organism=Gossypium arboreum
+====================================================================================================
+>uniref50:A0A0B0N0S7 C4-dicarboxylate transport [Gossypium arboreum]
+<protein>MFSLSYHILIPLSYSKNLDGLSIYCRVLRVIISCMHSSEPHILRRDY</protein>
+
+C4-dicarboxylate transport — UniRef50 A0A0B0N0S7 — is a 47-residue protein from Gossypium arboreum (NCBI taxon 29729).
+Cluster size: 1 member sequence(s)
+Representative: A0A0B0N0S7_GOSAR
+
+====================================================================================================
+[41/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=250  ordering=sequence_first
+         id=uniref50:UniRef50_A0ACC1KDF5   organism=Coemansia linderi
+====================================================================================================
+>uniref50:A0ACC1KDF5 RNA binding protein, heterogenous nuclear RNP-K like protein [Coemansia linderi]
+<protein>MRCVFPYEDGGIIIGLRGAHLTKLRRAMPDVDWRISNETNDRQDRILVIKGTVKHVSEAFKELAEHFISQGMHVEYPPQTRGRGNEDVDVAKPFVPMRLLIPHKTCGAIIGQKSETLINTRISCGARRVYVYRERIANSRERVVEIVGTPTSIAKVMMVLGEQVARTLTSDQHESDPYSPERDGLRQFLSKQGVPRTRVNLEPIKPPGSAGDKDEDKDKDESRKSGSAGASSSKRRSADRSPQPQPQSQP</protein>
+
+RNA binding protein, heterogenous nuclear RNP-K like protein — UniRef50 A0ACC1KDF5 — is a 250-residue protein from Coemansia linderi (NCBI taxon 2663919).
+Cluster size: 1 member sequence(s)
+Representative: A0ACC1KDF5_9FUNG
+
+====================================================================================================
+[42/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=600  ordering=sequence_first
+         id=ensembl_reg:ENSR00000718086   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000718086 enhancer [Homo sapiens]
+<dna>GGGCATTCCACCTTTCTTCTGAGGCTTTCAAAGGCTTAAAATAAGGCTCCACCAAATAGGTATGGCAGATGTTATTAAACTTCTATTTTTCTGGGTAAAAAACTGAAGTAAGTGGCAACTAGTGAAAGAGCCATGGCTTCTATTTTACTCATTTTGAAAGCCAAGCTTGAGGAGTTGTCATTATGTATATTTAAAAATAAAAAGAGGAGAAAAGAGTTCTCAAATAGTCTCCAAAGAATACACAGTGATGAAAGAAAGAAAGAGACAGAAAGAGAGAAAGAAGGAAAAGATGACAGAAGGAAGGAGAAGGAAGGAAGGAAGGAAGGAGAAAGGGAAAGGGAAGGAAAGGAAAAGAAAGGAAAGGAAAGGGAGAAAGAAAGAAGAAAGAAAGGAAAGAAGGAAAGAAAGAGAGAGAAAGAAAGAAAGAGAGAAGAAAGAGAAAGAAAGAAAGAAAGAAAAAGAAAGAAAGAAAGCTGCAAAAATAAAGCTGAAGTGAAATCATTTGCTGTGGTATAAACTCACCGACCCAGGTTTTCTCCCACAATATCTGGAGTTTGCAAAAGAATATTAAAAAAAAATAGATGGGGCCCCATCTTCTGG</dna>
+
+The sequence is a enhancer (600 bp) from the Ensembl release-112 Regulatory Build (ENSR00000718086) from Homo sapiens (NCBI taxon 9606).
+Location: 4:15,161,601-15,163,599
+Feature length: 1,999 bp (central 600 bp shown)
+
+====================================================================================================
+[43/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=1022  ordering=sequence_first
+         id=uniref50:UniRef50_A0A0L8V7A9   organism=Bacteroidota
+====================================================================================================
+>uniref50:A0A0L8V7A9 Ribonuclease P [Bacteroidota]
+<protein>MKQLFEEIQEESEFIIFYKDSDVDLEKKVSVKAERFSVERILRKAFEGTDLTYEISDRQIVIIPDQTEASEQVQEVIQQPGLKTISGVVKDDVGLGLPGVSVAVKGTARGTSTDVNGEFSMQAAVGDTLIFSFIGKTPVEQVVGDRNIFDIALYDDDTQLEEVQVVAFGRQKKTSVISSIETVRPADLKQPASNLTSALAGKIPGIISYQTTGEPGNDNAQFFVRGVTTFGYKTNPLILIDGFEASPDDLARMEPDNIESFSILKDASATVLYGARGANGIIIVETKSGREGPAKINIRLETHIATPTQMNELLDGVDYMRLYNEARISRNPLLGAYYSEQKIQSTIDGVDPMIYPNIDWYDELFEKSTINKKANFNVSGGGQVATYYVAGTVENENGLLKVAPENNFNNNISINRVQLRNNVIFKLTPTTRLDTRLQGRFERYNGPATGAGDIFRQVMNSNPVDFPAVYEADEKHAFADHILFGNTFVTGNLKANPYAEMVRGYEDRNESSITAMATLSQDLDFITEGLKLQAKASVNTWSQYRSTRSYSPFYYDLENYNQITGEYTLFALNPTGGQAFLGDVNPGRDASAHYYYEGRLNWDRKFGLHSVGLMTVGMFEEYLLTSGNSRSIYETLPERNMGNSGRLTYDFDNRYFFEFAYGYNGSEKFSGDRRFGFFPSFGGGWLVSNESFWAPMENIINTLKLKATWGKVGNDAIAERQDRFFYLSDIARGGGGYRWGNTFMNEYGGYRINRYANPDITWEVSTKMNLGIELTFLDDALKIQGDVFKDIRDQIYLQRQNFPSSAGLEASISGNVGKVESMGFEGSIDYQYISQDNWWMTGRANFTFATNEYVQLDERDYADEYLKRQGHPINQWWGLIAERLFVDEAEIANSPKQDFGTYQAGDIKYKDVNGDGVVNANDEVPLGLPTVPEIQYGFGLSGGFKDFDLSFFFQGNARVSMFINPGTGDDGIAPFAGRRNALTIIAEDYWSETNPDVHAFWPRLSVDPLQNNTRTSIIVVVT</protein>
+
+Ribonuclease P — UniRef50 A0A0L8V7A9 — is a 1022-residue protein from Bacteroidota (NCBI taxon 976).
+Cluster size: 66 member sequence(s)
+Representative: A0A0L8V7A9_9BACT
+
+====================================================================================================
+[44/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=248  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABQ4ZXG6   organism=Tanacetum coccineum
+====================================================================================================
+>uniref50:A0ABQ4ZXG6 Uncharacterized protein [Tanacetum coccineum]
+<protein>MFELGMADDVQSVLATLVMPTAVPVILKTYNLPPWLYRSTDHVDNDQDPEVSTTSELFALANGPSWTPISVNSCVVDGVRFKCEIVVELSINCLYVMLIVLVHMSSPMSARVPQEVTVAVMIVPHHTLCTYRCGVCFANKAKLKRKPIWRHGIGQAEYPRQDQQALSLKESRYLGLITYGKDVRSVPLYYPSWRIPKSGSGDHFPEMGSVIPFLMFNIIIVPCLDLQAAHRIPASPPGHEIYEGITQH</protein>
+
+Uncharacterized protein — UniRef50 A0ABQ4ZXG6 — is a 248-residue protein from Tanacetum coccineum (NCBI taxon 301880).
+Cluster size: 1 member sequence(s)
+Representative: A0ABQ4ZXG6_9ASTR
+
+====================================================================================================
+[45/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=175  ordering=sequence_first
+         id=uniref50:UniRef50_UPI003F41E5AC   organism=Pseudalkalibacillus sp. Hm43
+====================================================================================================
+>uniref50:UPI003F41E5AC sigma-70 family RNA polymerase sigma factor [Pseudalkalibacillus sp. Hm43]
+<protein>MNQSESMDCSAEEVDLLYEAVATIGKQMTNFAFTYVKDWGLAEDLVQEAFIKAYKNFHTFNGESALKTWLYSILANQCKDYLRSSYFKNVFLSNIFPIRKSGDEYDKIGTNEELSQNVLKLPVKYREVIILHYYEELKISEISSLLDLKESTVKTRLQRARAKLKYEMGGGSLHA</protein>
+
+sigma-70 family RNA polymerase sigma factor — UniRef50 UPI003F41E5AC — is a 175-residue protein from Pseudalkalibacillus sp. Hm43 (NCBI taxon 3450742).
+Cluster size: 1 member sequence(s)
+Representative: UPI003F41E5AC
+
+====================================================================================================
+[46/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=294  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABD3W007   organism=Sinanodonta woodiana
+====================================================================================================
+>uniref50:A0ABD3W007 Uncharacterized protein [Sinanodonta woodiana]
+<protein>MMAANNRGGMRPQGRSPPFLAVGLFVAVCILGFNYWSMSSRNAELGNEITLLESEVRVLSAKKVSAEKRSESVMDKVTDLEEILKKERNNYGNKEAELAECNKNLHLKEEQLTETKEEADACKSLSSSCEENKKNLQAEIEKLKVELANHVSAAQQAVDVCSESGCKQYVDQFRKKILEFLIKTFGSEVVPKLLGSGIDIGTYINNAVQPNQPQGANISGNSNNPGGALASKEVNPNNPDMNQNNGLGNQPGAPGQPVANPVDANQSNPNMNQRDTNQANDNRPIVGNQPGRRV</protein>
+
+Uncharacterized protein — UniRef50 A0ABD3W007 — is a 294-residue protein from Sinanodonta woodiana (NCBI taxon 1069815).
+Cluster size: 1 member sequence(s)
+Representative: A0ABD3W007_SINWO
+
+====================================================================================================
+[47/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=167  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABQ5GHW3   organism=Tanacetum coccineum
+====================================================================================================
+>uniref50:A0ABQ5GHW3 Uncharacterized protein [Tanacetum coccineum]
+<protein>MIPSATRPPNPQEQQGESSSLKKSTIIRIPRRRKPNPETPVLTTAQIDVVNPDEVTQMSIATARIIEDFEAQQAVKKVDEHLMDEDIKKIVEGDEESNANKFVDDILNGQEDPVTRIEPGSHKESSEAEKSANFMTIDEEVKEESAEDALLRKKGKGIVEIKDAPLP</protein>
+
+Uncharacterized protein — UniRef50 A0ABQ5GHW3 — is a 167-residue protein from Tanacetum coccineum (NCBI taxon 301880).
+Cluster size: 1 member sequence(s)
+Representative: A0ABQ5GHW3_9ASTR
+
+====================================================================================================
+[48/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=91  ordering=sequence_first
+         id=uniref50:UniRef50_UPI003012B9B7   organism=Klebsiella pneumoniae
+====================================================================================================
+>uniref50:UPI003012B9B7 hypothetical protein [Klebsiella pneumoniae]
+<protein>AADGPHPVDKRPFNLPPSAELHYAITAKQSGLDLKGEGLVKWTQSKTAYSVNTETRAMLLGKILETSSEGSIDTYGLAPSRFVEKRMRREP</protein>
+
+hypothetical protein — UniRef50 UPI003012B9B7 — is a 91-residue protein from Klebsiella pneumoniae (NCBI taxon 573).
+Cluster size: 1 member sequence(s)
+Representative: UPI003012B9B7
+
+====================================================================================================
+[49/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=949  ordering=sequence_first
+         id=uniprot:P0A5Y9#se   organism=Mycobacterium bovis (strain ATCC BAA-935 / AF2122/97)
+====================================================================================================
+>sp:P0A5Y9 Protein translocase subunit SecA 1 [Mycobacterium bovis (strain ATCC BAA-935 / AF2122/97)]
+<protein>MLSKLLRLGEGRMVKRLKKVADYVGTLSDDVEKLTDAELRAKTDEFKRRLADQKNPETLDDLLPEAFAVAREAAWRVLDQRPFDVQVMGAAALHLGNVAEMKTGEGKTLTCVLPAYLNALAGNGVHIVTVNDYLAKRDSEWMGRVHRFLGLQVGVILATMTPDERRVAYNADITYGTNNEFGFDYLRDNMAHSLDDLVQRGHHYAIVDEVDSILIDEARTPLIISGPADGASNWYTEFARLAPLMEKDVHYEVDLRKRTVGVHEKGVEFVEDQLGIDNLYEAANSPLVSYLNNALKAKELFSRDKDYIVRDGEVLIVDEFTGRVLIGRRYNEGMHQAIEAKEHVEIKAENQTLATITLQNYFRLYDKLAGMTGTAQTEAAELHEIYKLGVVSIPTNMPMIREDQSDLIYKTEEAKYIAVVDDVAERYAKGQPVLIGTTSVERSEYLSRQFTKRRIPHNVLNAKYHEQEATIIAVAGRRGGVTVATNMAGRGTDIVLGGNVDFLTDQRLRERGLDPVETPEEYEAAWHSELPIVKEEASKEAKEVIEAGGLYVLGTERHESRRIDNQLRGRSGRQGDPGESRFYLSLGDELMRRFNGAALETLLTRLNLPDDVPIEAKMVTRAIKSAQTQVEQQNFEVRKNVLKYDEVMNQQRKVIYAERRRILEGENLKDQALDMVRDVITAYVDGATGEGYAEDWDLDALWTALKTLYPVGITADSLTRKDHEFERDDLTREELLEALLKDAERAYAAREAELEEIAGEGAMRQLERNVLLNVIDRKWREHLYEMDYLKEGIGLRAMAQRDPLVEYQREGYDMFMAMLDGMKEESVGFLFNVTVEAVPAPPVAPAAEPAELAEFAAAAAAAAQQRSAVDGGARERAPSALRAKGVASESPALTYSGPAEDGSAQVQRNGGGAHKTPAGVPAGASRRERREAARRQGRGAKPPKSVKKR</protein>
+
+Protein translocase subunit SecA 1 — UniProtKB/Swiss-Prot P0A5Y9 — is a 949-residue protein from Mycobacterium bovis (strain ATCC BAA-935 / AF2122/97) (NCBI taxon 233413); gene secA1.
+Function: Part of the Sec protein translocase complex. Interacts with the SecYEG preprotein conducting channel. Has a central role in coupling the hydrolysis of ATP to the transfer of proteins into and across the cell membrane, serving as an ATP-driven molecular motor driving the stepwise translocation of polypeptide chains across the membrane
+Catalytic activity: Reaction=ATP + H2O + cellular proteinSide 1 = ADP + phosphate + cellular proteinSide 2.; EC=7.4.2.8; Evidence=;
+Subcellular location: Cell membrane; Peripheral membrane protein; Cytoplasmic side. Cytoplasm. Note=Distribution is 50-50
+GO annotations: cell envelope Sec protein transport complex (component); cytosol (component); plasma membrane (component); ATP binding (function); protein-exporting ATPase activity (function); intracellular protein transmembrane transport (process); protein import (process); protein targeting (process); protein transport by the Sec complex (process)
+Sequence features: 5 conflict; 3 binding [86; 104-108]; 1 chain; 1 region [869-949 (Disordered)]; 1 compbias; 1 mutagen
+Keywords: ATP-binding; Cell membrane; Cytoplasm; Membrane; Nucleotide-binding; Protein transport; Reference proteome; Translocase; Translocation; Transport
+Cross-references: EMBL U66080, LT708304; RefSeq WP_003901576.1; KEGG mbo:BQ2027_MB3268C; InterPro IPR014001, IPR001650, IPR027417, IPR000185 +8 more; Pfam PF21090, PF07517, PF01043, PF07516
+Lineage: Bacteria > Bacillati > Actinomycetota > Actinomycetes > Mycobacteriales > Mycobacteriaceae > Mycobacterium > Mycobacterium tuberculosis complex
+
+====================================================================================================
+[50/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=287  ordering=sequence_first
+         id=uniref50:UniRef50_A0A1H9GQC6   organism=Ignavigranum ruoffiae
+====================================================================================================
+>uniref50:A0A1H9GQC6 GHKL domain-containing protein [Ignavigranum ruoffiae]
+<protein>MVRSIKPFATFLVSFTAIVFLISIIFEVELGNTFDLVRTNFIFFIIYSLLTVVILFVYMRVNRQHQKIKEKQIEFQALQNYTQSLEQSYNTLRKFRHDYKNLMISLDALLDEGDFAAIQKFIKQDMQVEANKLLATRNNLDDLSKLNISPLKGLILAKLWQVDPQQIEVKLEINQPVDQLKMEPIDCVKVVGILLDNAIEAVQEVGSGQIRLTCFQLQHSVHLIIDNTYVGEMIPANQLFQPGFSTKGQQRGLGLANVREIIAQYPDISIETQIKGQIFSQHLIIPA</protein>
+
+GHKL domain-containing protein — UniRef50 A0A1H9GQC6 — is a 287-residue protein from Ignavigranum ruoffiae (NCBI taxon 89093).
+Cluster size: 2 member sequence(s)
+Representative: A0A1H9GQC6_9LACT
+
+====================================================================================================
+[51/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=75  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABV2G361   organism=Enterocloster citroniae
+====================================================================================================
+>uniref50:A0ABV2G361 Glycerol kinase [Enterocloster citroniae]
+<protein>MQFQSDILDTPVLVPQVEELSGMGAAYAAGFGLGIYGQEVFGCLKYDRYDVKMDDQMREKMHHGWQEAVGRVVSR</protein>
+
+Glycerol kinase — UniRef50 A0ABV2G361 — is a 75-residue protein from Enterocloster citroniae (NCBI taxon 358743).
+Cluster size: 2 member sequence(s)
+Representative: A0ABV2G361_9FIRM
+
+====================================================================================================
+[52/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=159  ordering=sequence_first
+         id=uniprot:Q7VK40#se   organism=Helicobacter hepaticus (strain ATCC 51449 / 3B1)
+====================================================================================================
+>sp:Q7VK40 Cyclic pyranopterin monophosphate synthase [Helicobacter hepaticus (strain ATCC 51449 / 3B1)]
+<protein>MQLTHLNKQNNPTMVDVSDKHITTREAYASGVISMSEQAFESAINHTGKKGPITQTAIIAAIMGSKKTSEIIPMCHPLMINKINVDITPNPAEHSITLGVLVKCEGKTGVEMEALTGVSIGLLTIYDMLKAIDKSMVISDIALQSKSGGKSGDFVREDS</protein>
+
+Cyclic pyranopterin monophosphate synthase — UniProtKB/Swiss-Prot Q7VK40 — is a 159-residue protein from Helicobacter hepaticus (strain ATCC 51449 / 3B1) (NCBI taxon 235279); gene moaC.
+Function: Catalyzes the conversion of (8S)-3',8-cyclo-7,8- dihydroguanosine 5'-triphosphate to cyclic pyranopterin monophosphate (cPMP)
+Catalytic activity: Reaction=(8S)-3',8-cyclo-7,8-dihydroguanosine 5'-triphosphate = cyclic pyranopterin phosphate + diphosphate; Xref=Rhea:RHEA:49580, ChEBI:CHEBI:33019, ChEBI:CHEBI:59648, ChEBI:CHEBI:131766; EC=4.6.1.17; Evidence=;
+Pathway: Cofactor biosynthesis; molybdopterin biosynthesis
+GO annotations: cyclic pyranopterin monophosphate synthase activity (function); Mo-molybdopterin cofactor biosynthetic process (process)
+Sequence features: 2 binding [74-76; 112-113]; 1 chain; 1 act site [127]
+Keywords: Lyase; Molybdenum cofactor biosynthesis; Reference proteome
+Cross-references: EMBL AE017125; RefSeq WP_011114895.1; KEGG hhe:HH_0052; InterPro IPR023045, IPR047594, IPR036522, IPR002820; Pfam PF01967
+Lineage: Bacteria > Pseudomonadati > Campylobacterota > Epsilonproteobacteria > Campylobacterales > Helicobacteraceae > Helicobacter
+
+====================================================================================================
+[53/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=125  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABW5K2U3   organism=Flavobacteriaceae
+====================================================================================================
+>uniref50:A0ABW5K2U3 Lipoprotein [Flavobacteriaceae]
+<protein>MKKLFILFILVIQSCSLLQDNNGIEVTIKNNSKHPITDIQCYTSEKLETLQIPNIEANKTVSKFLSMKKNKQDGNYILEYVDANKKKRIKKEGYYTNGSSLNKWITFSIEKDTILVTYSKPSLIY</protein>
+
+Lipoprotein — UniRef50 A0ABW5K2U3 — is a 125-residue protein from Flavobacteriaceae (NCBI taxon 49546).
+Cluster size: 2 member sequence(s)
+Representative: A0ABW5K2U3_9FLAO
+
+====================================================================================================
+[54/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=619  ordering=sequence_first
+         id=uniref50:UniRef50_A0A8J4PWX1   organism=Polysphondylium violaceum
+====================================================================================================
+>uniref50:A0A8J4PWX1 Uncharacterized protein [Polysphondylium violaceum]
+<protein>MVKSKRTIPLKETQKKKQIKIEKEEDDEIIVKQEELYTDDDEETINIKQEQEDEEEDQQVETYDIKLEGEEEEEEEEDQDQEEQEEDQEEEEEDQEDGVDIKQEQDEEEEDEEDKEEEEVRKKLDFLDKLSDRFINTLASTFIQNYGSQLETLGKNRLRNFYFESIHQINNTEIRELLFRPKAWNKFYFLLKSGIKQLKQEVSLEINDKEEIQGDQDEDEDQDVEKDDDGELSKVVFKNIHSYQTVGGRESLIYLLDEKPLDQVKHLYNQAILSSILDDSLLESFIKKQVSNEQQKGKQTSGSKFLLSLLDQFIMLTITNNSNNNLNHNINLFNYLLNLIIDTKEQSIIQESYNLLQKFLTVSVLNQLHNNNNKDIEIQKSYVDLASSLFKLSLMKHKQNNGFDQNTDFSVIKLLLGNSNYLPKLVNMLTNLDFTLDQYIPSKANTILSIFLQQFIQETLVNPQPTSSMAYLKARILCERGIIVLTKIKDPLLTKLKISSASLAPPENLLNILKENANLVTKTHSNMNDTQALRLLKLDGIMKLFNKVEEIQNLTKQQEQEEQEQDDDAVAEGTQYVVEKSVVNGDSTENKEDDDSQDPDQPKNLLDFLDEDDLISDTD</protein>
+
+Uncharacterized protein — UniRef50 A0A8J4PWX1 — is a 619-residue protein from Polysphondylium violaceum (NCBI taxon 133409).
+Cluster size: 1 member sequence(s)
+Representative: A0A8J4PWX1_9MYCE
+
+====================================================================================================
+[55/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=165  ordering=sequence_first
+         id=uniref50:UniRef50_UPI001891124B   organism=Triticum dicoccoides
+====================================================================================================
+>uniref50:UPI001891124B uncharacterized protein LOC119326658 isoform X1 [Triticum dicoccoides]
+<protein>MDRRCFRTPAPASAPRRRRSTTEAPSRANTGSDLQRVLRWDAFKQVCKLQLATRLVKFIRIGPAGSSAGCEPHVPPGLPPPVDFDFSHPFRFRFSKPFLVLLDMQVVRVPWTLFIGGDRVPVRSMAWCKMDAKMVSPSDDFGGYCWIHVHKGMAYGERSRRLAGE</protein>
+
+uncharacterized protein LOC119326658 isoform X1 — UniRef50 UPI001891124B — is a 165-residue protein from Triticum dicoccoides (NCBI taxon 85692).
+Cluster size: 1 member sequence(s)
+Representative: UPI001891124B
+
+====================================================================================================
+[56/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=439  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAV0EWZ0   organism=Cuscuta epithymum
+====================================================================================================
+>uniref50:A0AAV0EWZ0 Uncharacterized protein [Cuscuta epithymum]
+<protein>MLLVFKSESGEANMIPLLVYGPSLKFFTDKVLKDEAAVQLLNEFLGTLFVNSEHTCSNPALDHFDKVKKVWGHRDFLRVLLKEEGAPYPMKTCKILASRKLTEFIVPKIRSDPSFKVIVQYTEPASMMRSALSIIIGFWANEVALLPLVYTMGGRAFGVKKVIGDALPSFVKEAKTHSPLGEERCKNQMCMESPACCIIAELCQDESISKLADQLTKVPKAVTWAEEFLASLKDDVPVKYAHYFKYIERHRCSAMEFWFEPVIILQLIKALKESAPLVNVFHKYSKGAQLLRCQERMIRINKDRLLGSVVESDFVNKMRKALSILFGYWSDKDVTLLFSILFSLRGEKETFAEVDLTEESVQCLHYLTNDCGDVEGLKNVLADNYREDSAEYIDLFEKIRSKEQNAMKLDNDTDLAYIVVILKGRDILYFKKTPCGRTV</protein>
+
+Uncharacterized protein — UniRef50 A0AAV0EWZ0 — is a 439-residue protein from Cuscuta epithymum (NCBI taxon 186058).
+Cluster size: 1 member sequence(s)
+Representative: A0AAV0EWZ0_9ASTE
+
+====================================================================================================
+[57/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=296  ordering=sequence_first
+         id=uniref50:UniRef50_A0A7K4YSZ6   organism=Bucerotiformes
+====================================================================================================
+>uniref50:A0A7K4YSZ6 ICOSL protein (Fragment) [Bucerotiformes]
+<protein>MTFSPHNVPFFSLSFNLVVTALEEKIIVSKLGDNATLSCIYREKELRLKNLRVYWQIADDQEECSVVHALISSQDNESEQCIHFKNRTRLFWDRLESGDFSLLLLNVSQSDEHRYKCVVQEKIEYPKVIHQAEVVLSLAASYSQPILSGPIRNSDSTGEEVTFSCRSGNGYPKPIVYWINKTDNSHLPSSEPNITLHDDGTYSVFSTLKVKATSNMQIECSIENKILQENLSANYTQQKQSNESSTEGYKNLGKNGRGAQAAGIVSIVILMGLLTVLTCWLWRRRSSRLMPYTGNE</protein>
+
+ICOSL protein (Fragment) — UniRef50 A0A7K4YSZ6 — is a 296-residue protein from Bucerotiformes (NCBI taxon 57379).
+Cluster size: 2 member sequence(s)
+Representative: A0A7K4YSZ6_BUCAB
+
+====================================================================================================
+[58/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=521  ordering=sequence_first
+         id=uniref50:UniRef50_UPI002234DAE7   organism=Polypteridae
+====================================================================================================
+>uniref50:UPI002234DAE7 uncharacterized protein LOC127528848 [Polypteridae]
+<protein>MSIIKMGSGSMEQNPCLQDEDYDKLQVKEKCSSLEICVDLKRALTQKEEFIQRLQFENNTLSCEAKEQNLEVKQLRLEIMKNRAENNSLGAEVKEKTLELKWLLYVMAKYRSENERLSTETKEQNLELKRLYQEMVKHKIENERLGVEVKWLHKEVTKYRTENESLRVDTKHQMLEIKRLQQEIAKKTLDKKELERELQRAKDMAEGFKKDVHNLMKNFPKLDQVKEKNEALQREKEPSIEGSKFPSLSQMHKHPEFVPVFKKYNLGHIIGEGGNGQVRIATRKFDNATVALKIIPLIPGSEWLDVPGEKGKVPLEVGLLKRVCAVPAGPNIIQMSEYILGRRYMFIFMELLESYTSLEDVIYKKTGPLSEEKAKHAFRQIVQAVLHCHSRGVFHNDIKPNNIMYQTTTGQIKLIDFGYGDLLKEKYYPHAPGTPAYWPPEWYLFRKYKAEPVTVWTLGITLFELLCGNRPFKEKMEILECKISYTNEISGECKDLIEKCLCSHPIDRLTLKDISIHSWLR</protein>
+
+uncharacterized protein LOC127528848 — UniRef50 UPI002234DAE7 — is a 521-residue protein from Polypteridae (NCBI taxon 8289).
+Cluster size: 2 member sequence(s)
+Representative: UPI002234DAE7
+
+====================================================================================================
+[59/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=337  ordering=sequence_first
+         id=uniref50:UniRef50_A0A7L4UPW0   organism=Balneicella halophila
+====================================================================================================
+>uniref50:A0A7L4UPW0 Endolytic murein transglycosylase [Balneicella halophila]
+<protein>MMKKLLLFLAILGFILIGIIGFAYYKINDSLFLQDYGLVVNKHTTPEDIFTELKNKDIINSKLLPTYLARAKQVNQFKEGFYYFPKGTSTNAFINTLRAGRQSPVKLTFNNTRTLFEFAGKISRQIKPDSLELLNHLTNDSVANSYGFDKNNFIGMFLPNTYEMYYTATPKEFTDRMNKEYLRFWNTQRKKKAEELGYTQKQISIVASIVDEETNKSDEKSRIAGVYLNRLERNIPLQADPTLKFAVGDFTIKRLLNKHMEVDSPYNTYKYSGLPPGPIRQPSISAIDAVLNAENHNYIYFCAKADFSGYHVFSKTLSEHNRNARAYHRALNKRGIR</protein>
+
+Endolytic murein transglycosylase — UniRef50 A0A7L4UPW0 — is a 337-residue protein from Balneicella halophila (NCBI taxon 1537566).
+Cluster size: 2 member sequence(s)
+Representative: A0A7L4UPW0_BALHA
+
+====================================================================================================
+[60/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=164  ordering=sequence_first
+         id=uniref50:UniRef50_A0A8S1DXA5   organism=Ecdysozoa
+====================================================================================================
+>uniref50:A0A8S1DXA5 PID domain-containing protein [Ecdysozoa]
+<protein>MPSKKQYNLVQNDDYDTRIPLHPDEAYHHGISFQAKFIGTLDIPRPTSRVEIVAAMRRIRYEFKAKAVKKKKVNVEVSIEGVKVSLKGKKKKKNQWTDDSKLVLMQHPIYRIFYVSHDSQDLKIFSYIARDGASNVFKCNVFKSTKKVCNLLFASDLPVAYALR</protein>
+
+PID domain-containing protein — UniRef50 A0A8S1DXA5 — is a 164-residue protein from Ecdysozoa (NCBI taxon 1206794).
+Cluster size: 8 member sequence(s)
+Representative: A0A8S1DXA5_9INSE
+
+====================================================================================================
+[61/100]  source=ensembl  entity_type=regulatory_feature  seq_type=dna  seq_len=187  ordering=sequence_first
+         id=ensembl_reg:ENSR00000737226   organism=Homo sapiens
+====================================================================================================
+>ensembl:ENSR00000737226 open chromatin region [Homo sapiens]
+<dna>TGTTGCTGCTGTTTCCCCCCACCCCCCCTTGGTCTCAATGTCATTTAATTCTGCTCTGATCAAAGTCCCTCTTGCAGTGTATTCCCCAGGGAGTTTTCTGAACTTATTCTATCTGGATGTCTAAATCTCTAGCAAAAACCAGGGACATTTTCTTCAATTATTTCCCTAAATAAGTTTTGCATACTTG</dna>
+
+The sequence is a open chromatin region (187 bp) from the Ensembl release-112 Regulatory Build (ENSR00000737226) from Homo sapiens (NCBI taxon 9606).
+Location: 4:137,068,618-137,068,804
+Feature length: 187 bp
+
+====================================================================================================
+[62/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=176  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABV1QD27   organism=Streptomyces
+====================================================================================================
+>uniref50:A0ABV1QD27 GNAT family N-acetyltransferase [Streptomyces]
+<protein>MSMVLSSTSLTLRPWEPGDTDALAALADDEELRRWTSHRVAGPQDAVRWIAAQEAGWKSRKRLSFAILLTGRAVGHIVLKRSKDETCGELGYWTGASARGLGVASGAVELLTAWAFDTNTGVGLSRLELIHNAANPASCRVAQKTGYSLASVLPARAPHEAERHLHAREREAVPRS</protein>
+
+GNAT family N-acetyltransferase — UniRef50 A0ABV1QD27 — is a 176-residue protein from Streptomyces (NCBI taxon 1883).
+Cluster size: 2 member sequence(s)
+Representative: A0ABV1QD27_STRMI
+
+====================================================================================================
+[63/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=267  ordering=sequence_first
+         id=uniref50:UniRef50_A0AA37XEC3   organism=Litorihabitans aurantiacus
+====================================================================================================
+>uniref50:A0AA37XEC3 Uncharacterized protein [Litorihabitans aurantiacus]
+<protein>MVGCKVDPDQVALRYYYHAGAVAASRSTADGLTVGWQGGGVIENVPAGGPLPRVDTIYALQLNPEHGDATNDLVVRIAHGTPSSNPRWPVLPVGGVELGSYLMPAGATATGQATAYSTGRKSVLIDSAAGVLFQKVDPNNGSYGTTGGVWIQGEIEVPTKRLLVYTADMKIRVVAGTSGADPEELQMVMRPVLDDEAFAESFSDPITSLSANFYSPSFTWRREVDPGRHTVGLYYGRAWGQAIPHGVYDGGLRQGTALTITDGGVVA</protein>
+
+Uncharacterized protein — UniRef50 A0AA37XEC3 — is a 267-residue protein from Litorihabitans aurantiacus (NCBI taxon 1930061).
+Cluster size: 1 member sequence(s)
+Representative: A0AA37XEC3_9MICO
+
+====================================================================================================
+[64/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=258  ordering=sequence_first
+         id=uniref50:UniRef50_A0A804Q8U7   organism=Spermatophyta
+====================================================================================================
+>uniref50:A0A804Q8U7 alpha-amylase [Spermatophyta]
+<protein>MMLFITDWLLWLKSSDLGFDAWRLDFAQGYSPEVAKVYVDATAPTFAVAEVWNSMAYDGDNKPEYDQDPHRQALVDWVDRVGGAASPATVFDFTTKGILNAAVEGELWRLIDPQGKAPGVIGWWPAKAVTFVDNHDTGSTQAMWPFPSDKVMQGYAYILTHPGNPCIFYDHFFDWGFKDEIAALVAVRKRNGITPTSELTILEHDGDSYVAEIDGKVIVKIGSRYDVGHLIPAGFEVAAHGNDYAVWEKAGAEQVTRA</protein>
+
+alpha-amylase — UniRef50 A0A804Q8U7 — is a 258-residue protein from Spermatophyta (NCBI taxon 58024).
+Cluster size: 2 member sequence(s)
+Representative: A0A804Q8U7_MAIZE
+
+====================================================================================================
+[65/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=211  ordering=sequence_first
+         id=uniref50:UniRef50_UPI001D019AA0   organism=Staphylococcus simulans
+====================================================================================================
+>uniref50:UPI001D019AA0 Mur ligase family protein [Staphylococcus simulans]
+<protein>MGKSSTRKLITSLLSDFNVLENRGNNNVRAAIYSNMLKLIKNPDFAVIETSMNAINYLENTAIYLKPDIAIITGIGEAHFSTFKSVKDIAKIKTRIFEGLSDNGTAIINNDTLYADYLVNKAQEKTNNVLTYGINKDSKVDLSVDNIRYNKGNIEFLIENQNNEKEVYQINTISKGMVYNALASILVLKSLNLPIKKKSLKNSNHFLKYYL</protein>
+
+Mur ligase family protein — UniRef50 UPI001D019AA0 — is a 211-residue protein from Staphylococcus simulans (NCBI taxon 1286).
+Cluster size: 1 member sequence(s)
+Representative: UPI001D019AA0
+
+====================================================================================================
+[66/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=148  ordering=sequence_first
+         id=uniref50:UniRef50_UPI0003DE4FDD   organism=Microbacterium
+====================================================================================================
+>uniref50:UPI0003DE4FDD MarR family transcriptional regulator [Microbacterium]
+<protein>MSADTRIDPLDALLALEAALATEERDLRGVLNLGANDIVVLRLLLAAEQADALVRPSEISRTLAISTAATTALIDRLETRGYLARRPHESDRRSIRVTATIPDDSPIRAAFATSRAHRADALDGLLPEQSDAVASAFRRLSSAIAPGE</protein>
+
+MarR family transcriptional regulator — UniRef50 UPI0003DE4FDD — is a 148-residue protein from Microbacterium (NCBI taxon 33882).
+Cluster size: 1 member sequence(s)
+Representative: UPI0003DE4FDD
+
+====================================================================================================
+[67/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=410  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABY2GSF2   organism=sordariomyceta
+====================================================================================================
+>uniref50:A0ABY2GSF2 Putative lipoate-protein ligase A [sordariomyceta]
+<protein>MIPSRLLNRRTINRLRTSSLSPLPRYLTSSSSPSASSTTRFSTDAASHPSNRVQIYLSHSTDPLLNLSVEHRLLQITPPDSTILTLYVNAPSIVFGRNQNPWLQVNLGRLAQIAQNPSAAGWNDAAVQLVRRRSGGGAVFHDGGNVNFSVICPPERFDRNKHAEMVVRALKALSRPNTRVNERHDIVMDVASSAQKATYKVSGSAYKLTRLRSLHHGTCLLRSPNLSSISGLLRSPAQGYLDARGVDSVRSPVRNVDVDNDEFKDAVVREFEGMYGEVQLRDEFDDTALQVEEIRKGYEELGSKSWTWGQTPRFAFSTHPTEEDPRPRAELPFDLKMRLVANHGIIEDMDIKHSDGAAVDGLDASVFHGARVWEVDDWAASLARAGLGSSLSEEAGHWLNHMFGTEYTSL</protein>
+
+Putative lipoate-protein ligase A — UniRef50 A0ABY2GSF2 — is a 410-residue protein from sordariomyceta (NCBI taxon 715989).
+Cluster size: 12 member sequence(s)
+Representative: A0ABY2GSF2_9HYPO
+
+====================================================================================================
+[68/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=175  ordering=sequence_first
+         id=uniref50:UniRef50_A0A6A6F371   organism=Cercospora zeae-maydis SCOH1-5
+====================================================================================================
+>uniref50:A0A6A6F371 Uncharacterized protein [Cercospora zeae-maydis SCOH1-5]
+<protein>MRALTRAGSCRRSTCNTKRCHITRYGKVEGAAQSVIGRHESRFVQSIARRVPCVAKAHFPRRTVLRRHRGSAALPSAALLITARRRHVICVYARDRDMLFWTTLEDVGIPPRGAVALHITPDEHVSRRRLTWFQVKSMISCAAAGGRGGAGGSLLVGTVTAGADNLLSIFISARH</protein>
+
+Uncharacterized protein — UniRef50 A0A6A6F371 — is a 175-residue protein from Cercospora zeae-maydis SCOH1-5 (NCBI taxon 717836).
+Cluster size: 1 member sequence(s)
+Representative: A0A6A6F371_9PEZI
+
+====================================================================================================
+[69/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=738  ordering=sequence_first
+         id=uniref50:UniRef50_UPI0024464DF8   organism=Paramacrobiotus metropolitanus
+====================================================================================================
+>uniref50:UPI0024464DF8 caprin-1-like isoform X1 [Paramacrobiotus metropolitanus]
+<protein>MAASASANSLSSSVSSAAAHVINNKLGVSASSSMDDLVEPIIEPIKSALVGIDKKIRNMEKKKSKLDNLRDEVQKSGKPLNEDQAQSLARYEDNNQQLETFRELQKQFMVCAEDIKKCYRKILRKEQQAEHDRLLDLERYRAVVMALESPDVLMDVIQETEGLPENCREQVDQVRRLLFPFRSDLLPEGSGGRASSEHLQFVTEQQCHLLHGRSLQVTPSGKELTGCKELLDVLLASPFFASHPDVLHSKSRSPLALPTEPHVAAPGAAKKDARIKSPSVVTHTPQQASSFKSAASVIVVGEEAGVSQVMSNVPSAVPVIPPPDYQHGSSMSFVNSKISSGMVPPVVPGQQQIVANSSAGVPHTGLSPSAVPLGAAALPVSGGLQSSMGAPNVSVPPLIVPTVPVAAASTANAFPVSSGAAGLGAFHGHGPNLVPSNRSGHGSVGDRDRDRERSGSFGGLMMDVKEEPGAHVGAIGSGAPQRMTRPPLPPDNAVAQGQSAWQSGRIGTFDPKNPDGDASDLMGGADAFRSHSPADNQENRGFGDDLYKRRDQDNGFGYRDRGAGARPGMNRGGRGGFEPPMRNDRRSLDDSNDRGRMDDRRRFHNDRNMERGGGGQGSRGGVPPMGRYPGDNRNAYRNSNDFEHNGNGDAMLTSSSSSQNSMMMGKEMGEKGSGAGPTNDSHTDYGLFHMPNPGFKGRTGLEQDRRYDRNRDRDRERERERDRDDRNRGNRRTGNIYM</protein>
+
+caprin-1-like isoform X1 — UniRef50 UPI0024464DF8 — is a 738-residue protein from Paramacrobiotus metropolitanus (NCBI taxon 2943436).
+Cluster size: 1 member sequence(s)
+Representative: UPI0024464DF8
+
+====================================================================================================
+[70/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=127  ordering=sequence_first
+         id=uniprot:E3G1S2#se   organism=Enterobacter lignolyticus (strain SCF1)
+====================================================================================================
+>sp:E3G1S2 Modulator protein MzrA [Enterobacter lignolyticus (strain SCF1)]
+<protein>MGLQNMTLRRFTLSMSALLLLCALLWLWAALEQQESSLAIRPVTPNTSMPDGFSIWHHLDANGIRFKSITPQDDALVIKFESSEQSAAAKEVLDRSLPHGYVIALQEDDAIAPQWLSRLRDAPHRLG</protein>
+
+Modulator protein MzrA — UniProtKB/Swiss-Prot E3G1S2 — is a 127-residue protein from Enterobacter lignolyticus (strain SCF1) (NCBI taxon 701347); gene mzrA.
+Function: Modulates the activity of the EnvZ/OmpR two-component regulatory system, probably by directly modulating EnvZ enzymatic activity and increasing stability of phosphorylated OmpR
+Subcellular location: Cell inner membrane; Single-pass membrane protein
+GO annotations: plasma membrane (component); protein kinase binding (function)
+Sequence features: 2 topo dom; 1 chain; 1 transmem [11-31 (Helical)]
+Keywords: Cell inner membrane; Cell membrane; Membrane; Reference proteome; Transmembrane; Transmembrane helix
+Cross-references: EMBL CP002272; RefSeq WP_013364630.1; KEGG esc:Entcl_0600; InterPro IPR026574, IPR027398; Pfam PF13721
+Lineage: Bacteria > Pseudomonadati > Pseudomonadota > Gammaproteobacteria > Enterobacterales > Enterobacteriaceae > Pluralibacter
+
+====================================================================================================
+[71/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=121  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABT9Q839   organism=Streptosporangium lutulentum
+====================================================================================================
+>uniref50:A0ABT9Q839 Uncharacterized protein [Streptosporangium lutulentum]
+<protein>MEILITDAVVGGLTLTLDRDGGTVRVEGDAIPTVVVRRSVEAAPLQHIPIGTRGTEDLTMTLDGAPVALRPAPGRVTRDSYRAEVDHEGITYSVFDFLWLSEDFRHSGPVWSYSRGVRSPR</protein>
+
+Uncharacterized protein — UniRef50 A0ABT9Q839 — is a 121-residue protein from Streptosporangium lutulentum (NCBI taxon 1461250).
+Cluster size: 1 member sequence(s)
+Representative: A0ABT9Q839_9ACTN
+
+====================================================================================================
+[72/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=49  ordering=sequence_first
+         id=uniref50:UniRef50_A0ACB7GBV4   organism=Manihot esculenta
+====================================================================================================
+>uniref50:A0ACB7GBV4 Rad60/SUMO-like domain-containing protein [Manihot esculenta]
+<protein>MNAYCDRQSVELSSIAFLFYGRRLRGDQTPDELEMEIDAMLHQTGGSIS</protein>
+
+Rad60/SUMO-like domain-containing protein — UniRef50 A0ACB7GBV4 — is a 49-residue protein from Manihot esculenta (NCBI taxon 3983).
+Cluster size: 1 member sequence(s)
+Representative: A0ACB7GBV4_MANES
+
+====================================================================================================
+[73/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=220  ordering=sequence_first
+         id=uniref50:UniRef50_A0A316YMC5   organism=Acaromyces ingoldii
+====================================================================================================
+>uniref50:A0A316YMC5 Uncharacterized protein [Acaromyces ingoldii]
+<protein>MPAISRRDTGERSLSGGAIAGIIVAIVVVFLLLAGLLVWKLLQYRKERRDPNSTTNMEKRARQRAIALARAEKHLATSRTTGNYGPGTVVPASVSGDHTAVDTPTDEPRNSLGLANASSTGQPEMTSAEEPVTAEVMHNPEGAVEARAIENHHMAQPSDFNEQDGEPWKGKRNWRSFMGRGKTQHTGQPLIEKDGDAPAPGGPEDDQPEPAPGQGRCAHM</protein>
+
+Uncharacterized protein — UniRef50 A0A316YMC5 — is a 220-residue protein from Acaromyces ingoldii (NCBI taxon 215250).
+Cluster size: 1 member sequence(s)
+Representative: A0A316YMC5_9BASI
+
+====================================================================================================
+[74/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=96  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAV7PQE4   organism=Pleurodeles waltl
+====================================================================================================
+>uniref50:A0AAV7PQE4 Uncharacterized protein [Pleurodeles waltl]
+<protein>MIPVTTWHLQSQANKPIKAEKRVLTTAAVDRCGGNVEIRPNKPVADDGREVLLIKRWFLTAHVKRLKYSKKMCFAACGTGASLHKPLKSKENSLAV</protein>
+
+Uncharacterized protein — UniRef50 A0AAV7PQE4 — is a 96-residue protein from Pleurodeles waltl (NCBI taxon 8319).
+Cluster size: 1 member sequence(s)
+Representative: A0AAV7PQE4_PLEWA
+
+====================================================================================================
+[75/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=164  ordering=sequence_first
+         id=uniref50:UniRef50_A0A0G9N2R8   organism=Aurantiacibacter luteus
+====================================================================================================
+>uniref50:A0A0G9N2R8 Uncharacterized protein [Aurantiacibacter luteus]
+<protein>MGDRVYPSGGYLQQRYGLSDEEAARRHIVMDAAVAFNTSLYENPPQGYSDLWIRHEPTFAIVLNVRPPYDRAAFLARAPEVLRGDLEFFEVTRTRTEIERDQDRIIASWRGFRNWSGGYEVQTDRFRFTTASDAEHAAMRAALPADLREQVVLAVGPQPVPLSR</protein>
+
+Uncharacterized protein — UniRef50 A0A0G9N2R8 — is a 164-residue protein from Aurantiacibacter luteus (NCBI taxon 1581420).
+Cluster size: 1 member sequence(s)
+Representative: A0A0G9N2R8_9SPHN
+
+====================================================================================================
+[76/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=636  ordering=sequence_first
+         id=uniref50:UniRef50_A0A7G8PR37   organism=Constantimarinum furrinae
+====================================================================================================
+>uniref50:A0A7G8PR37 Peptidase M56 domain-containing protein [Constantimarinum furrinae]
+<protein>MELLDYILKSAGILTIFYLFYAVMLRKNTHFTAKRHYLFGGITAALLLPLFEYTKIIYIEIPSTVVSATSVLSPVDQAVIPSESLSVDWWEVLFVCYLTGILVMTVRLIVQLISLLTLLTGNPTAKKGKFTYVYVSERIAPFSFFNYIVFNPDLHQENDLTMILQHEKVHASQWHTIDILAANLMRILQWANPFSWFYKVSLEENLEYIADSETAQKVPSVKQYQLALVKASSSLTTPALTNNFYHSFIKKRIIMLNKSNSKKYDLWKLAIILPILAVFLWSFNVSEKIEYIETEVTEDINVEPTSMDALPEITSEETSISETNETQNSEDSTPTTVAVVSENQTEDNERIQQEVVAETSFNEVYILITKSTTKAELEIHKKELKREHNIDFNYSNLEYNSKGELISIAIEYNTNKGGHGNYHVVEDDGPIKDFYFFVSEDGRSGFVAEGSEERMIEREKKIKERMEKRVERIEEMKKERVKKRNEMADVRRAKVAELVETEKKLVKAQNRVVARASDLEDRYAALVYSDGNEVSEDVDDEMVYVISKNTPSSSYVSSSGRNSVVIKKNTTDAQLASMKEKLEGKGITFTYRNVKRNSRGEITGIKLRMKDGNGSETSSNVKSDDEPISPIRLTLD</protein>
+
+Peptidase M56 domain-containing protein — UniRef50 A0A7G8PR37 — is a 636-residue protein from Constantimarinum furrinae (NCBI taxon 2562285).
+Cluster size: 1 member sequence(s)
+Representative: A0A7G8PR37_9FLAO
+
+====================================================================================================
+[77/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=432  ordering=sequence_first
+         id=uniref50:UniRef50_I9TFT6   organism=Bacteroidales
+====================================================================================================
+>uniref50:I9TFT6 HipA domain-containing protein [Bacteroidales]
+<protein>MIESLDVILWDKKVGTLVANREGHRSKACFYFDSDYVRNGYDIAPLRAPVKGVAAQRGLPVYPDEERLFGGLPSFIADSLPDHWGNTVFNEWAKVHHIRMRDLSALDRLAYIGRRGMGALEFVPPTAEELETPFKVEIADLYQLARQAFEEAGRFNVPVSGNLMVESLFKVGTSAGGRRPKAVVNVNFEEGQCYSGQVATPYPGYTPMIVKFDEHQKMPTTRIEYSYYLMAVDAELQMMPSRLLEGEQTAHFLTERFDRQNGKKVHIQTLAAMNPSADSYEALFEAACRIGVPPGELRQLFRSMVLNVLGGNVDDHNKNFSFLMDDDGHWHVAPAYDYTFSVDPDAPYYVNRHSMTVNNKTEGITAEDLLEVARRYGIKAAEPFIEKAIGIVSHYPEYGREAGVGEEWIGTIEKEIAARIECVSDNRADRLK</protein>
+
+HipA domain-containing protein — UniRef50 I9TFT6 — is a 432-residue protein from Bacteroidales (NCBI taxon 171549).
+Cluster size: 40 member sequence(s)
+Representative: I9TFT6_9BACE
+
+====================================================================================================
+[78/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=156  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABQ6LT64   organism=Paralimibaculum aggregatum
+====================================================================================================
+>uniref50:A0ABQ6LT64 Extensin-like C-terminal domain-containing protein [Paralimibaculum aggregatum]
+<protein>MRLAASNRPAASLRPSLAPGAMRCVSRSGPRASGLALRAARSGPRALQPAARRHPGAPASGLGNRGADGCRPIRRADGHISEHAAADAVGIPGFRPAGGRRLTRARGRQGMGPQAACLCAVRGGPGRLPRAVPGPEQGRRDAGPFHGGQGHCRADR</protein>
+
+Extensin-like C-terminal domain-containing protein — UniRef50 A0ABQ6LT64 — is a 156-residue protein from Paralimibaculum aggregatum (NCBI taxon 3036245).
+Cluster size: 2 member sequence(s)
+Representative: A0ABQ6LT64_9RHOB
+
+====================================================================================================
+[79/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=107  ordering=sequence_first
+         id=uniref50:UniRef50_A0A9P9D6D5   organism=Dactylonectria
+====================================================================================================
+>uniref50:A0A9P9D6D5 Uncharacterized protein (Fragment) [Dactylonectria]
+<protein>MEDEIPQAVRNCRACKQDLPEVEFRSVKDPAKFTGECASCRARQKQRATESRAAVAVAAMRNTALRLSSRTATKRSDSLANLTPPRRTAPKPASVNSLPPPAKPALL</protein>
+
+Uncharacterized protein (Fragment) — UniRef50 A0A9P9D6D5 — is a 107-residue protein from Dactylonectria (NCBI taxon 1620264).
+Cluster size: 3 member sequence(s)
+Representative: A0A9P9D6D5_9HYPO
+
+====================================================================================================
+[80/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=400  ordering=sequence_first
+         id=uniref50:UniRef50_UPI0005029B0F   organism=Sulfuricurvum
+====================================================================================================
+>uniref50:UPI0005029B0F ATP-binding protein [Sulfuricurvum]
+<protein>MKHSVFLKITLLFIVIFIGAGIGFYAIHQKLDEEHERRLRAEAQTMLSLLRKSIIYPSETRKEFLRQNGYDVIFPRSDVIATLHQAFTGIPDTYPPEIQDSLKEGIIQILKDRNHLYVYLTRAKPPMLLVKADAAYRPVWPEAVFVTVLTALLLFYLLIIRALFPLVRLIRSIQEYGLTGRYPPIRTSRKDEIGLVSTALDNAMRQNQSLIEARQLFLRNIMHELKTPITVGKLALPFLKKGEEKSILEITSGALKPHIEPCDPKKLVEKAASLLFLQDDAVETSFDGHLIYADADALVSVFKNLIDNALKYSPDHTARIHQNGDVLVFSNRGEPWEHNCSLASLSEPFFHSRSNPESFGLGLYIVKSILDAHSFTIAYRYEQDRHCFEITCRNRFEMNG</protein>
+
+ATP-binding protein — UniRef50 UPI0005029B0F — is a 400-residue protein from Sulfuricurvum (NCBI taxon 286130).
+Cluster size: 6 member sequence(s)
+Representative: UPI0005029B0F
+
+====================================================================================================
+[81/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=95  ordering=sequence_first
+         id=uniref50:UniRef50_A0AAQ4FHI2   organism=Amblyomma americanum
+====================================================================================================
+>uniref50:A0AAQ4FHI2 Uncharacterized protein [Amblyomma americanum]
+<protein>MRCHLSISTVTRGVKSSTHEVGRATSPTAPTSGNSSTHMSEAACDNGTALHFDDAPSTAPSAEGSMGQYQLWTVETWNSLLTSQKVSTTSKISMI</protein>
+
+Uncharacterized protein — UniRef50 A0AAQ4FHI2 — is a 95-residue protein from Amblyomma americanum (NCBI taxon 6943).
+Cluster size: 1 member sequence(s)
+Representative: A0AAQ4FHI2_AMBAM
+
+====================================================================================================
+[82/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=229  ordering=sequence_first
+         id=uniref50:UniRef50_A0A9P0ASF9   organism=Brassicogethes aeneus
+====================================================================================================
+>uniref50:A0A9P0ASF9 Uncharacterized protein [Brassicogethes aeneus]
+<protein>MPPKKGSNSNPVKEKFEESDSEKNVEAKQSEVSLENNIAKLLEIQFAKFKEDMERTYRNEISEVKKSIGFMSDCFEQQKEELKKTLKALKNVQEENNTIKNKMSELENRINNKEQLERENNLIISGVPKQNETTTTIVEKIMNTLKLQNSQSILETRRISKKDDSPILVKFAEKNKKVEVFKNRKEIKSVKCSDCQLEGNSQIYFNDDLIPNIQTLFQKARDVKKRKGI</protein>
+
+Uncharacterized protein — UniRef50 A0A9P0ASF9 — is a 229-residue protein from Brassicogethes aeneus (NCBI taxon 1431903).
+Cluster size: 1 member sequence(s)
+Representative: A0A9P0ASF9_BRAAE
+
+====================================================================================================
+[83/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=275  ordering=sequence_first
+         id=uniref50:UniRef50_A0A6A1VZR1   organism=Morella rubra
+====================================================================================================
+>uniref50:A0A6A1VZR1 Protein kinase domain-containing protein [Morella rubra]
+<protein>MDVDDKKANILTWGSRLQIAIDAAQGLEYLHHGSKPPIVHRDVKCTNILLSENFQSKLADFGMSKIFPADAGSHVSTVVVGTQGYVDPEYYLSNRWTEKSDVYSFGVVLLRIITGRPVMERSNVMTQTHLSRWVSSMLANGDIRNIVDPRMPGNLDVNSVWKAIEIAMFCVSPTSVRRPNMSQVEGKLKECLQTEMAPMEMVNMDLTTEVELYPSASAGQGLTGDEDPVTRCMGPIRWDVLKLTHTVQVTKKATPPEMHSPAQLHTSSAMTDVLE</protein>
+
+Protein kinase domain-containing protein — UniRef50 A0A6A1VZR1 — is a 275-residue protein from Morella rubra (NCBI taxon 262757).
+Cluster size: 2 member sequence(s)
+Representative: A0A6A1VZR1_9ROSI
+
+====================================================================================================
+[84/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=2114  ordering=sequence_first
+         id=uniref50:UniRef50_L5M1X5   organism=Boreoeutheria
+====================================================================================================
+>uniref50:L5M1X5 Protein JBTS17 [Boreoeutheria]
+<protein>MGSKYKQFTDPIEEEDAHLLLGSVRGVLKAAAMAEADVLSETWRLLMGSAKDFSRRLWGLVPGGLYLPAPPLYCPQPALLSEEDGDDLLLRAEKENRQKVSGILQRLLLLLRAARCSFPAAQWYLLQLRWARKVMQKIRMKGSLPSLSPFPPSLLHYCVGGVAFFRPGATGDNKLDEVSIKAIGCFRELCALCWMLHVRDKLSSSCRQYQKARENMEGKKDLAVEFDSCAVEHCLCAVEWACRMLPFSRFSNIEELIQDLILSLIGELPPIRKVADMFVKAFPNPEDIRVPLREKYYSLRQRLGHCVVKGPHTEEAMSVVMRSIHKVRVKALTRVQRNIGPFERHVWEPVEEDKPAEGPGFEGCSLGTSLSRSTLTDLGTPPGHSEADSLSEARSAGGRSGTHCYRRKAPRHVESTPTAEPGADRSMAEPKGGPTGRGQAPVLQIAPPVIGVWEFERDDDEYVKFLDLFLSYVLERDLRGSEDPGLPLLTSFSGHLREQELNPLLSGLHPALHRPGQARGQGVFRAGSCFAVALQPEDPEGPVPPAPGLAAGTRPPPENPPSDFNESGGRSGLFGLKQKALYRTQGDGAEKPCVLRVSSRSPWAPEGSRRGRCMFRAIGGSDTDPLAELPPALGAAGGMGLRGLLEWMLRWAACRLPCDPSLPAPAQARPVLRVRTSVAAILTSLWLLEQPYATAYKARSAVREGQMLNAGAAPCWSVCSHSGSTTQPEAGLMAGKCSSDGGSLPHLRGSAKEQRAKRMPTEARTPEIKETNEESISVTDDTDKQVVDIIDEDLLRGDTFTLEELETLPPDHEEDAKGPVGSPESPHIAAHTQTSPRLLEHSTGAAPCPRREPVEECVEEKPAAQNGAQTPACKEKSSPDPPVVPNGVSVASQTLVPTPPPALRGQPRARRPDSPGSVRQMLQDEVFKLVQPHGSSQGQLREDRKPVFSFLLTASQLRFPLSVAGSRRREGRQRGACGGEGSWSLLVLHVFPIIFSDVSLIFIFLQLQQINFLTLMQIAGSSLPSRPDTHAGAQQPLSARLAXXXXXXXXXXASCPPGPAGHAPLHRVSLPSALPAATALRPGDAFPLLQLQPEQRRKPFAFPAERALRVPPRGLEDRAEAGLTDIPKHLNLDQYVGQDSATPQQDSSAVPKPEGVFDLRPGPLESSPHYAFGFPLLHLQPEPAFTFFSVARAPVAAPSAPARAAAGAGTHPGFSFLRSCPSQENAYRTPQLTLIGNLIASKQSQQRPPPDFLEQGDPGHLQLGKDKGDPPEVRPGKGGKKRQGLSDPFRYVTWQKRRAEKELQENSSEQQRRKPSVAVHPGAAVLPDHDSGAAGRAEEQREHRGSQTLDAFEIPLETLHDDVTTSAGLHFLASVRKEAVERQDASTNTDPDKEAASQVVSECRKNQQAFSSTSEREPLPVPRPLAPDVFLNLRLPSERAEKPLAPSAPDTVGHTYLNVIDIEAGDLQEAPVGEPSDEDMLLQAEGPSSAALHHLAAAVTSAAPLRRGKSQGPASSAVDFPLTPAEVSPSCVEGGSWRAGAAQAEEPGVPSPPSSVREDRDVSKPAFQFKEESSQLDAAEGGGLRDYLLRELLQGASAPGPAPSPHPHPRLQRLSSQLRKIDAQLQAIQSIADRIEQDFPEHEHRTVGPVGGRHCKEVESVDDIELSSGPESEKTLASKAITISKEDSGLVHFLTHMNEEDQSDKEQTFEDEFSVTETHSHPKTCVFPSADSALSLSSDQNGSFPGVNNHDELFESVSAEPLQMTGLTDIADIIDDLIAKDGVSSGELGLTGRQARGISRIQRSSGSRPGRSAKERREIQVWMRRKRRERMAEYLHELAERRGQEHDPFCPRSNAFYMTSREIRLSQKMKHEKDRLLLCDHYSRRISQAYSLMNELLSESVQVPAQTPSPGKPRTAHTCRLQSSLSPRRETRYGHNFPVNRPGKVRNIPKPSYIPKGKSFGQPQGSPWPHGTITFTQKKACGARGARRKAVHSPVTFRKGSTAPCLQHSEQHGSAGLGPHTEQVCAEDEREETVVSPWLVPSDIRRILHGSHSSLLQDLSPTEEEPASPTGESGMDSVSESTGSILSKLDWNAIEDMVANVEDKSLSVHWALDL</protein>
+
+Protein JBTS17 — UniRef50 L5M1X5 — is a 2114-residue protein from Boreoeutheria (NCBI taxon 1437010).
+Cluster size: 6 member sequence(s)
+Representative: L5M1X5_MYODS
+
+====================================================================================================
+[85/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=369  ordering=sequence_first
+         id=uniprot:Q5PKZ8#se   organism=Salmonella paratyphi A (strain ATCC 9150 / SARB42)
+====================================================================================================
+>sp:Q5PKZ8 Maltose/maltodextrin import ATP-binding protein MalK [Salmonella paratyphi A (strain ATCC 9150 / SARB42)]
+<protein>MASVQLRNVTKAWGDVVVSKDINLDIHDGEFVVFVGPSGCGKSTLLRMIAGLETITSGDLFIGETRMNDIPPVERGVGMVFQSYALYPHLSVAENMSFGLKLAGAKKEVMNQRVNQVAEVLQLAHLLERKPKALSGGQRQRVAIGRTLVAEPRVFLLDEPLSNLDAALRVQMRIEISRLHKRLGRTMIYVTHDQVEAMTLADKIVVLDAGRVAQVGKPLELYHYPADRFVAGFIGSPKMNFLPVKVTATAIEQVQVELPNRQQIWLPVESRGVQVGANMSLGIRPEHLLPSDIADVTLEGEVQVVEQLGHETQIHIQIPAIRQNLVYRQNDVVLVEEGATFAIGLPPERCHLFREDGSACRRLHQEPGV</protein>
+
+Maltose/maltodextrin import ATP-binding protein MalK — UniProtKB/Swiss-Prot Q5PKZ8 — is a 369-residue protein from Salmonella paratyphi A (strain ATCC 9150 / SARB42) (NCBI taxon 295319); gene malK.
+Function: Part of the ABC transporter complex MalEFGK involved in maltose/maltodextrin import. Responsible for energy coupling to the transport system
+Catalytic activity: Reaction=D-maltose(out) + ATP + H2O = D-maltose(in) + ADP + phosphate + H(+); Xref=Rhea:RHEA:22132, ChEBI:CHEBI:15377, ChEBI:CHEBI:15378, ChEBI:CHEBI:17306, ChEBI:CHEBI:30616, ChEBI:CHEBI:43474, ChEBI:CHEBI:456216; EC=7.5.2.1; Evidence=;
+Subcellular location: Cell inner membrane; Peripheral membrane protein
+GO annotations: ATP-binding cassette (ABC) transporter complex, substrate-binding subunit-containing (component); maltose transport complex (component); ABC-type maltose transporter activity (function); ATP binding (function); ATP hydrolysis activity (function)
+Sequence features: 1 chain; 1 domain [4-234 (ABC transporter)]; 1 binding [36-43]
+Keywords: ATP-binding; Cell inner membrane; Cell membrane; Membrane; Nucleotide-binding; Sugar transport; Translocase; Transport
+Cross-references: EMBL CP000026; RefSeq WP_000179180.1; KEGG spt:SPA4047; InterPro IPR003593, IPR003439, IPR017871, IPR015855 +5 more; Pfam PF00005, PF08402
+Lineage: Bacteria > Pseudomonadati > Pseudomonadota > Gammaproteobacteria > Enterobacterales > Enterobacteriaceae > Salmonella
+
+====================================================================================================
+[86/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=1666  ordering=sequence_first
+         id=uniref50:UniRef50_A0ACF8Q5M9   organism=Chlorella vulgaris
+====================================================================================================
+>uniref50:A0ACF8Q5M9 Serine/threonine protein phosphatase 2A regulatory subunit B''gamma [Chlorella vulgaris]
+<protein>MVSAGFCHLLGEALLQMRGLTGRFPLAPFLCGCGYMLTLVADKIAANAHGGGGHAGCGGHSPRLPAKGPATDSCCAVEVLAGMDIAERGLGGPSRLEKHSSSSEAEVQGLLDRTPPRNGSTSRLALQHSVLAANGSSSQADGQQHLAELGGAKDPGTSGYTRSSFEVMAGGAAAGGGIGGGSSSTLRRVAGLRQDSSDSLGFEGEPPSSPLLAVSSASGGGGGGSGASHLRSVSFLTAVLMGVALCFHSLLEGAAMGAQATIGNSFHIFIAIVSHKGLSAYALGSSIVDSQASMQSFWSVVLPFTFASPVGIFIGYVISDIAKGIGAASISALASGTFLYVAFMEVIPKELRDPSHMVPKLIALLTGFGLMSIQKSVSEDGDIWRAAAASGLHLHVTGVSFPLDSGHRHVFRWTADGMKVLELLDDVKHGRRAALAPSLRKGGAPSNQPPLSPRKAGVPHSPVSPSCKPVIPLKLPPSPQLLSIPQFYFPQLGPQPDTQRAMEERLLGMLSTQPEGLAVDDLKRMLQQILNLPSSLAYPLFHKLAAKGEERVASGALLHWASMHNLCGAPEQRRAFDILRQEHASAVVPEDLRPLLAGILLSHAGLEFLQEAPEFQERYAETVIHRIFYHNNRLGDGRVSWREGDLLSSLKEVDEQEDINKVLRHFSYEHFYVVYCKFWDLDTGVMVSAGFCHLLGEALLQMRGLTGRFPLAPFLCGCGYMLTLVADKIAANAHGGGGHAGCGGHSPRLPAKGPATDSCCAVEVLAGMDIAERGLGGPSRLEKHSSSSEAEVQGLLDRTPPRNGSTSRLALQHSVLAANGSSSQADGQQHLAELGGAKDPGTSGYTRSSFEVMAGGAAAGGGIGGGSSSTLRRVAGLRQDSSDSLGFEGEPPSSPLLAVSSASGGGGGGSGASHLRSVSFLTAVLMGVALCFHSLLEGAAMGAQATIGNSFHIFIAIVSHKALSAYALGSSIVDSQASMQSFWSVVLPFTFASPVGIFIGYVISDIAKGIGAASISALASGTFLYVAFMEVIPKELRDPSHMAQPSASKLKLDSLFLQWFSMPETQRLVLELLDDVKHGRRAALAPSLRKGGAPSNQPPLSPRKAGVPHSPVSPSCKPVIPLKLPPSPQLLSIPQFYFPQLGPQPDTQRAMEERLLGMLSTQPEGLAVDDLKRMLQQILNLPSSLAYPLFHKLAAKGEERVASGALLHWASMHNLCGAPEQRRAFDILRQEHASAVVPEDLRPLLAGILLSHAGLEFLQEAPEFQERYAETVIHRIFYHNNRLGDGRISWREGDLLSSLKEVDEQEDINKVLRHFSYEHFYVVYCKFWDLDTDHDFRISRDDLLRYGNHSLTYRIVDRIFSQAGRPFHRHTTSNGGEAPGGGGSGGTMTYEDFVYFILSEEDKATDASLDYWFRCCDLDGDGRLTPDELLYFYEEQLHRMECLSQESVSFDDIMAQMQDMVGPQDPSYFTLHDLKRSRPLAGTLFNVLFNLSKFMAYETRDPFVTRQEREDGLTEWDRFARTEYLRLAMEEDADNDNASDGAWSRLDALGSTPRHRVATRLPTCTAAAAAAAAAAAAAARRLAWHADNRPSLVGCARCAMCCGAAERQGWAPGPAPARQQRHTLVLKAPVLASGSCACCSREAPPSGPAGMAGWIGPCCCGAALAS</protein>
+
+Serine/threonine protein phosphatase 2A regulatory subunit B''gamma — UniRef50 A0ACF8Q5M9 — is a 1666-residue protein from Chlorella vulgaris (NCBI taxon 3077).
+Cluster size: 2 member sequence(s)
+Representative: A0ACF8Q5M9_CHLVU
+
+====================================================================================================
+[87/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=754  ordering=sequence_first
+         id=uniprot:Q9IMP4#se   organism=Influenza C virus (strain C/Johannesburg/1/1966)
+====================================================================================================
+>sp:Q9IMP4 RNA-directed RNA polymerase catalytic subunit [Influenza C virus (strain C/Johannesburg/1/1966)]
+<protein>MEINPYLMFLNNDVTSLISTTYPYTGPPPMSHGSSTKYTLETIKRTYDYSRTSVEKTSKVFNIPRRKFCNCLEDKDELVKPTGNVDISSLLGLAEMMEKRMGEGFFKHCVMEAETEILKMHFSRLTEGRQTYDWTSERNMPAATALQLTVDAIKETEGPFKGTTMLEYCNKMIEMLDWKEIKFKKVKTVVRREKDKRSGKEIKTKVPVMGIDSIKHDEFLIRALTINTMAKDGERGKLQRRAIATPGMIVRPFSKIVETVAQKICEKLKESGLPVGGNEKKAKLKTTVTSLNARMNSDQFAVNITGDNSKWNECQQPEAYLALLAYITKDSSDLMKDLCSVAPVLFCNKFVKLGQGIRLSNKRKTKEVIIKAEKMGKYKNLMREEYKNLFEPLEKYIQKDVCFLPGGMLMGMFNMLSTVLGVSTLCYMDEELKAKGCFWTGLQSSDDFVLFAVASNWSNIHWTIRRFNAVCKLIGINMSLEKSYGSLPELFEFTSMFFDGEFVSNLAMELPAFTTAGVNEGVDFTAAMSIIKTNMINNSLSPSTALMALRICLQEFRATYRVHPWDSRVKGGRMKIINEFIKTIENKDGLLIADGGKLMNNISTLHIPEEVLKFEKMDEQYRNRVFNPKNPFTNFDKTIDIFRAHGPIRVEENEAVVSTHSFRTRANRTLLNTDMRAMMAEEKRYQMVCDMFKSVFESADINPPIGAMSIGEAIEEKLLERAKMKRDIGAIEDSEYEEIKDIIRDAKKARLESR</protein>
+
+RNA-directed RNA polymerase catalytic subunit — UniProtKB/Swiss-Prot Q9IMP4 — is a 754-residue protein from Influenza C virus (strain C/Johannesburg/1/1966) (NCBI taxon 100673); gene PB1.
+Function: RNA-dependent RNA polymerase which is responsible for replication and transcription of virus RNA segments. The transcription of viral mRNAs occurs by a unique mechanism called cap-snatching. 5' methylated caps of cellular mRNAs are cleaved after 10-13 nucleotides by PA. In turn, these short capped RNAs are used as primers by PB1 for transcription of viral mRNAs. During virus replication, PB1 initiates RNA synthesis and copy vRNA into complementary RNA (cRNA) which in turn serves as a template for the production of more vRNAs
+Catalytic activity: Reaction=RNA(n) + a ribonucleoside 5'-triphosphate = RNA(n+1) + diphosphate; Xref=Rhea:RHEA:21248, Rhea:RHEA-COMP:14527, Rhea:RHEA- COMP:17342, ChEBI:CHEBI:33019, ChEBI:CHEBI:61557, ChEBI:CHEBI:140395; EC=2.7.7.48; Evidence=;
+Subcellular location: Host nucleus. Host cytoplasm
+GO annotations: host cell cytoplasm (component); host cell nucleus (component); nucleotide binding (function); RNA binding (function); RNA-directed RNA polymerase activity (function); DNA-templated transcription (process); symbiont-mediated suppression of host gene expression (process); symbiont-mediated suppression of host mRNA transcription via inhibition of RNA polymerase II activity (process); viral RNA genome replication (process); viral transcription (process)
+Sequence features: 35 helix; 27 strand; 11 turn; 2 motif [189-197 (Nuclear localization signal); 205-218 (Nuclear localization signal)]; 1 chain; 1 domain [288-484 (RdRp catalytic)]; 1 region [251-258 (Promoter-binding site)]
+Keywords: 3D-structure; Eukaryotic host gene expression shutoff by virus; Eukaryotic host transcription shutoff by virus; Host cytoplasm; Host gene expression shutoff by virus; Host nucleus; Host-virus interaction; Inhibition of host RNA polymerase II by virus; Nucleotide-binding; Nucleotidyltransferase; Phosphoprotein; RNA-directed RNA polymerase
+Cross-references: EMBL AF170575; PDB 5D98, 5D9A, 6F5P, 6XZD +5 more; InterPro IPR007099, IPR001407; Pfam PF00602
+Lineage: Viruses > Riboviria > Orthornavirae > Negarnaviricota > Polyploviricotina > Insthoviricetes > Articulavirales > Orthomyxoviridae
+
+====================================================================================================
+[88/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=212  ordering=sequence_first
+         id=uniref50:UniRef50_A0A915EGM4   organism=Ditylenchus dipsaci
+====================================================================================================
+>uniref50:A0A915EGM4 Tyrosine-protein phosphatase domain-containing protein [Ditylenchus dipsaci]
+<protein>MPSVDLDDAQQESRLSASVDKQQSYGRKHAHGKNLGVLKRSGVRYVINVTSNLPNYFEHEPDFSYLRIPVDDSCSHNLAQFFQKPYPSLRKQEQSTPQLCLAYLMYALHSPLEEAFDLLLKQNATIAPNFHFMETLTCWERELFEQGETSSSSSSTSTSTVSSASAFSSDNAFSTTPGQTQQDNSTKGCPNNTNNCISSPSTVNSPTIYTVN</protein>
+
+Tyrosine-protein phosphatase domain-containing protein — UniRef50 A0A915EGM4 — is a 212-residue protein from Ditylenchus dipsaci (NCBI taxon 166011).
+Cluster size: 1 member sequence(s)
+Representative: A0A915EGM4_9BILA
+
+====================================================================================================
+[89/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=297  ordering=sequence_first
+         id=uniprot:Q5NP22#se   organism=Zymomonas mobilis subsp. mobilis (strain ATCC 31821 / ZM4 / CP4)
+====================================================================================================
+>sp:Q5NP22 Bifunctional protein FolD [Zymomonas mobilis subsp. mobilis (strain ATCC 31821 / ZM4 / CP4)]
+<protein>MTEAIIIDGKEFSSNLRNKIAEDVKAFKKERNVVPGLAVVLVGEDPASRIYVRKKEEMTTAVGMNSLSYRLDANASQQELLDLIETLNHDPAVHGILVQLPLPKHIDTPTILEAIDPDKDVDGFHVVNAGRLAIGTPSLVPCTPAGCMMLLEHSLGSLKGKNALVIGRSTIVGRPMAQLLLAADCTVTVAHRHTKNLEELCRQADIVVAAVGIPHFVKASWLKPGAVVIDVGINRVPAEDEAAKAAGKTRIVGDVDFVEAAKVASAITPVPGGVGPMTIACLLNNTVQAARNLTSAS</protein>
+
+Bifunctional protein FolD — UniProtKB/Swiss-Prot Q5NP22 — is a 297-residue protein from Zymomonas mobilis subsp. mobilis (strain ATCC 31821 / ZM4 / CP4) (NCBI taxon 264203); gene folD.
+Function: Catalyzes the oxidation of 5,10-methylenetetrahydrofolate to 5,10-methenyltetrahydrofolate and then the hydrolysis of 5,10- methenyltetrahydrofolate to 10-formyltetrahydrofolate
+Catalytic activity: Reaction=(6R)-5,10-methylene-5,6,7,8-tetrahydrofolate + NADP(+) = (6R)- 5,10-methenyltetrahydrofolate + NADPH; Xref=Rhea:RHEA:22812, ChEBI:CHEBI:15636, ChEBI:CHEBI:57455, ChEBI:CHEBI:57783, ChEBI:CHEBI:58349; EC=1.5.1.5; Evidence=;
+Pathway: One-carbon metabolism; tetrahydrofolate interconversion
+GO annotations: cytosol (component); methenyltetrahydrofolate cyclohydrolase activity (function); methylenetetrahydrofolate dehydrogenase (NADP+) activity (function); L-histidine biosynthetic process (process); methionine biosynthetic process (process); purine nucleotide biosynthetic process (process); tetrahydrofolate interconversion (process)
+Sequence features: 2 binding [167-169; 233]; 1 chain
+Keywords: Amino-acid biosynthesis; Histidine biosynthesis; Hydrolase; Methionine biosynthesis; Multifunctional enzyme; NADP; One-carbon metabolism; Oxidoreductase; Purine biosynthesis; Reference proteome
+Cross-references: EMBL AE008692; RefSeq WP_011240773.1; KEGG zmo:ZMO0914; InterPro IPR046346, IPR036291, IPR000672, IPR020630 +2 more; Pfam PF00763, PF02882
+Lineage: Bacteria > Pseudomonadati > Pseudomonadota > Alphaproteobacteria > Sphingomonadales > Zymomonadaceae > Zymomonas
+
+====================================================================================================
+[90/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=382  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABP8NCJ6   organism=Bacteria
+====================================================================================================
+>uniref50:A0ABP8NCJ6 Repeat domain-containing protein [Bacteria]
+<protein>MVANFGYNAGGWRVERHPRLVVDLTGDRRADIIGFGNAGVWVARNNGNGTFQSPQLAVGNFGYDAGGWRVERHPRFLADTTGDGRPDIVGFGNAGVWVSRNNGNGTFQLPQLLVGNFGYDAGGWRVEMHPRLVVDLTGDRRADIVGFGNAGVWVARNNGDGTFQDPQLVVDNFGYNAGGWRVERHPRFLADTTGDGRPDIVGFGNAGVWVARNNGDGTFQAPQLMVNNFGYDAGGWRVERHPRLVVDLTGDGRADIVGFGNAGVWVARNNGDGTFQDPQLVVGNFGYEAGGWRVDMHPRFLADTTGDGRPDVVGFGDFGVWVARNNGDGTFQPPQLIVGNFAYIAGGWRVDMHPRFLADISGDGRADIVGFGNAGVWVSISI</protein>
+
+Repeat domain-containing protein — UniRef50 A0ABP8NCJ6 — is a 382-residue protein from Bacteria (NCBI taxon 2).
+Cluster size: 5 member sequence(s)
+Representative: A0ABP8NCJ6_9BACT
+
+====================================================================================================
+[91/100]  source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=163  ordering=sequence_first
+         id=uniprot:Q8DKR4#se   organism=Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1)
+====================================================================================================
+>sp:Q8DKR4 Nucleotide-binding protein tll0793 [Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1)]
+<protein>MASTFSFDIVSDFDWQELVNAVDQTGREIKARYDLKDTQTALELTKEGLTIHTDSEFTLNSVQTILQQKAAKRQLSLKIFDYGPVEAAGGQRVKQLIKLRRGIPSELAKEISKLIRNEFKKVQASIQGDVVRVSAKSKDDLQAVIQRLKTQDYPVPLQFTNYR</protein>
+
+Nucleotide-binding protein tll0793 — UniProtKB/Swiss-Prot Q8DKR4 — is a 163-residue protein from Thermosynechococcus vestitus (strain NIES-2133 / IAM M-273 / BP-1) (NCBI taxon 197221); gene tll0793.
+Function: Nucleotide-binding protein
+GO annotations: cytosol (component); nucleotide binding (function)
+Sequence features: 1 chain
+Keywords: Nucleotide-binding; Reference proteome
+Cross-references: EMBL BA000039; RefSeq WP_011056636.1; KEGG tel:tll0793; InterPro IPR035571, IPR035570, IPR036183, IPR007551; Pfam PF04461
+Lineage: Bacteria > Bacillati > Cyanobacteriota > Cyanophyceae > Acaryochloridales > Thermosynechococcaceae > Thermosynechococcus
+
+====================================================================================================
+[92/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=80  ordering=sequence_first
+         id=uniref50:UniRef50_A0A4R5LTM3   organism=Seongchinamella unica
+====================================================================================================
+>uniref50:A0A4R5LTM3 IS3 family transposase (Fragment) [Seongchinamella unica]
+<protein>MIDKLREHESVDFICNTFQIPRSSYYDYKQRQAVIDVERLQLRSQVNQLFNDSRGAAGSRSIVTMLRDRGTHIGRFKVRA</protein>
+
+IS3 family transposase (Fragment) — UniRef50 A0A4R5LTM3 — is a 80-residue protein from Seongchinamella unica (NCBI taxon 2547392).
+Cluster size: 1 member sequence(s)
+Representative: A0A4R5LTM3_9GAMM
+
+====================================================================================================
+[93/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=71  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABS7FBW1   organism=Chromobacterium subtsugae
+====================================================================================================
+>uniref50:A0ABS7FBW1 Uncharacterized protein [Chromobacterium subtsugae]
+<protein>MKITFEYTPFSIAALKGDPPPIKQLPDGYPAPAKGDVFLLGDPPLRLLVAERRYRFHGGEWGLHIMLGLDG</protein>
+
+Uncharacterized protein — UniRef50 A0ABS7FBW1 — is a 71-residue protein from Chromobacterium subtsugae (NCBI taxon 251747).
+Cluster size: 1 member sequence(s)
+Representative: A0ABS7FBW1_9NEIS
+
+====================================================================================================
+[94/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=172  ordering=sequence_first
+         id=uniref50:UniRef50_A0A545UHR7   organism=Aliikangiella
+====================================================================================================
+>uniref50:A0A545UHR7 Twin-arginine translocation pathway signal protein [Aliikangiella]
+<protein>MMKRRQFFKSLMGTSVLMLGGVSAFQWYQQSSIEYSNHVKTEFLTADDQVVLSVLIPIIAGDLPQAPNIETTILNVDEAILQLPLRTQAELRELFDLLSTGVSRLLLAGVWLNWQKAGSQHVIDFLDDWREHSLSLLQQAYIGLRLLVVGSIYAEPDHWAAIGYPGPYPINQ</protein>
+
+Twin-arginine translocation pathway signal protein — UniRef50 A0A545UHR7 — is a 172-residue protein from Aliikangiella (NCBI taxon 1920241).
+Cluster size: 2 member sequence(s)
+Representative: A0A545UHR7_9GAMM
+
+====================================================================================================
+[95/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=426  ordering=sequence_first
+         id=uniref50:UniRef50_A0A178D2X0   organism=Fonsecaea
+====================================================================================================
+>uniref50:A0A178D2X0 Uncharacterized protein [Fonsecaea]
+<protein>MDAENQQQKSQAPQTQSEPGSAISQQPAARESMDASGVSNRVGLRGGGEGEDICCGFGTTKEDNHSRIPIPSPLPSASPTVSSRTMTPPSAWPAMNPVVDAFCHWIGLDYFYEWQRWGNLGHFLSVCRLVDTNGVRQLHWNINTWTDDEVLAWKQSYMTTCSSIEVAGAIFASVGLTALQLPNMDSTHWSARALLTCSMILGVLSVVFAASQQSDIGMLNKPLDIRLFLSRGKAVATQRGYRYRKPFALLPLESSVAALKQFDLPKVVLNLAVLLYIVGVGVYLLYAWLYRVEPAGGRDDFRNVFIAFAATVGVVYLYVAVVGALAYADNRKRTEDFDLDRTTTFAKPASQVQLEEWLRALQDMQSTTLESANVYIRLQTAVDDLKAKWDADRDEFEHRKKVMRTAQKNNRKRHARDAPAAAAHHA</protein>
+
+Uncharacterized protein — UniRef50 A0A178D2X0 — is a 426-residue protein from Fonsecaea (NCBI taxon 40354).
+Cluster size: 2 member sequence(s)
+Representative: A0A178D2X0_9EURO
+
+====================================================================================================
+[96/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=203  ordering=sequence_first
+         id=uniref50:UniRef50_Q0SP37   organism=Borreliaceae
+====================================================================================================
+>uniref50:Q0SP37 Tetratricopeptide repeat domain protein [Borreliaceae]
+<protein>MAKNNLLVFFIAIIFVFVSIIVVFYNSLSKDYVKSGGEIVENLEKDLNDYLKENDAKEREKISLRIKELILKEKEISSYFISRFYLAKAVYLQSQSQYDEAIKDLDIVIKAKGIESEIAFINKATIYEKMGLKEDALLVYEDLIKNTSLGFLKVRALLSKAILIEEKDKDLAVKVYEEIVKFPYENNLYINIANNKILELKQN</protein>
+
+Tetratricopeptide repeat domain protein — UniRef50 Q0SP37 — is a 203-residue protein from Borreliaceae (NCBI taxon 1643685).
+Cluster size: 42 member sequence(s)
+Representative: Q0SP37_BORAP
+
+====================================================================================================
+[97/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=68  ordering=sequence_first
+         id=uniref50:UniRef50_A0AB34G3K1   organism=Purpureocillium lavendulum
+====================================================================================================
+>uniref50:A0AB34G3K1 Inorganic phosphate transporter 1-2 [Purpureocillium lavendulum]
+<protein>MAPPDGGDHTGACDPRTMATTTTLDGDDGDPAGPASCMVHRSRGMRRRALHDLVAQALDERTGAGGLA</protein>
+
+Inorganic phosphate transporter 1-2 — UniRef50 A0AB34G3K1 — is a 68-residue protein from Purpureocillium lavendulum (NCBI taxon 1247861).
+Cluster size: 1 member sequence(s)
+Representative: A0AB34G3K1_9HYPO
+
+====================================================================================================
+[98/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=283  ordering=sequence_first
+         id=uniref50:UniRef50_A0ABP1I722   organism=Hexamita inflata
+====================================================================================================
+>uniref50:A0ABP1I722 Hypothetical_protein [Hexamita inflata]
+<protein>MPPVIIKQNGATQLQSNKYRRNIEQDGKGANFRTWTRQPPRCWLYISVFQYQSEAVSSYNNLQSFSYIISHVLQSSNLLNATCDFIKIFQQRQRYKVKYFSHYYEKIIAQQLCTHQMRTQYNLYQILQVLRNIQLNSDDLWTIAIFDFFSCTRTIAVSSASKILIRVFVRATYVTYILIQIFHGTQVEGRHCCCAIRTQPHATGYYQIERRDITVKQQISQKYRIGWERCQLQNVDTSAATLLALYFCVLIPIRSSIQLQQSVIVQLYNKSRVTIIQLIKRHL</protein>
+
+Hypothetical_protein — UniRef50 A0ABP1I722 — is a 283-residue protein from Hexamita inflata (NCBI taxon 28002).
+Cluster size: 2 member sequence(s)
+Representative: A0ABP1I722_9EUKA
+
+====================================================================================================
+[99/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=299  ordering=sequence_first
+         id=uniref50:UniRef50_A0A7D9HEZ9   organism=Malacalcyonacea
+====================================================================================================
+>uniref50:A0A7D9HEZ9 carbonic anhydrase [Malacalcyonacea]
+<protein>MHIYIGLLSCLVCICAGQNYSNWDYSDQGANWVTKFKLCAGTKQSPIDIKAPTCDEGLNNSITFTNYDKTGSSKFTFENNGHSLVLKAPGPDAKVTLGSLGTFNFHQLHFHWGKDDTKGSEHLHDGKVFPAEMHLVHINSKYSTFQEAQQNADGLAVFGVFIKVGQAENTAFNFLSSSPSLIYEGTKVNVTQFAINTLLPTDQTIFYRYKGSLTSPTCDEIVTWTVFDQPISLSASQLAQFRIVKDNHNKTLVDNFRVVQNLNNRTITYWSEEKCGSGAVALGASIFSALFSLLLFALL</protein>
+
+carbonic anhydrase — UniRef50 A0A7D9HEZ9 — is a 299-residue protein from Malacalcyonacea (NCBI taxon 3028843).
+Cluster size: 3 member sequence(s)
+Representative: A0A7D9HEZ9_PARCT
+
+====================================================================================================
+[100/100]  source=uniprot_uniref50  entity_type=protein  seq_type=aa  seq_len=298  ordering=sequence_first
+         id=uniref50:UniRef50_M1PE39   organism=Desulfobulbales
+====================================================================================================
+>uniref50:M1PE39 Ribosomal RNA small subunit methyltransferase I [Desulfobulbales]
+<protein>MNETDGNKTGILYVAATPIGNLEDITLRCLRVLGEVDLIAAEDTRHTRKLLTHFQISTPLISYYREKEVERSAQLIQRLLGGESIALVSDAGTPAISDPGALLVARAHEAGITVVPLSGASALTTALSASGITNPHFLFLGFAPSKKSQRRSLLTSLKDVPWPVIFYESPRRIEGLLSDILKIMGNRNGFWGRELTKAYEDLRKGTINSLLEQASSQTNRGEFVLVVEPGTTLSAEGENLQDLLIWYRDNTTLSLKDVSRKLAGDLGLSRSVVYQEALIVYKENRETVEGEVIKKGDT</protein>
+
+Ribosomal RNA small subunit methyltransferase I — UniRef50 M1PE39 — is a 298-residue protein from Desulfobulbales (NCBI taxon 3024411).
+Cluster size: 14 member sequence(s)
+Representative: M1PE39_DESSD
+
+====================================================================================================
+[end of sample]
