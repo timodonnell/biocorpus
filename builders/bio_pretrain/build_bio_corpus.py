@@ -113,16 +113,41 @@ class BioRecord:
 # Rendering (shared by both sources)                                           #
 # --------------------------------------------------------------------------- #
 
-_EVID = re.compile(r"\s*\{ECO:[^}]*\}")
+# Matches a complete {ECO:…} evidence block, or an unclosed {ECO:… that biopython
+# truncates when parsing gene names (the closing brace is dropped). Only the {ECO:
+# prefix is anchored, so legitimate braces in chemical names (e.g. N(6)-{(R)-S(8)-…})
+# in catalytic-activity reactions are left untouched.
+_EVID = re.compile(r"\s*\{ECO:[^}]*(?:\}|$)")
 
 
 def _clean(s: Optional[str]) -> Optional[str]:
     """Strip UniProt evidence tags and squeeze whitespace."""
     if not s:
         return None
-    s = _EVID.sub("", s).strip().rstrip(".").strip()
-    s = re.sub(r"\s+", " ", s)
+    s = _EVID.sub("", s)
+    s = re.sub(r"\s*;?\s*Evidence=[^;]*", "", s)  # empty 'Evidence=' left after ECO removal (catalytic CC lines)
+    s = re.sub(r"\s+", " ", s).strip().strip(";").strip().rstrip(".").strip()
     return s or None
+
+
+def _clean_keywords(keywords) -> Optional[str]:
+    """Join keywords, dropping UniProt {ECO:…} evidence blocks.
+
+    TrEMBL keywords carry inline evidence tags, and biopython splits KW lines on
+    ';' — so a single ``{ECO:…,; ECO:…}`` block is scattered across list items.
+    Join first, strip evidence from the whole string, then re-split and dedup so
+    no orphan ``ECO:…`` fragment survives.
+    """
+    if not keywords:
+        return None
+    joined = _EVID.sub("", "; ".join(keywords))
+    parts, seen = [], set()
+    for k in joined.split(";"):
+        k = k.strip().rstrip(".").strip()
+        if k and not k.startswith("ECO:") and k not in seen:
+            seen.add(k)
+            parts.append(k)
+    return "; ".join(parts[:12]) or None
 
 
 def _anchor(rec: BioRecord) -> str:
@@ -234,8 +259,14 @@ def _db_label(rec: BioRecord) -> str:
 # per-residue features (domains, active/binding sites, PTMs, signal peptides,
 # transmembrane spans, disulfides). Bookkeeping (cluster size, accession lists,
 # representative ids) is deliberately excluded.
-_SUBSTANTIVE = ("function", "catalytic_activity", "subcellular_location", "pathway",
-                "disease", "go", "features")
+# Tier-A: biological characterisation — any one of these makes a protein worth keeping.
+_TIER_A = ("function", "catalytic_activity", "subcellular_location", "pathway", "disease", "go")
+# Feature-summary labels that are NOT sufficient on their own: a lone disordered/other
+# REGION or a COILED-coil span does not characterise an otherwise-unknown protein. Any
+# other feature type (domain, binding/active site, signal, transmembrane, PTM, disulfide,
+# repeat, …) counts as substantive structural annotation (tier B).
+_WEAK_FT_LABELS = {"region", "coiled"}
+_FT_LABEL_RE = re.compile(r"(?:^|;)\s*\d+\s+([a-z][a-z ]*?)(?=\s*\[|;|$)")
 
 
 def is_informative(rec: BioRecord) -> bool:
@@ -243,18 +274,27 @@ def is_informative(rec: BioRecord) -> bool:
 
     Genomic records (dogma / splice / regulatory) are intrinsically annotated —
     coding regions, UTRs, exon structure, splice motifs, cis-regulatory element
-    type. A protein record is kept iff it carries at least one substantive field:
-    function, catalytic activity, localisation, pathway, disease, GO terms, or
-    per-residue features (domains, sites, PTMs, signal/transmembrane spans, …).
+    type. A protein record is kept iff it carries either:
 
-    The protein *name* is not used: an entry named "Uncharacterized protein" that
-    still has InterPro domain boundaries or GO terms carries learnable content and
-    is kept; a truly bare entry has none of these fields and is dropped here.
+      * tier A — a biological field: function, catalytic activity, localisation,
+        pathway, disease, or GO terms; **or**
+      * tier B — a substantive structural feature: domain boundary, active/binding
+        site, signal peptide, transmembrane span, PTM, disulfide, repeat, …
+
+    A lone disordered/other REGION or a COILED-coil span is *not* enough — that is
+    the whole of the annotation on many "Uncharacterized protein" TrEMBL entries,
+    which we exclude. The protein *name* is not used directly: an entry named
+    "Uncharacterized protein" that still has a real domain or GO term is kept.
     """
     if rec.entity_type in ("central_dogma", "splice_junction", "regulatory_feature"):
         return True
     a = rec.annotations or {}
-    return any(a.get(k) for k in _SUBSTANTIVE)
+    if any(a.get(k) for k in _TIER_A):
+        return True
+    feats = a.get("features")
+    return bool(feats) and any(
+        lbl.strip() not in _WEAK_FT_LABELS for lbl in _FT_LABEL_RE.findall(feats)
+    )
 
 
 def render(rec: BioRecord, ordering: str) -> BioRecord:
@@ -539,7 +579,7 @@ def _uniprot_record_from_swiss(rec, source_url: str, version: str) -> BioRecord:
         if go_terms
         else None,
         "features": _summarise_features(rec.features),
-        "keywords": "; ".join(rec.keywords[:12]) if rec.keywords else None,
+        "keywords": _clean_keywords(rec.keywords),
         "lineage": " > ".join((rec.organism_classification or [])[:8]) or None,
     }
     annotations = {k: v for k, v in annotations.items() if v}
