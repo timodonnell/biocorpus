@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biocorpus v2 — dataset report</title>
+<style>
+:root{--bg:#F5F8F6;--surface:#fff;--surface2:#EEF3F1;--spec:#F0F4F2;--ink:#13201D;--soft:#3B4A46;
+--muted:#697974;--line:#DCE4E1;--accent:#137A6B;--accent2:#1C9A86;--warn:#A9720C;--warnbg:rgba(169,114,12,.12);
+--fh:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--fb:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+--fm:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;}
+@media (prefers-color-scheme:dark){:root{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;
+--ink:#DBE5E1;--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;
+--warn:#DDA23F;--warnbg:rgba(221,162,63,.14);}}
+:root[data-theme=dark]{--bg:#0C110F;--surface:#121A17;--surface2:#16211D;--spec:#0F1815;--ink:#DBE5E1;
+--soft:#A9B7B2;--muted:#7C8C87;--line:#22302A;--accent:#40C4AC;--accent2:#5AD3BC;--warn:#DDA23F;--warnbg:rgba(221,162,63,.14);}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:17px;line-height:1.6;
+-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px}
+h1,h2,h3,.eyebrow,th,.chip,.stat b,summary,.dmeta{font-family:var(--fh)}
+h1{font-size:clamp(1.9rem,4.6vw,2.7rem);font-weight:720;letter-spacing:-.025em;line-height:1.05;margin:.3em 0 .1em}
+h2{font-size:1.45rem;font-weight:650;letter-spacing:-.01em;margin:0 0 .2em}
+h3{font-size:1.02rem;font-weight:640;margin:1.8em 0 .1em}
+p{max-width:70ch} a{color:var(--accent)}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:640}
+header{padding:52px 0 34px} section{padding:44px 0;border-top:1px solid var(--line)}
+.lede{font-size:1.16rem;color:var(--soft);max-width:64ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-size:.76rem;padding:5px 11px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);
+border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:26px}
+.stat{background:var(--surface);padding:16px 18px}
+.stat b{display:block;font-size:1.75rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted)}
+.note{background:var(--warnbg);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);
+border-radius:10px;padding:14px 18px;margin-top:22px;font-size:.95rem}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-top:18px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;font-family:var(--fh)}
+th,td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:var(--surface2)}
+tbody tr:last-child td{border-bottom:0}
+td small{display:block;font-family:var(--fb);color:var(--muted);font-size:.85rem;margin-top:3px;max-width:46ch}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{min-width:150px} .track{height:9px;background:var(--surface2);border-radius:999px;overflow:hidden;display:inline-block;width:100px;vertical-align:middle}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.pct{font-size:.8rem;color:var(--muted);margin-left:8px;font-variant-numeric:tabular-nums}
+.why{color:var(--muted);font-size:.92rem;margin:.2em 0 .5em}
+details.doc{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+details.doc>summary{cursor:pointer;padding:11px 15px;background:var(--surface2);font-size:.84rem;list-style:none}
+details.doc>summary::-webkit-details-marker{display:none}
+details.doc>summary::before{content:"▶";color:var(--accent);font-size:.7rem;margin-right:8px}
+details.doc[open]>summary::before{content:"▼"}
+details.doc>summary code{font-family:var(--fm);font-size:.82rem}
+.dmeta{font-size:.74rem;color:var(--muted);padding:8px 15px 0}
+pre{margin:0;padding:12px 15px;background:var(--spec);font-family:var(--fm);font-size:.76rem;line-height:1.5;
+white-space:pre-wrap;word-break:break-word;max-height:34em;overflow:auto}
+footer{border-top:1px solid var(--line);padding:30px 0 60px;color:var(--muted);font-size:.85rem}
+code{font-family:var(--fm);font-size:.85em}
+</style></head><body>
+<header><div class="wrap">
+<div class="eyebrow">Dataset report · v2</div>
+<h1>biocorpus</h1>
+<p class="lede">A sequence-first biology pre-training corpus: 21,138,120 documents, ~9.15 B tokens,
+built from UniProt and Ensembl — deduplicated at UniRef50, filtered to genuinely learnable annotation,
+with verified DNA→RNA→protein mappings.</p>
+<div class="chips">
+<span class="chip">21,138,120 documents</span><span class="chip">~9.15 B tokens</span>
+<span class="chip">49 GB raw · 7.0 GB compressed</span><span class="chip">64 zstd shards</span>
+<span class="chip">tier A+B annotation gate</span><span class="chip">CC-BY-4.0 / open</span></div>
+<div class="kpis">
+<div class="stat"><b>9.15 B</b><span>tokens (Llama-3 / marin-tokenizer)</span></div>
+<div class="stat"><b>21.1 M</b><span>documents</span></div>
+<div class="stat"><b>34 M</b><span>UniRef50 representatives considered</span></div>
+<div class="stat"><b>0%</b><span>cross-source redundancy (reps are unique)</span></div>
+</div>
+<div class="note"><b>Published</b> at <a href="https://huggingface.co/buckets/timodonnell/biocorpus">hf://buckets/timodonnell/biocorpus</a>
+as 64 <code>.jsonl.zst</code> shards (7.0 GB). Built by a local flat-file join — no per-record web requests.</div>
+</div></header>
+
+<section><div class="wrap">
+<div class="eyebrow">Composition</div><h2>What's in it</h2>
+<p>Documents and tokens by record type. Token counts are measured with the Marin tokenizer over an unbiased
+reservoir sample per source.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>record type</th><th class="num">documents</th><th class="num">tok/doc</th><th class="num">tokens</th><th>share of tokens</th></tr></thead>
+<tbody><tr><td><b>TrEMBL representatives</b><small>Annotated UniProtKB entry of each UniRef50 cluster representative — the deduplicated protein universe (the bulk).</small></td><td class="num">20,091,178</td><td class="num">423</td><td class="num">8.493 B</td><td class="bar"><div class="track"><div class="fill" style="width:92.9%"></div></div><span class="pct">92.9%</span></td></tr><tr><td><b>Swiss-Prot</b><small>The full reviewed set, richly annotated, emitted in <em>both</em> orderings (recognition + design).</small></td><td class="num">950,174</td><td class="num">613</td><td class="num">0.582 B</td><td class="bar"><div class="track"><div class="fill" style="width:6.4%"></div></div><span class="pct">6.4%</span></td></tr><tr><td><b>Central dogma</b><small>DNA (pre-mRNA) → spliced RNA → protein for one human transcript, with the mapping verified.</small></td><td class="num">21,316</td><td class="num">2,468</td><td class="num">0.053 B</td><td class="bar"><div class="track"><div class="fill" style="width:0.6%"></div></div><span class="pct">0.6%</span></td></tr><tr><td><b>Splice sites</b><small>5′ donor / 3′ acceptor junction windows with the observed motif classified.</small></td><td class="num">75,452</td><td class="num">238</td><td class="num">0.018 B</td><td class="bar"><div class="track"><div class="fill" style="width:0.2%"></div></div><span class="pct">0.2%</span></td></tr></tbody></table></div>
+<p style="margin-top:16px">The protein backbone is the <b>UniProtKB entry of each UniRef50 cluster representative</b> —
+the whole protein universe once, deduplicated at 50% identity, each carrying its real annotation. Swiss-Prot adds
+richly-curated depth in both orderings; the human genomic records add signal protein databases don't carry —
+splicing and the central dogma.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Quality</div><h2>The annotation gate</h2>
+<p>A protein is kept <b>only</b> if it carries genuinely learnable annotation — <b>tier A</b> (a biological field:
+function, catalytic activity, localization, pathway, disease, or GO) <b>or tier B</b> (a substantive structural
+feature: domain boundary, active/binding site, signal peptide, transmembrane span, PTM, disulfide, repeat).
+Entries whose <em>only</em> annotation is a disordered or coiled-coil region — the bulk of "Uncharacterized protein"
+TrEMBL entries — are dropped (~21% of representatives). UniProt evidence tags (<code>{ECO:…}</code>), empty
+<code>Evidence=</code> clauses and markup are stripped; there are no <code>&lt;protein&gt;</code>/<code>&lt;dna&gt;</code> tags.</p>
+<h3>Annotation coverage of the kept set</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>field</th><th class="num">TrEMBL reps</th><th class="num">Swiss-Prot</th></tr></thead>
+<tbody><tr><td>per-residue features (domains/sites/PTMs)</td><td class="num">92.4%</td><td class="num">84.5%</td></tr><tr><td>GO terms</td><td class="num">64.4%</td><td class="num">98.7%</td></tr><tr><td>subcellular location</td><td class="num">21.7%</td><td class="num">65.9%</td></tr><tr><td>function</td><td class="num">5.9%</td><td class="num">85.2%</td></tr><tr><td>catalytic activity</td><td class="num">6.9%</td><td class="num">46.1%</td></tr><tr><td>pathway</td><td class="num">2.5%</td><td class="num">23.3%</td></tr></tbody></table></div>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Format</div><h2>One JSON object per line</h2>
+<p><code>text</code> is what a tokenizer consumes; every other field is queryable metadata:</p>
+<p><code>id · source · source_version · source_url · license · accession · entity_type · seq_type · seq_len ·
+organism · taxid · gene · name · annotations{…} · sequence · sequences{dna_genomic,rna,cds,protein} (dogma only) ·
+ordering · text</code></p>
+<p>Each document leads with a short identity anchor, then the sequence, then clean natural-language annotation.
+Missing fields are omitted rather than rendered as empty slots, and only claims that were checked are asserted.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Examples</div><h2>Example documents</h2>
+<p>Full documents, nothing truncated — long ones scroll inside their box.</p>
+<h3>TrEMBL representative — tier A (recognition ordering)</h3><p class="why">Deduplicated cluster representative with real biological annotation. Sequence first: trains P(annotation | sequence).</p><details class="doc" open><summary><code>uniprot:D9Q373</code> · Acidilobus saccharovorans (strain DSM 16705 / JCM 18335 / VK</summary><div class="dmeta">source=uniprot_trembl  entity_type=protein  seq_type=aa  seq_len=214  ordering=sequence_first</div><pre>&gt;tr:D9Q373 Probable thymidylate kinase [Acidilobus saccharovorans (strain DSM 16705 / JCM 18335 / VKM B-2471 / 345-15)]
+MKGAIVALEGIDGSGITTHSKLLAQRLSSMGYRAIYTKEPTEGPVGQVIRQLLAQGRPEPRLAALLFAADRSWHLCCDPSLPGGVMGALEQGYVVVMDRYKYSSIAYQGASGADPGWLWEVNSFAPEADLLIFIDVPVEVALSRVAERQRREGYEVEGFLRRAKERFYEVLAQAEARGVTVVRLSQVKDDRPLSVDEFSSLVLEEALRFLKTLR
+
+Probable thymidylate kinase — UniProtKB/TrEMBL D9Q373 — is a 214-residue protein from Acidilobus saccharovorans (strain DSM 16705 / JCM 18335 / VKM B-2471 / 345-15) (NCBI taxon 666510); gene tmk.
+Catalytic activity: Reaction=dTMP + ATP = dTDP + ADP; Xref=Rhea:RHEA:13517, ChEBI:CHEBI:30616, ChEBI:CHEBI:58369, ChEBI:CHEBI:63528, ChEBI:CHEBI:456216; EC=2.7.4.9
+GO annotations: cytoplasm (component); ATP binding (function); dTMP kinase activity (function); dTDP biosynthetic process (process); dTTP biosynthetic process (process); dUDP biosynthetic process (process)
+Sequence features: 1 domain [8-181 (Thymidylate kinase-like)]
+Keywords: ATP-binding; Kinase; Nucleotide biosynthesis; Nucleotide-binding; Reference proteome; Transferase
+Lineage: Archaea &gt; Thermoproteota &gt; Thermoprotei &gt; Acidilobales &gt; Acidilobaceae &gt; Acidilobus</pre></details><h3>TrEMBL representative — tier B</h3><p class="why">No biological field, but kept on a substantive structural feature — a domain boundary. This is the class the gate deliberately protects.</p><details class="doc"><summary><code>uniprot:A0A1D3L0M4</code> · Methanobacterium congolense</summary><div class="dmeta">source=uniprot_trembl  entity_type=protein  seq_type=aa  seq_len=177  ordering=sequence_first</div><pre>&gt;tr:A0A1D3L0M4 Transposase zinc-ribbon domain-containing protein [Methanobacterium congolense]
+MVGVIFLGMKSDLVLELFIPDEEKALNFFRCIRWSNGVYCPECGSYDVYKRGYVYNKRVRRYSCNKCGKNFTDFSDTIFANKHLPLGEMFYIILNQDKKSVNRLSEELGHKWESIDRLSKEFKEYLEKNTKDPVLSGKIEIDEMYQSSGDKGLKKTIQDAEASNKEEEARGKKTNHQ
+
+Transposase zinc-ribbon domain-containing protein — UniProtKB/TrEMBL A0A1D3L0M4 — is a 177-residue protein from Methanobacterium congolense (NCBI taxon 118062); gene MCBB_0570.
+Sequence features: 1 domain [20-69 (Transposase zinc-ribbon)]; 1 region [149-177 (Disordered)]
+Keywords: Reference proteome
+Lineage: Archaea &gt; Methanobacteriati &gt; Methanobacteriota &gt; Methanomada group &gt; Methanobacteria &gt; Methanobacteriales &gt; Methanobacteriaceae &gt; Methanobacterium</pre></details><h3>Swiss-Prot — recognition ordering</h3><p class="why">Sequence → annotation.</p><details class="doc"><summary><code>uniprot:Q60888#se</code> · Mus musculus (Mouse)</summary><div class="dmeta">source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=311  ordering=sequence_first</div><pre>&gt;sp:Q60888 Olfactory receptor 10D1B [Mus musculus (Mouse)]
+MKNLSVVTQFILLGIPHTEGVETMLFVLFFSFYIFTLVGNLLILLAIVSSSRLHTPMYFFLCQLSVCDIFFPSVSSPKMLFYLSGNTPAISYAGCVSQLFFYHFLGGTECFLYTVMAYDRFVAICYPLRYSVIMSHRICAFLAMGTAVFGCIHSTFLTTLTFQLPYCGPKDVNYYFCDIPVVMKLACADTSTLEMVGFISVGLMPLSCFFFILTSYSCIVRSILQIRSTEGRHRAFSTCSAHFTAILLFYMPVIFIYLRPTPSPWLDATVQILNNLVTPMLNPLIYSLRNKEVKSSLWTVLHLLCFLPKHL
+
+Olfactory receptor 10D1B — UniProtKB/Swiss-Prot Q60888 — is a 311-residue protein from Mus musculus (Mouse) (NCBI taxon 10090); gene Or10d1b.
+Function: Odorant receptor
+Subcellular location: Cell membrane; Multi-pass membrane protein
+GO annotations: membrane (component); plasma membrane (component); G protein-coupled receptor activity (function); olfactory receptor activity (function); detection of chemical stimulus involved in sensory perception of smell (process); G protein-coupled receptor signaling pathway (process); sensory perception of smell (process)
+Sequence features: 8 topo dom; 7 transmem [25-45 (Helical; Name=1); 55-75 (Helical; Name=2)]; 1 disulfid [95-187]
+Keywords: Cell membrane; Disulfide bond; G protein-coupled receptor; Membrane; Olfaction; Receptor; Reference proteome; Sensory transduction; Transducer; Transmembrane; Transmembrane helix
+Lineage: Eukaryota &gt; Metazoa &gt; Chordata &gt; Craniata &gt; Vertebrata &gt; Euteleostomi &gt; Mammalia &gt; Eutheria</pre></details><h3>Swiss-Prot — design ordering</h3><p class="why">The same entry rendered metadata-first: trains P(sequence | annotation).</p><details class="doc"><summary><code>uniprot:Q60888#me</code> · Mus musculus (Mouse)</summary><div class="dmeta">source=uniprot_swissprot  entity_type=protein  seq_type=aa  seq_len=311  ordering=metadata_first</div><pre>Olfactory receptor 10D1B — UniProtKB/Swiss-Prot Q60888 — is a 311-residue protein from Mus musculus (Mouse) (NCBI taxon 10090); gene Or10d1b.
+Function: Odorant receptor
+Subcellular location: Cell membrane; Multi-pass membrane protein
+GO annotations: membrane (component); plasma membrane (component); G protein-coupled receptor activity (function); olfactory receptor activity (function); detection of chemical stimulus involved in sensory perception of smell (process); G protein-coupled receptor signaling pathway (process); sensory perception of smell (process)
+Sequence features: 8 topo dom; 7 transmem [25-45 (Helical; Name=1); 55-75 (Helical; Name=2)]; 1 disulfid [95-187]
+Keywords: Cell membrane; Disulfide bond; G protein-coupled receptor; Membrane; Olfaction; Receptor; Reference proteome; Sensory transduction; Transducer; Transmembrane; Transmembrane helix
+Lineage: Eukaryota &gt; Metazoa &gt; Chordata &gt; Craniata &gt; Vertebrata &gt; Euteleostomi &gt; Mammalia &gt; Eutheria
+
+&gt;sp:Q60888 Olfactory receptor 10D1B [Mus musculus (Mouse)]
+MKNLSVVTQFILLGIPHTEGVETMLFVLFFSFYIFTLVGNLLILLAIVSSSRLHTPMYFFLCQLSVCDIFFPSVSSPKMLFYLSGNTPAISYAGCVSQLFFYHFLGGTECFLYTVMAYDRFVAICYPLRYSVIMSHRICAFLAMGTAVFGCIHSTFLTTLTFQLPYCGPKDVNYYFCDIPVVMKLACADTSTLEMVGFISVGLMPLSCFFFILTSYSCIVRSILQIRSTEGRHRAFSTCSAHFTAILLFYMPVIFIYLRPTPSPWLDATVQILNNLVTPMLNPLIYSLRNKEVKSSLWTVLHLLCFLPKHL</pre></details><h3>Central dogma</h3><p class="why">DNA → spliced RNA → protein in one document, verified (mRNA = spliced exons; translate(CDS) = protein).</p><details class="doc"><summary><code>ensembl-dogma:ENST00000304952:triple</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=central_dogma  seq_type=rna  seq_len=885  ordering=sequence_first</div><pre>&gt;ensembl-dogma:ENST00000304952 HES4 [Homo sapiens]
+Gene HES4 (protein_coding), Ensembl canonical transcript ENST00000304952, 1:998,964-1,000,097 (-), 4 exon(s) / 3 intron(s).
+
+Genomic DNA (pre-mRNA, sense strand; exons UPPERCASE, introns lowercase):
+GCGGGCCTGGAGCCGGGATCCGCCCTAGGGGCTCGGATCGCCGCGCGCTCGCCGCTCGCCCGCCAGCCCGCCCGTGGTCCGTGGCGGCGCGCTCCACCCGGCACGGGGAGGCGCGGGGCGCACCATGGCCGCAGACACGCCGGGGAAACCGAGCGCCTCGCCGATGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGgtggggtcccggccgggcgtgaggggggcgaccggggggcgggagggacgcgggactcagccggtgcccgacccgcagTCCTCCAAGCCGGTCATGGAGAAGCGGCGCCGAGCGCGTATTAACGAGAGCCTCGCTCAGCTCAAAACCCTCATCCTGGACGCCCTCAGAAAAGAGgtaagtcgggggcgaaggcccgagacccggagtctgggtcgcagctgacctggacctcccgcctatccccgcccccagAGCTCCCGCCACTCGAAGCTGGAGAAGGCGGACATCCTGGAGATGACCGTGAGACACCTGCGGAGCCTGCGTCGCGTGCAGGTGACGGgtgaggcgcgggcggcggcggcttggaggcggggggagggcgcgggacccccgggacccggcaccgacctctcctcctgtgtcgctcccgcagCCGCGCTCAGCGCCGACCCCGCCGTTCTGGGCAAGTACCGCGCCGGCTTCCACGAGTGTCTGGCGGAGGTGAACCGCTTCCTGGCCGGCTGCGAGGGCGTCCCGGCCGACGTGCGCTCCCGCCTGCTGGGCCACCTGGCAGCCTGCCTGCGCCAGCTGGGACCCTCCCGCCGCCCGGCCTCGCTGTCCCCGGCTGCCCCCGCAGAGGCCCCAGCGCCCGAGGTCTACGCGGGCCGCCCGCTGCTGCCATCGCTCGGCGGCCCCTTCCCTCTGCTCGCGCCGCCGCTGCTGCCGGGTCTGACCCGGGCGCTGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGTGGGCCCTGGAGGCCGTGGCTGCGCTGAGGCTGTGGCCCTGAGACTGCATCGGAGGCGGCGCCCCGTTCTAGGGCCGTGGCCTTTGCCGAGACTGTAGCAGAGAAAACGTATTTATTATTCCA
+
+Transcription and splicing remove 3 intron(s) (249 nt) to give the mature mRNA (885 nt):
+GCGGGCCUGGAGCCGGGAUCCGCCCUAGGGGCUCGGAUCGCCGCGCGCUCGCCGCUCGCCCGCCAGCCCGCCCGUGGUCCGUGGCGGCGCGCUCCACCCGGCACGGGGAGGCGCGGGGCGCACCAUGGCCGCAGACACGCCGGGGAAACCGAGCGCCUCGCCGAUGGCAGGAGCGCCGGCCAGCGCCAGCCGGACCCCAGACAAGCCCCGGAGCGCGGCCGAGCACCGCAAGUCCUCCAAGCCGGUCAUGGAGAAGCGGCGCCGAGCGCGUAUUAACGAGAGCCUCGCUCAGCUCAAAACCCUCAUCCUGGACGCCCUCAGAAAAGAGAGCUCCCGCCACUCGAAGCUGGAGAAGGCGGACAUCCUGGAGAUGACCGUGAGACACCUGCGGAGCCUGCGUCGCGUGCAGGUGACGGCCGCGCUCAGCGCCGACCCCGCCGUUCUGGGCAAGUACCGCGCCGGCUUCCACGAGUGUCUGGCGGAGGUGAACCGCUUCCUGGCCGGCUGCGAGGGCGUCCCGGCCGACGUGCGCUCCCGCCUGCUGGGCCACCUGGCAGCCUGCCUGCGCCAGCUGGGACCCUCCCGCCGCCCGGCCUCGCUGUCCCCGGCUGCCCCCGCAGAGGCCCCAGCGCCCGAGGUCUACGCGGGCCGCCCGCUGCUGCCAUCGCUCGGCGGCCCCUUCCCUCUGCUCGCGCCGCCGCUGCUGCCGGGUCUGACCCGGGCGCUGCCCGCCGCCCCCAGGGCGGGGCCGCAGGGCCCGGGUGGGCCCUGGAGGCCGUGGCUGCGCUGAGGCUGUGGCCCUGAGACUGCAUCGGAGGCGGCGCCCCGUUCUAGGGCCGUGGCCUUUGCCGAGACUGUAGCAGAGAAAACGUAUUUAUUAUUCCA
+Exon boundaries in the mRNA: 1-232, 233-328, 329-416, 417-885.
+5&#x27; UTR: 1-124 (124 nt); CDS: 125-790 (666 nt); 3&#x27; UTR: 791-885 (95 nt).
+
+Translation of the CDS (666 nt, standard genetic code) yields the 221-residue protein:
+MAADTPGKPSASPMAGAPASASRTPDKPRSAAEHRKSSKPVMEKRRRARINESLAQLKTLILDALRKESSRHSKLEKADILEMTVRHLRSLRRVQVTAALSADPAVLGKYRAGFHECLAEVNRFLAGCEGVPADVRSRLLGHLAACLRQLGPSRRPASLSPAAPAEAPAPEVYAGRPLLPSLGGPFPLLAPPLLPGLTRALPAAPRAGPQGPGGPWRPWLR
+
+Verified: the mRNA equals the genomic exons with introns removed; translate(CDS) equals the protein.</pre></details><h3>Splice site</h3><p class="why">A window over a donor/acceptor site with the observed motif classified.</p><details class="doc"><summary><code>ensembl_splice:ENST00000594440:intron1:donor</code> · Homo sapiens</summary><div class="dmeta">source=ensembl  entity_type=splice_junction  seq_type=dna  seq_len=200  ordering=sequence_first</div><pre>&gt;ensembl:ENST00000594440:intron1:donor [Homo sapiens]
+CCTTGATTAAACGTGCACTTCGCAGTCCTCGGTTCTCCATACCCGTGACCTGGGGATCGCTACGGACCTTAAAATACCCGCAACAGCCCCTTCGTCCCAAGTAAGTAGGAGAATTGCTTCCCTTTCGGTTTAAAATCTCTCTGAGGCCGTTCCTTGCTCTCTGCCTTTCTTCCTTAGGACCATGTAGACAACCCCATTCA
+
+The sequence is a 200 bp window over a 5&#x27; splice donor site in gene ZNF841 from Homo sapiens (NCBI taxon 9606).
+Splice site: 5&#x27; splice donor
+Transcript: ENST00000594440
+Intron: 1 of 6
+Intron location: 19:52,093,972-52,095,574 (-)
+Intron length: 1,603 bp
+Donor dinucleotide: GT — canonical (GT-AG)</pre></details>
+</div></section>
+
+<section><div class="wrap">
+<div class="eyebrow">Uniform sample</div><h2>Random documents</h2>
+<p>An unbiased reservoir sample across the whole corpus — representative of what a model actually sees.</p>
+<details class="doc"><summary>uniform sample 1</summary><pre>&gt;tr:A0A1W2B5F7 Helix-turn-helix domain-containing protein [Moheibacter sediminis]
+MKILENILFYLFLLVGNILFAQNPKIPVKNTFKELRSHYENMEENNQRALPFVNAYLEKAKKENNYDKIIQGYRDFIFFSPKREDKLVYADSCISYALNSKNNELISKAYLGKGILYYFFYKKYQPALDNYLKAYQYSENIEDKYLKNSIIYHIGVVKSYLGYYDEALMLFNECITYFEPLTIADIHPNLVFNNQKGYFNSLHQKIICYQQLGNHVKSDSLIQIGLSTLPHSQEFALEKSYFLKSKAVSNYYKNDFNLAIIYFNNALPELKKINDFTWFSVSYFYLGKCYLKTHRKNLAIPYFMKVDSIFQKNKFILPQIRENYEILIHHFHSVENHEQELHYTRQLLKVDSVLNKDFKYLSSKMHKEYSTKALLKKQEQLENRNSIGFNLLIAASVLTFVLLINLIYRSKKEKEIQQKYIELEKRIIKQNNQRMNTNVSMIINPIQKGKTEKPAYLIEEILQKLEKFEQNKGFRKKGLTQSQLAKKFETNTTYLSQVINEYKMKNFNTYLNNLRMNYITHELYHNPKYLEYTIEALAEDCGISSRQNFSDLFNEVNGIRPADFIRKRRELRQKESSISLN
+
+Helix-turn-helix domain-containing protein — UniProtKB/TrEMBL A0A1W2B5F7 — is a 581-residue protein from Moheibacter sediminis (NCBI taxon 1434700); gene SAMN06296427_105272.
+GO annotations: DNA-binding transcription factor activity (function); sequence-specific DNA binding (function)
+Sequence features: 1 transmem [387-408 (Helical)]; 1 domain [459-567 (HTH araC/xylS-type)]
+Keywords: Membrane; Reference proteome; Transmembrane; Transmembrane helix
+Lineage: Bacteria &gt; Pseudomonadati &gt; Bacteroidota &gt; Flavobacteriia &gt; Flavobacteriales &gt; Weeksellaceae &gt; Moheibacter</pre></details><details class="doc"><summary>uniform sample 2</summary><pre>&gt;sp:Q9Z0F3 Bcl-2-like protein 10 [Mus musculus (Mouse)]
+MADSQDPLHERTRRLLSDYIFFCAREPDTPEPPPTSVEAALLRSVTRQIQQEHQEFFSSFCESRGNRLELVKQMADKLLSKDQDFSWSQLVMLLAFAGTLMNQGPYMAVKQKRDLGNRVIVTRDCCLIVNFLYNLLMGRRHRARLEALGGWDGFCRFFKNPLPLGFWRRLLIQAFLSGFFATAIFFIWKRL
+
+Bcl-2-like protein 10 — UniProtKB/Swiss-Prot Q9Z0F3 — is a 191-residue protein from Mus musculus (Mouse) (NCBI taxon 10090); gene Bcl2l10.
+Function: Promotes cell survival by suppressing apoptosis induced by BAX but not BAK (By similarity). Increases binding of AHCYL1/IRBIT to ITPR1 (By similarity). Reduces ITPR1-mediated calcium release from the endoplasmic reticulum cooperatively with AHCYL1/IRBIT under normal cellular conditions (By similarity). Under apoptotic stress conditions, dissociates from ITPR1 and is displaced from mitochondria-associated endoplasmic reticulum membranes, leading to increased Ca(2+) transfer to mitochondria which promotes apoptosis (By similarity). Required for the correct formation of the microtubule organizing center during oocyte cell division, potentially via regulation of protein abundance and localization of other microtubule organizing center components such as AURKA and TPX2 (PubMed:27753540)
+Subcellular location: Mitochondrion. Nucleus membrane. Endoplasmic reticulum. Cytoplasm, cytoskeleton, spindle. Note=Localizes to mitochondria- associated endoplasmic reticulum membranes (MAMs) (By similarity). Localization to MAMs is greatly reduced under apoptotic stress conditions (By similarity)
+GO annotations: cytosol (component); endoplasmic reticulum (component); membrane (component); mitochondria-associated endoplasmic reticulum membrane contact site (component); mitochondrial outer membrane (component); mitochondrion (component); nuclear membrane (component); spindle (component); calcium ion binding (function); caspase binding (function); channel activity (function); identical protein binding (function); +9 more
+Sequence features: 8 helix; 3 strand; 2 motif [79-98 (BH1); 144-155 (BH2)]; 1 transmem [166-183 (Helical)]; 1 crosslnk; 1 turn
+Keywords: 3D-structure; Apoptosis; Cytoplasm; Cytoskeleton; Endoplasmic reticulum; Isopeptide bond; Membrane; Mitochondrion; Nucleus; Reference proteome; Transmembrane; Transmembrane helix
+Lineage: Eukaryota &gt; Metazoa &gt; Chordata &gt; Craniata &gt; Vertebrata &gt; Euteleostomi &gt; Mammalia &gt; Eutheria</pre></details><details class="doc"><summary>uniform sample 3</summary><pre>&gt;tr:A0A1Z4ER67 Lysozyme [Mycobacteroides stephanolepidis]
+MTTTGRISGGADIQLKAIRDDAQKLSDGASAGQAQLDLIRQTDKLQDYWDNSEAANAAWDDYQHNSSRLERDLGKLRESSAAVTGVADRIEQVLTLKQQQTTSVVKSLIEGTLRNSPGDLENRLVTGAASIWARNQGGGIGGVGTNQHLYAHHGAPGDNWNWNDVKADLQNSVADAFAAACKQLDAINAATDKNLQESYAKLLEALNIPQGPTGTGSGVTEQGAPGDLTPDQLIAIMNSQGHDLSKEKAAEYAPLLEAAMKERGITSPAQKAAFLAQLAAETGGLTNWSENTPASGYNVGRGPIQLTGEGNYEAAGNALGIDLLNNPGLASDPKYAFRIAAWFVTSDEMGNAMGKLGDGGWGSVPFLGTYATGSNGEQFAQYGSGTGFEGMSRTINGGMAGWRARAEFYETARQVLGAPSLGPYPQHPEESHAG
+
+Lysozyme — UniProtKB/TrEMBL A0A1Z4ER67 — is a 434-residue protein from Mycobacteroides stephanolepidis (NCBI taxon 1520670); gene MSTE_00091.
+GO annotations: chitinase activity (function); cell wall macromolecule catabolic process (process); chitin catabolic process (process); defense response (process)
+Sequence features: 1 domain [295-346 (Glycoside hydrolase family 19 catalytic)]
+Keywords: Disulfide bond; Plant defense; Reference proteome
+Lineage: Bacteria &gt; Bacillati &gt; Actinomycetota &gt; Actinomycetes &gt; Mycobacteriales &gt; Mycobacteriaceae &gt; Mycobacteroides</pre></details><details class="doc"><summary>uniform sample 4</summary><pre>&gt;tr:A0A671VQV7 BCL2 interacting killer [Sparus aurata (Gilthead sea bream)]
+MVAQTRQPRQAVSLQAGPGEVDTGTLFDMNLRVNDGAARAIGRQLAVIGDKLDREWASRDPNWPPSPLHMLRPAQALTRTIYRDIHSQLWGFKGLSAAVKAWISSTAPGQGILRADAWTAWVSSFKAVTCTGWSRGALVTVALVAAVTIFGALWVEGRA
+
+BCL2 interacting killer — UniProtKB/TrEMBL A0A671VQV7 — is a 159-residue protein from Sparus aurata (Gilthead sea bream) (NCBI taxon 8175).
+Sequence features: 1 transmem [136-155 (Helical)]
+Keywords: Membrane; Reference proteome; Transmembrane; Transmembrane helix
+Lineage: Eukaryota &gt; Metazoa &gt; Chordata &gt; Craniata &gt; Vertebrata &gt; Euteleostomi &gt; Actinopterygii &gt; Neopterygii</pre></details><details class="doc"><summary>uniform sample 5</summary><pre>&gt;tr:A0ABV5JLE6 DUF1127 domain-containing protein [Pseudohalocynthiibacter aestuariivivens]
+MSITTATRSVPFGAITTFRLVHAIENAAEAFASWKAARQTRGALANLSDSQLEDIGLVRADADMIYNKIRSGRY
+
+DUF1127 domain-containing protein — UniProtKB/TrEMBL A0ABV5JLE6 — is a 74-residue protein from Pseudohalocynthiibacter aestuariivivens (NCBI taxon 1591409); gene ACFFUT_18060.
+Sequence features: 1 domain [28-62 (YjiS-like)]
+Keywords: Reference proteome
+Lineage: Bacteria &gt; Pseudomonadati &gt; Pseudomonadota &gt; Alphaproteobacteria &gt; Rhodobacterales &gt; Paracoccaceae &gt; Pseudohalocynthiibacter</pre></details><details class="doc"><summary>uniform sample 6</summary><pre>&gt;tr:A0A0A8EBX7 Transmembrane protein [Mesomycoplasma flocculare ATCC 27399]
+MNKNRQNYRYQNPQNRANFPNQERKSPNFPRRYPVYHQEQEYDREDFQEENNYYQERTYYKPKYENSQQFYQEQLMEQDYHDRMEQKWINEDSNNFISKEVRKIFGLELIFLPLKAIFWFLLIITVSVVTLLWTQELIPGWTYHKKYLPLIIIPGIIAAVLFFLFVKTLLDYKAVKKSVDYFRSQLRNNNNRLEMPPMIPWLVKKVNQKEVNAIWLCVFSLFATIMMGINYWILLKYFPEKNIQNSIEYITSMSINAVLFIIMLVYDLMLRRRLSNIEAIFGHIYHKSVDVARIRFRRHLIWAFFTVIIFLILRRIGKKRNLI
+
+Transmembrane protein — UniProtKB/TrEMBL A0A0A8EBX7 — is a 323-residue protein from Mesomycoplasma flocculare ATCC 27399 (NCBI taxon 743971); gene MYF_00355.
+Sequence features: 5 transmem [109-135 (Helical); 147-166 (Helical)]; 1 region [1-30 (Disordered)]
+Keywords: Membrane; Reference proteome; Transmembrane; Transmembrane helix
+Lineage: Bacteria &gt; Bacillati &gt; Mycoplasmatota &gt; Mycoplasmoidales &gt; Metamycoplasmataceae &gt; Mesomycoplasma</pre></details><details class="doc"><summary>uniform sample 7</summary><pre>&gt;tr:I1JWM9 DCD domain-containing protein [Glycine max (Soybean) (Glycine hispida)]
+MRWEKVKGIGGEEGPGKRWGHTCNAVRDGRFLYLFGGYGKFNCQTNQVHVFDTLKQSWSEPAIKGPPPTPRDSHSCTVIGDSLFVFGGTDGSKLLNDLHILDTSSHTWVFPTVRGEAPDAREGHDAALVGKRLFMFGGCGRSADNINEVYYNDLYILNTELFVWNRATTSGTPPSPRDGHTCSSWRNKIIVIGGEDENDSYLSDVHILDTDTLIWSKLCTSGQLLPPRAGHSTVSFGKNLFVFGGFTDAQSLYNDLYMLNIETCVWTKVAITPNGPSARFSVAGDCLDPYMSGVLVFVGGCNRNLEALDDMHYLYTGIARESEQRPKKLSLRKQLKLKCLEQNPNLVQNPVLCGYGVGADSNQPMSILNYSQPSRLYIPVNQPLPPGKKMFQANVKGKNSAGYTIETVIDGKPLHGVLFKNQPNTLIPVPNTSSRKRTFSEILSPASNGIHSHNVMAYKVLRQDRMQDKQELRGESSESHERHKEADTIVVSSNPTTAAKSIKVSVNPEPEAVSMDQNGDEKNDTPKSLIESLKNDGSNDVTSSKGEVQIGGQINVPVSNYEIPRQMSDAPNCNADVLKPAAAKSAVCPPNQGVTGDCTTPRTEGHNEQAKLT
+
+DCD domain-containing protein — UniProtKB/TrEMBL I1JWM9 — is a 613-residue protein from Glycine max (Soybean) (Glycine hispida) (NCBI taxon 3847); gene LOC100785267.
+GO annotations: cytoplasm (component); signal transduction (process)
+Sequence features: 2 region [466-546 (Disordered); 586-613 (Disordered)]
+Keywords: Kelch repeat; Reference proteome; Repeat
+Lineage: Eukaryota &gt; Viridiplantae &gt; Streptophyta &gt; Embryophyta &gt; Tracheophyta &gt; Spermatophyta &gt; Magnoliopsida &gt; eudicotyledons</pre></details><details class="doc"><summary>uniform sample 8</summary><pre>&gt;tr:A0A4R3YPW7 Response regulator receiver domain-containing protein [Luteibacter rhizovicinus]
+MPDWLRSGMQLGMGRTMSLAERILEGRSVLLVEDEAMLAMVLEDRLLDAGSTAVHIFGHVEAALVFLAAHTVDLAIVDVNVAGESGERVGEVLVARGIPFVFSSGYDDVGLDERWRDWPLLRKPYGTADLHAVLLDLIHGTKGTDPV
+
+Response regulator receiver domain-containing protein — UniProtKB/TrEMBL A0A4R3YPW7 — is a 147-residue protein from Luteibacter rhizovicinus (NCBI taxon 242606); gene EC912_10584.
+GO annotations: phosphorelay signal transduction system (process)
+Sequence features: 1 domain [28-138 (Response regulatory)]; 1 mod res [78 (4-aspartylphosphate)]
+Keywords: Phosphoprotein; Reference proteome
+Lineage: Bacteria &gt; Pseudomonadati &gt; Pseudomonadota &gt; Gammaproteobacteria &gt; Lysobacterales &gt; Rhodanobacteraceae &gt; Luteibacter</pre></details>
+</div></section>
+
+<footer><div class="wrap">
+<p>Built from UniProtKB (Swiss-Prot + TrEMBL) and UniRef50 (UniProt Consortium, CC-BY 4.0) and Ensembl human
+GRCh38 release 112 (EMBL-EBI). Reproducible from
+<a href="https://github.com/timodonnell/biocorpus">github.com/timodonnell/biocorpus</a>
+(<code>builders/bio_pretrain/</code>). Tokens measured with <code>marin-community/marin-tokenizer</code>.</p>
+</div></footer>
+</body></html>
